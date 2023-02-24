@@ -1,0 +1,3 @@
+/Users/jcbraz/Projects/CG-project/src/build/CMakeFiles/group_project.dir
+/Users/jcbraz/Projects/CG-project/src/build/CMakeFiles/edit_cache.dir
+/Users/jcbraz/Projects/CG-project/src/build/CMakeFiles/rebuild_cache.dir
