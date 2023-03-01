@@ -10,10 +10,8 @@
 #include <GL/glut.h>
 #endif
 #define GLUT_
-#include "./include/tinyxml2.cpp"
 
 using namespace std;
-using namespace tinyxml2;
 
 struct GeometricFigure {
     string graphicType;
