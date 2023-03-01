@@ -11,7 +11,6 @@
 #endif
 #define GLUT_
 
-#
 #define STACKS 0
 #define DIMENSION 1
 #define DIVISION_EDGE 0
@@ -21,12 +20,31 @@
 
 using namespace std;
 
-enum GeometricType {PLANE, BOX, SPHERE, CONE, NaN};
+enum GeometricType {NONE=-1, PLANE, BOX, SPHERE, CONE};
+
+ostream& operator << (ostream& strm, GeometricType& gt) {
+	const string name_gt[] = {"NaN", "Plane", "Box", "Sphere", "Cone"};
+	return strm << name_gt[gt+1];
+} 
 
 struct GeometricFigure {
 	GeometricType geometric_type;
-	int values[3];
+	vector<int> values;
 	double radius;
+	public:
+	GeometricFigure() {
+		geometric_type = NONE;
+		radius = 0.0;
+	}
+	
+	friend ostream& operator << (ostream& strm, GeometricFigure * gf) {
+		strm << "Geometric Figure: " << gf->geometric_type << endl;
+		if (gf->radius != 0.0)
+			strm << "Input Value:" << gf->radius << endl;
+		for (int i = gf->values.size()-1; i >= 0; i--)
+			strm << "Input Value:" << gf->values[i] << endl;
+		return strm;
+	}
 };
 
 GeometricType get_geometric_type(string text) {
@@ -35,6 +53,19 @@ GeometricType get_geometric_type(string text) {
 	else if (text.compare("sphere.3d") == 0) return SPHERE;
 	else if (text.compare("cone.3d") == 0) return CONE;
 	throw invalid_argument("Invalid Geometric Figure!");
+}
+
+void parse_values(GeometricFigure * gf, size_t n, char ** values) {
+	try {
+		gf->values.push_back(stoi(values[n--]));
+		gf->values.push_back(stoi(values[n--]));
+		if (gf->geometric_type == CONE) 
+			gf->values.push_back(stoi(values[n--]));
+		if (gf->geometric_type == SPHERE || gf->geometric_type == CONE)
+			gf->radius = stod(values[n]);	
+	} catch (exception& ex) {
+		throw invalid_argument("Invalid Input Values!");
+	}
 }
 /*
 
@@ -92,16 +123,26 @@ void executeCommands(GeometricFigure input_struct) {
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
 int main(int argc, char ** argv) {
 
-	GeometricFigure * geometric_figure = new GeometricFigure;
+	GeometricFigure * gf = new GeometricFigure;
+	
 	try {
-		geometric_figure->geometric_type = get_geometric_type(argv[argc-1]);
+		gf->geometric_type = get_geometric_type(argv[argc-1]);
+		parse_values(gf, argc-2, argv);
 	}
 	catch (exception &ex) {
 		cout << ex.what() << endl;
 		exit(0);
 	}
-	/*
-	cout << "GeometricType" << geometric_figure->geometric_type << endl;
+	
+	cout << "GF: " << gf << endl;
+	
+	/*for (int i = argc-2; i > 0; i--) {
+		gf->values.push_back(stoi(argv[i]));
+	}
+	
+	for (int k : gf->values)
+		cout << "N: " << k << endl;
+	
 	for (int i = argc-2; i > 0; i--) {
 			
 		cout << "N:" << i << " Text: " << argv[i] << endl; 
