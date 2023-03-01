@@ -10,19 +10,23 @@
 #include <GL/glut.h>
 #endif
 #define GLUT_
+#include "./include/tinyxml2.cpp"
+
+using namespace std;
+using namespace tinyxml2;
 
 struct GeometricFigure {
-    std::string graphicType;
+    string graphicType;
     double radius_or_length;
     int slices_or_grid;
     int stacks;
-    std::string outputFile;
+    string outputFile;
 };
 
-GeometricFigure parseThreeCoordenateInput(std::string commands) {
-    std::stringstream input(commands);
-    std::string token;
-    std::vector<std::string> tokens;
+GeometricFigure parseThreeCoordenateInput(string commands) {
+    stringstream input(commands);
+    string token;
+    vector<string> tokens;
     while (input >> token) {
         tokens.push_back(token);
     }
@@ -30,14 +34,14 @@ GeometricFigure parseThreeCoordenateInput(std::string commands) {
     GeometricFigure input_struct;
     if (tokens.size() == 6) {
         input_struct.graphicType = tokens[1];
-        input_struct.radius_or_length = std::stod(tokens[2]);
-        input_struct.slices_or_grid = std::stoi(tokens[3]);
-        input_struct.stacks = std::stoi(tokens[4]);
+        input_struct.radius_or_length = stod(tokens[2]);
+        input_struct.slices_or_grid = stoi(tokens[3]);
+        input_struct.stacks = stoi(tokens[4]);
         input_struct.outputFile = tokens[5];
     } else if (tokens.size() == 5) {
         input_struct.graphicType = tokens[1];
-        input_struct.radius_or_length = std::stod(tokens[2]);
-        input_struct.slices_or_grid = std::stoi(tokens[3]);
+        input_struct.radius_or_length = stod(tokens[2]);
+        input_struct.slices_or_grid = stoi(tokens[3]);
         input_struct.stacks = -1;
         input_struct.outputFile = tokens[4];
     }
@@ -46,15 +50,20 @@ GeometricFigure parseThreeCoordenateInput(std::string commands) {
 
 void executeCommands(GeometricFigure input_struct) {
 
+    
+
     GLUquadric* quad = gluNewQuadric();
     if (input_struct.graphicType == "sphere") {
-        gluSphere(quad,input_struct.radius_or_length, input_struct.slices_or_grid, input_struct.stacks);
+        glBegin(GL_TRIANGLES);
+            gluSphere(quad,input_struct.radius_or_length, input_struct.slices_or_grid, input_struct.stacks);
+        glEnd();
         gluDeleteQuadric(quad);
     } else if (input_struct.graphicType == "box") {
     } else if (input_struct.graphicType == "cone") {
     } else if (input_struct.graphicType == "plane") {
     } else {
-        std::cout << "Invalid Graphic Type";
+        cout << "Invalid Graphic Type";
+        
     }
 
     glFlush();
@@ -63,13 +72,13 @@ void executeCommands(GeometricFigure input_struct) {
 
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
 int main() {
-    std::string commands = "generator sphere 1 10 10 sphere.3d";
+    string commands = "generator sphere 1 10 10 sphere.3d";
     GeometricFigure input = parseThreeCoordenateInput(commands);
     executeCommands(input);
-    std::cout << "Graphic type: " << input.graphicType << '\n';
-    std::cout << "radius_or_length: " << input.radius_or_length << '\n';
-    std::cout << "slices_or_grid: " << input.slices_or_grid << '\n';
-    std::cout << "Stacks: " << input.stacks << '\n';
-    std::cout << "Output file: " << input.outputFile << '\n';
+    cout << "Graphic type: " << input.graphicType << '\n';
+    cout << "radius_or_length: " << input.radius_or_length << '\n';
+    cout << "slices_or_grid: " << input.slices_or_grid << '\n';
+    cout << "Stacks: " << input.stacks << '\n';
+    cout << "Output file: " << input.outputFile << '\n';
     return 0;
 }
