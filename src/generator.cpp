@@ -50,8 +50,6 @@ GeometricFigure parseThreeCoordenateInput(string commands) {
 
 void executeCommands(GeometricFigure input_struct) {
 
-    
-
     GLUquadric* quad = gluNewQuadric();
     if (input_struct.graphicType == "sphere") {
         glBegin(GL_TRIANGLES);
