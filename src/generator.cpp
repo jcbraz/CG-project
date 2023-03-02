@@ -49,10 +49,10 @@ struct GeometricFigure {
 };
 
 GeometricType getGeometricType(string text) {
-	if (text.compare("plane.3d") == 0) return PLANE;
-	else if (text.compare("box.3d") == 0) return BOX;
-	else if (text.compare("sphere.3d") == 0) return SPHERE;
-	else if (text.compare("cone.3d") == 0) return CONE;
+	if (!text.compare("plane.3d")) return PLANE;
+	else if (!text.compare("box.3d")) return BOX;
+	else if (!text.compare("sphere.3d")) return SPHERE;
+	else if (!text.compare("cone.3d")) return CONE;
 	throw invalid_argument("Invalid Geometric Figure!");
 }
 
