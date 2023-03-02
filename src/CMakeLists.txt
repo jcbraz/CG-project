@@ -3,10 +3,9 @@ cmake_minimum_required(VERSION 3.5)
 # Project Name
 PROJECT(group_project)
 
-set(CMAKE_BUILD_TYPE Debug)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-add_executable(${PROJECT_NAME} generator.cpp)
+add_executable(${PROJECT_NAME} parseXML.cpp)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
@@ -28,8 +27,7 @@ if  (WIN32)
 	
 	
 	include_directories(${TOOLKITS_FOLDER}/glut )
-	target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} 
-										  ${TOOLKITS_FOLDER}/glut/glut32.lib)
+	target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} ${TOOLKITS_FOLDER}/glut/glut32.lib)
 	
 	if (EXISTS "${TOOLKITS_FOLDER}/glut/glut32.dll" )
 		file(COPY ${TOOLKITS_FOLDER}/glut/glut32.dll DESTINATION ${CMAKE_BINARY_DIR})
@@ -51,11 +49,3 @@ else (WIN32) #Linux and Mac
 	endif(NOT GLUT_FOUND)
 	
 endif(WIN32)
-
-
-
-
-
-
-
-
