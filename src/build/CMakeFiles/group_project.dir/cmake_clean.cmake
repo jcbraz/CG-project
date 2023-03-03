@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/group_project.dir/generator.cpp.o"
-  "CMakeFiles/group_project.dir/generator.cpp.o.d"
+  "CMakeFiles/group_project.dir/parseXML.cpp.o"
+  "CMakeFiles/group_project.dir/parseXML.cpp.o.d"
   "group_project"
   "group_project.pdb"
 )

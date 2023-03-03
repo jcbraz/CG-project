@@ -69,28 +69,28 @@ include CMakeFiles/group_project.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/group_project.dir/flags.make
 
-CMakeFiles/group_project.dir/generator.cpp.o: CMakeFiles/group_project.dir/flags.make
-CMakeFiles/group_project.dir/generator.cpp.o: /Users/jcbraz/Projects/CG-project/src/generator.cpp
-CMakeFiles/group_project.dir/generator.cpp.o: CMakeFiles/group_project.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jcbraz/Projects/CG-project/src/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/group_project.dir/generator.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/group_project.dir/generator.cpp.o -MF CMakeFiles/group_project.dir/generator.cpp.o.d -o CMakeFiles/group_project.dir/generator.cpp.o -c /Users/jcbraz/Projects/CG-project/src/generator.cpp
+CMakeFiles/group_project.dir/parseXML.cpp.o: CMakeFiles/group_project.dir/flags.make
+CMakeFiles/group_project.dir/parseXML.cpp.o: /Users/jcbraz/Projects/CG-project/src/parseXML.cpp
+CMakeFiles/group_project.dir/parseXML.cpp.o: CMakeFiles/group_project.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jcbraz/Projects/CG-project/src/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/group_project.dir/parseXML.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/group_project.dir/parseXML.cpp.o -MF CMakeFiles/group_project.dir/parseXML.cpp.o.d -o CMakeFiles/group_project.dir/parseXML.cpp.o -c /Users/jcbraz/Projects/CG-project/src/parseXML.cpp
 
-CMakeFiles/group_project.dir/generator.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/group_project.dir/generator.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jcbraz/Projects/CG-project/src/generator.cpp > CMakeFiles/group_project.dir/generator.cpp.i
+CMakeFiles/group_project.dir/parseXML.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/group_project.dir/parseXML.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jcbraz/Projects/CG-project/src/parseXML.cpp > CMakeFiles/group_project.dir/parseXML.cpp.i
 
-CMakeFiles/group_project.dir/generator.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/group_project.dir/generator.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jcbraz/Projects/CG-project/src/generator.cpp -o CMakeFiles/group_project.dir/generator.cpp.s
+CMakeFiles/group_project.dir/parseXML.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/group_project.dir/parseXML.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jcbraz/Projects/CG-project/src/parseXML.cpp -o CMakeFiles/group_project.dir/parseXML.cpp.s
 
 # Object files for target group_project
 group_project_OBJECTS = \
-"CMakeFiles/group_project.dir/generator.cpp.o"
+"CMakeFiles/group_project.dir/parseXML.cpp.o"
 
 # External object files for target group_project
 group_project_EXTERNAL_OBJECTS =
 
-group_project: CMakeFiles/group_project.dir/generator.cpp.o
+group_project: CMakeFiles/group_project.dir/parseXML.cpp.o
 group_project: CMakeFiles/group_project.dir/build.make
 group_project: CMakeFiles/group_project.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/jcbraz/Projects/CG-project/src/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable group_project"

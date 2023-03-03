@@ -129,29 +129,29 @@ group_project/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_project.dir/build.make CMakeFiles/group_project.dir/build
 .PHONY : group_project/fast
 
-generator.o: generator.cpp.o
-.PHONY : generator.o
+parseXML.o: parseXML.cpp.o
+.PHONY : parseXML.o
 
 # target to build an object file
-generator.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_project.dir/build.make CMakeFiles/group_project.dir/generator.cpp.o
-.PHONY : generator.cpp.o
+parseXML.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_project.dir/build.make CMakeFiles/group_project.dir/parseXML.cpp.o
+.PHONY : parseXML.cpp.o
 
-generator.i: generator.cpp.i
-.PHONY : generator.i
+parseXML.i: parseXML.cpp.i
+.PHONY : parseXML.i
 
 # target to preprocess a source file
-generator.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_project.dir/build.make CMakeFiles/group_project.dir/generator.cpp.i
-.PHONY : generator.cpp.i
+parseXML.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_project.dir/build.make CMakeFiles/group_project.dir/parseXML.cpp.i
+.PHONY : parseXML.cpp.i
 
-generator.s: generator.cpp.s
-.PHONY : generator.s
+parseXML.s: parseXML.cpp.s
+.PHONY : parseXML.s
 
 # target to generate assembly for a file
-generator.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_project.dir/build.make CMakeFiles/group_project.dir/generator.cpp.s
-.PHONY : generator.cpp.s
+parseXML.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/group_project.dir/build.make CMakeFiles/group_project.dir/parseXML.cpp.s
+.PHONY : parseXML.cpp.s
 
 # Help Target
 help:
@@ -162,9 +162,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... group_project"
-	@echo "... generator.o"
-	@echo "... generator.i"
-	@echo "... generator.s"
+	@echo "... parseXML.o"
+	@echo "... parseXML.i"
+	@echo "... parseXML.s"
 .PHONY : help
 
 
