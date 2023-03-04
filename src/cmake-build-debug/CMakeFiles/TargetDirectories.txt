@@ -1,0 +1,3 @@
+/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/CMakeFiles/group_project.dir
+/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/CMakeFiles/rebuild_cache.dir
