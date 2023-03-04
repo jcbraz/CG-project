@@ -43,6 +43,7 @@ class GeometricShape {
     public:
     void drawObject(vector<Point> points);
     virtual vector<Point> getPoints() = 0;
+    void writeTo3DFile(vector<Point> points);
 
     friend ostream &operator<<(ostream &out, const GeometricShape &go) {
         go.Print(out);

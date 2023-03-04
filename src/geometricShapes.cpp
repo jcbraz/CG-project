@@ -18,6 +18,7 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <fstream>
 
 /*
  *
@@ -63,7 +64,7 @@ Cone::Cone(float radius, float height, int slices, int stacks, string pathFile) 
     Cone::height = height;
     Cone::slices = slices;
     Cone::stacks = stacks;
-    Cone::fileName = fileName;
+    Cone::fileName = pathFile;
 }
 
 
@@ -144,4 +145,13 @@ void GeometricShape::drawObject(vector<Point> points) {
         for (auto p : points)
             glVertex3f(p.x, p.y, p.z);
     glEnd();
+}
+
+void GeometricShape::writeTo3DFile(vector<Point> points) {
+    ofstream file(fileName);
+    cout << "Writing Points to:" << fileName << endl;
+    for (auto p : points) {
+        file << p.x << " " << p.y << " " << p.z << " ";
+    }
+    file.close();
 }
