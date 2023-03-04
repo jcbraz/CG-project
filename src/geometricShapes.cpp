@@ -55,7 +55,17 @@ Cone::Cone(float radius, float height, int slices, int stacks) {
     Cone::height = height;
     Cone::slices = slices;
     Cone::stacks = stacks;
+    Cone::fileName = "cone.3d";
 }
+
+Cone::Cone(float radius, float height, int slices, int stacks, string pathFile) {
+    Cone::radius = radius;
+    Cone::height = height;
+    Cone::slices = slices;
+    Cone::stacks = stacks;
+    Cone::fileName = fileName;
+}
+
 
 vector<Point> Cone::getPoints() {
     vector<Point> points;

@@ -38,6 +38,8 @@ public:
 class GeometricShape {
     protected:
         int vertices;
+        string fileName;
+
     public:
     void drawObject(vector<Point> points);
     virtual vector<Point> getPoints() = 0;
@@ -73,6 +75,7 @@ class Cone : public GeometricShape {
     public:
         Cone();
         Cone(float radius, float height, int slices, int stacks);
+        Cone(float radius, float height, int slices, int stacks, string pathFile);
         vector<Point> getPoints() override;
 
     protected:

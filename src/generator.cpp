@@ -128,13 +128,13 @@ int main(int argc, char ** argv) {
     GeometricShape * gShape;
 
     try {
-        string s_gShape = argv[argc - 1];
+        string s_gShape = argv[1];
         //if (s_gShape == "plane.3d")
             //gShape = new Plane(stof(argv[1]), stoi(argv[2]));
             //    else if (s_gShape == "box.3d")
             //        gShape = new Box(stof(argv[1]), stoi(argv[2]));
-        if (s_gShape == "cone.3d")
-            gShape = new Cone(stof(argv[1]), stof(argv[2]), stoi(argv[3]), stoi(argv[4]));
+        if (s_gShape == "cone")
+            gShape = new Cone(stof(argv[2]), stof(argv[3]), stoi(argv[4]), stoi(argv[5]), argv[1]);
             //    else if (s_gShape == "sphere.3d")
             //        gShape = new Sphere(stof(argv[1]), stoi(argv[2]), stoi(argv[3]));
         else
