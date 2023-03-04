@@ -73,8 +73,8 @@ void renderScene(void) {
 
 	// Draw Geometric Figure
     //drawCylinder(1,2,320);
-	GeometricShape * cone = new Cone(3, 5, 6, 3);
-    cone->drawObject();
+	GeometricShape * cone = new Cone(2, 3, 10, 10);
+    cone->drawObject(cone->getPoints());
     // End of frame
     glutSwapBuffers();
 }
@@ -129,11 +129,11 @@ int main(int argc, char ** argv) {
 
     try {
         string s_gShape = argv[argc - 1];
-        if (s_gShape == "plane.3d")
-            gShape = new Plane(stof(argv[1]), stoi(argv[2]));
+        //if (s_gShape == "plane.3d")
+            //gShape = new Plane(stof(argv[1]), stoi(argv[2]));
             //    else if (s_gShape == "box.3d")
             //        gShape = new Box(stof(argv[1]), stoi(argv[2]));
-        else if (s_gShape == "cone.3d")
+        if (s_gShape == "cone.3d")
             gShape = new Cone(stof(argv[1]), stof(argv[2]), stoi(argv[3]), stoi(argv[4]));
             //    else if (s_gShape == "sphere.3d")
             //        gShape = new Sphere(stof(argv[1]), stoi(argv[2]), stoi(argv[3]));

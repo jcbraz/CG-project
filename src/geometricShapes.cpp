@@ -3,7 +3,6 @@
 //
 
 #include <iostream>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -40,13 +39,6 @@ Point::Point() {
 
 /*
  *
- * END POINT STRUCT
- *
- */
-
-
-/*
- *
  * CONE CLASS
  *
  */
@@ -65,84 +57,38 @@ Cone::Cone(float radius, float height, int slices, int stacks) {
     Cone::stacks = stacks;
 }
 
-void Cone::drawObject() {
+vector<Point> Cone::getPoints() {
+    vector<Point> points;
 
     float alpha = 2 * M_PI / slices;
-
-    Point * p = new Point(0, 0, radius);
-
-    glBegin(GL_TRIANGLES);
+    float v_h = height / stacks;
+    float v_r = radius / stacks;
+    // Base
     for (int i = 0; i < slices; i++) {
-        glColor3f(1.0f, 1.0f, 1.0f);
+        points.push_back(Point(0, 0, 0));
+        points.push_back(Point(radius * sin(alpha * i), 0, radius * cos(alpha * i)));
+        points.push_back(Point(radius * sin(alpha * (i + 1)), 0, radius * cos(alpha * (i + 1))));
 
-        Point * p_1 = new Point(
-                radius * sin(alpha * i),
-                0,
-                radius * cos(alpha * i)
-        );
+        for (int j = 0; j < stacks-1; j++) {
 
-        Point * h = new Point(0, height, 0);
+            points.push_back(Point((radius - v_r * j) * sin(alpha * i), j * v_h,(radius - v_r * j) * cos(alpha * i)));
+            points.push_back(Point((radius - v_r * (j+1)) * sin(alpha * (i+1)), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * (i+1))));
+            points.push_back(Point((radius - v_r * j) * sin(alpha * (i+1)), j * v_h, (radius - v_r * j) * cos(alpha * (i+1))));
 
-        Point * v_1 = new Point(
-                h->x - p_1->x,
-                h->y - p_1->y,
-                h->z - p_1->z
-        );
+            points.push_back(Point((radius - v_r * j) * sin (alpha * i), j * v_h, (radius - v_r * j) * cos(alpha * i)));
+            points.push_back(Point((radius - v_r * (j+1)) * sin (alpha * i), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * i)));
+            points.push_back(Point((radius - v_r * (j+1)) * sin (alpha * (i+1)), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * (i+1))));
 
-        Point * p_2 = new Point(
-                radius * sin(alpha * (i+1)),
-                0,
-                radius * cos(alpha * (i+1))
-        );
-
-        Point * v_2 = new Point(
-                h->x - p_2->x,
-                h->y - p_2->y,
-                h->z - p_2->z
-        );
-
-        // Cone Base
-        glVertex3f(0.0f, 0.0f, 0.0f);
-        glVertex3f(p_2->x, p_2->y, p_2->z);
-        glVertex3f(p_1->x, p_1->y, p_1->z);
-
-        for (int j = 0; j < stacks; j++) {
-
-            // Stack Bottom Triangle
-            glColor3f(0.5f, 0.5f, 0.0f);
-            glVertex3f(
-                    p_1->x + j*v_1->x/stacks,
-                    p_1->y + j*v_1->y/stacks,
-                    p_1->z + j*v_1->z/stacks);
-
-            glVertex3f(
-                    p_2->x + (j+1)*v_2->x/stacks,
-                    p_2->y + (j+1)*v_2->y/stacks,
-                    p_2->z + (j+1)*v_2->z/stacks);
-
-            glVertex3f(p_2->x + j*v_2->x/stacks,
-                       p_2->y + j*v_2->y/stacks,
-                       p_2->z + j*v_2->z/stacks);
-
-            // Stack Top Triangle
-            glVertex3f(
-                    p_1->x + j*v_1->x/stacks,
-                    p_1->y + j*v_1->y/stacks,
-                    p_1->z + j*v_1->z/stacks);
-
-            glVertex3f(
-                    p_1->x + (j+1)*v_1->x/stacks,
-                    p_1->y + (j+1)*v_1->y/stacks,
-                    p_1->z + (j+1)*v_1->z/stacks);
-
-            glVertex3f(
-                    p_2->x + (j+1)*v_2->x/stacks,
-                    p_2->y + (j+1)*v_2->y/stacks,
-                    p_2->z + (j+1)*v_2->z/stacks);
         }
     }
-    glEnd();
 
+    for (int i = 0; i < slices; i++) {
+        points.push_back(Point((radius - v_r * (stacks-1)) * sin(alpha * i), (stacks-1) * v_h,(radius - v_r * (stacks-1)) * cos(alpha * i)));
+        points.push_back(Point((radius - v_r * stacks) * sin(alpha * (i+1)), stacks * v_h, (radius - v_r * stacks) * cos(alpha * (i+1))));
+        points.push_back(Point((radius - v_r * (stacks-1)) * sin(alpha * (i+1)), (stacks-1) * v_h, (radius - v_r * (stacks-1)) * cos(alpha * (i+1))));
+    }
+
+    return points;
 }
 
 void Cone::Print(ostream &) const {
@@ -153,6 +99,7 @@ void Cone::Print(ostream &) const {
     cout << "Slices:" << Cone::slices << endl;
 
 }
+
 
 /*
  *
@@ -170,13 +117,21 @@ Plane::Plane(float length, int divisions) {
     Plane::divisions = divisions;
 }
 
-void Plane::drawObject() {
-
-}
-
 void Plane::Print(ostream &) const {
     cout << "Geometric Shape:Plane" << endl;
     cout << "Length:" << Plane::length << endl;
     cout << "Divisions:" << Plane::divisions << endl;
 }
 
+/*
+ *
+ * END POINT STRUCT
+ *
+ */
+void GeometricShape::drawObject(vector<Point> points) {
+    glBegin(GL_TRIANGLES);
+        glColor3f(1.0f, 1.0f, 1.0f);
+        for (auto p : points)
+            glVertex3f(p.x, p.y, p.z);
+    glEnd();
+}

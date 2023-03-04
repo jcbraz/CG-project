@@ -39,9 +39,10 @@ class GeometricShape {
     protected:
         int vertices;
     public:
-    virtual void drawObject() = 0;
-    friend ostream& operator<<( ostream& out, const GeometricShape& go )
-    {
+    void drawObject(vector<Point> points);
+    virtual vector<Point> getPoints() = 0;
+
+    friend ostream &operator<<(ostream &out, const GeometricShape &go) {
         go.Print(out);
         return out;
     }
@@ -72,7 +73,7 @@ class Cone : public GeometricShape {
     public:
         Cone();
         Cone(float radius, float height, int slices, int stacks);
-        void drawObject() override;
+        vector<Point> getPoints() override;
 
     protected:
         void Print(ostream &) const override;
@@ -98,7 +99,6 @@ class Plane : public GeometricShape {
     public:
         Plane();
         Plane(float length, int divisions);
-        void drawObject() override;
 
     protected:
         void Print(ostream &) const override;};
@@ -122,7 +122,6 @@ class Box : public GeometricShape {
     public:
         Box();
         Box(float length, int divisions);
-        void drawObject() override;
 
     protected:
         void Print(ostream &) const override;};
@@ -146,7 +145,6 @@ class Sphere : public GeometricShape {
     public:
         Sphere();
         Sphere(float radius, int slices, int stacks);
-        void drawObject() override;
 
     protected:
         void Print(ostream &) const override;};
