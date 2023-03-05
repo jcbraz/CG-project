@@ -16,9 +16,9 @@ bool parseXML(string filepath) {
         return false;
     }
 
-    XMLNode* root = xml_doc.FirstChildElement("world");
+    XMLNode* root = xml_doc.FirstChildElement();
     if (root == nullptr) {
-        cout << "Error finding 'world' node" << endl;
+        cout << "Error finding node" << endl;
         return false;
     }
 
