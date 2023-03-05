@@ -49,8 +49,8 @@ cmake_ninja_workdir = /home/user13/Desktop/Github/CG-project/src/cmake-build-deb
 
 build cmake_object_order_depends_target_group_project: phony || CMakeFiles/group_project.dir
 
-build CMakeFiles/group_project.dir/generator.cpp.o: CXX_COMPILER__group_project_Debug /home/user13/Desktop/Github/CG-project/src/generator.cpp || cmake_object_order_depends_target_group_project
-  DEP_FILE = CMakeFiles/group_project.dir/generator.cpp.o.d
+build CMakeFiles/group_project.dir/engine.cpp.o: CXX_COMPILER__group_project_Debug /home/user13/Desktop/Github/CG-project/src/engine.cpp || cmake_object_order_depends_target_group_project
+  DEP_FILE = CMakeFiles/group_project.dir/engine.cpp.o.d
   FLAGS = -g -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles/group_project.dir
   OBJECT_FILE_DIR = CMakeFiles/group_project.dir
@@ -69,7 +69,7 @@ build CMakeFiles/group_project.dir/geometricShapes.cpp.o: CXX_COMPILER__group_pr
 #############################################
 # Link the executable group_project
 
-build group_project: CXX_EXECUTABLE_LINKER__group_project_Debug CMakeFiles/group_project.dir/generator.cpp.o CMakeFiles/group_project.dir/geometricShapes.cpp.o | /usr/lib/libGL.so /usr/lib/libGLU.so
+build group_project: CXX_EXECUTABLE_LINKER__group_project_Debug CMakeFiles/group_project.dir/engine.cpp.o CMakeFiles/group_project.dir/geometricShapes.cpp.o | /usr/lib/libGL.so /usr/lib/libGLU.so
   FLAGS = -g
   LINK_LIBRARIES = /usr/lib/libGL.so  /usr/lib/libGLU.so  -lglut
   OBJECT_DIR = CMakeFiles/group_project.dir

@@ -19,6 +19,10 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <fstream>
+#include <cstring>
+#include <iomanip>
+
+#define FLOAT_PRECISION 5
 
 /*
  *
@@ -147,11 +151,40 @@ void GeometricShape::drawObject(vector<Point> points) {
     glEnd();
 }
 
-void GeometricShape::writeTo3DFile(vector<Point> points) {
-    ofstream file(fileName);
-    cout << "Writing Points to:" << fileName << endl;
+void GeometricShape::writeTo3DFile(vector<Point> points, string fName) {
+    ofstream file(fName);
+    cout << "Writing Points to:" << fName << endl;
     for (auto p : points) {
-        file << p.x << " " << p.y << " " << p.z << " ";
+        file << setprecision(FLOAT_PRECISION) << p.x << " " << p.y << " " << p.z << " ";
     }
+    file << endl;
     file.close();
+}
+
+vector<Point> GeometricShape::readFrom3DFile(string fName) {
+    ifstream file(fName);
+    string line;
+    cout << "Reading From:" << fName << endl;
+    getline(file, line);
+
+    vector<Point> points;
+    vector<float> nms;
+    char buf[32];
+    int j = 0;
+    for (int i = 0; i < line.length(); i++) {
+
+        if (isdigit(line[i]) || line[i] == '.' || line[i] == '-' || line[i] == 'e') {
+            buf[j++] = line[i];
+        }
+        else {
+            nms.push_back(stof(buf));
+            memset(buf, 0, 32);
+            j = 0;
+        }
+        if (nms.size() == 3) {
+            points.push_back(Point(nms[0], nms[1], nms[2]));
+            nms.clear();
+        }
+    }
+    return points;
 }

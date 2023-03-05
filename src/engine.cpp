@@ -76,8 +76,12 @@ void renderScene(void) {
 
     // Draw Geometric Figure
     //drawCylinder(1,2,320);
-    GeometricShape * cone = new Cone(2, 3, 10, 10);
-    cone->drawObject(cone->getPoints());
+    GeometricShape * cone = new Cone(2, 3, 3, 1);
+    vector<Point> pointss = cone->getPoints();
+    GeometricShape::writeTo3DFile(pointss, "cone.3d");
+    vector<Point> points = GeometricShape::readFrom3DFile(cone->getFileName());
+    GeometricShape::drawObject(points);
+
     // End of frame
     glutSwapBuffers();
 }
@@ -127,7 +131,6 @@ void createGeometricShape() {
 
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
 int main(int argc, char ** argv) {
-
 
     createGeometricShape();
 

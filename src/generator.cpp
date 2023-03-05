@@ -44,7 +44,7 @@ int main(int argc, char ** argv) {
     }
 
     cout << *gShape << endl;
-    gShape->writeTo3DFile(gShape->getPoints());
+
 	//executeCommands(...);
     return 0;
 }

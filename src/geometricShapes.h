@@ -41,9 +41,11 @@ class GeometricShape {
         string fileName;
 
     public:
-    void drawObject(vector<Point> points);
     virtual vector<Point> getPoints() = 0;
-    void writeTo3DFile(vector<Point> points);
+    static void drawObject(vector<Point> points);
+    static void writeTo3DFile(vector<Point> points, string fName);
+    static vector<Point> readFrom3DFile(string fName);
+    string getFileName() { return fileName; }
 
     friend ostream &operator<<(ostream &out, const GeometricShape &go) {
         go.Print(out);
