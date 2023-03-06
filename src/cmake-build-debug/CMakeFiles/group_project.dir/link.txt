@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/group_project.dir/engine.cpp.o CMakeFiles/group_project.dir/geometricShapes.cpp.o -o group_project  /usr/lib/libGL.so /usr/lib/libGLU.so -lglut 

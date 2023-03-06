@@ -121,16 +121,19 @@ class Plane : public GeometricShape {
  *
  */
 class Box : public GeometricShape {
-    private:
-        float length;
-        int divisions;
+private:
+    float length;
+    int divisions;
 
-    public:
-        Box();
-        Box(float length, int divisions);
+public:
+    Box();
+    Box(float length, int divisions);
+    Box(float length, int divisions, string pathFile);
+    vector<Point> getPoints() override;
 
-    protected:
-        void Print(ostream &) const override;};
+protected:
+    void Print(ostream &) const override;};
+
 /*
  *
  * END BOX CLASS

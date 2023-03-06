@@ -76,10 +76,15 @@ void renderScene(void) {
 
     // Draw Geometric Figure
     //drawCylinder(1,2,320);
-    GeometricShape * cone = new Cone(2, 3, 3, 1);
-    vector<Point> pointss = cone->getPoints();
-    GeometricShape::writeTo3DFile(pointss, "cone.3d");
-    vector<Point> points = GeometricShape::readFrom3DFile(cone->getFileName());
+
+    /*
+    GeometricShape * cone = new Cone(1, 0.5, 30, 10);
+    vector<Point> points = cone->getPoints();
+*/
+
+    GeometricShape * box = new Box(2, 3);
+    vector<Point> points = box->getPoints();
+
     GeometricShape::drawObject(points);
 
     // End of frame
@@ -96,7 +101,6 @@ void processKeys(unsigned char key, int x, int y) {
         is_skeleton = !is_skeleton;
         cout << "Pressed: " << key << endl;
     }
-
     glutPostRedisplay();
 }
 
@@ -120,7 +124,8 @@ void createGeometricShape() {
 
     //  OpenGL settings
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BACK);
+    //glEnable(GL_CULL_FACE);
+    glPolygonMode(GL_BACK, GL_LINE);
 
     // Glut's main cycle
     glutMainLoop();
