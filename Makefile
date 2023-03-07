@@ -60,7 +60,7 @@ EQUALS = =
 CMAKE_SOURCE_DIR = /Users/bernardocosta/Desktop/CG-project/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/bernardocosta/Desktop/CG-project/src/build
+CMAKE_BINARY_DIR = /Users/bernardocosta/Desktop/CG-project
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -68,7 +68,7 @@ CMAKE_BINARY_DIR = /Users/bernardocosta/Desktop/CG-project/src/build
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/Applications/CMake.app/Contents/bin/cmake-gui -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/Applications/CMake.app/Contents/bin/ccmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/bernardocosta/Desktop/CG-project/src/build/CMakeFiles /Users/bernardocosta/Desktop/CG-project/src/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/bernardocosta/Desktop/CG-project/CMakeFiles /Users/bernardocosta/Desktop/CG-project//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/bernardocosta/Desktop/CG-project/src/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/bernardocosta/Desktop/CG-project/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

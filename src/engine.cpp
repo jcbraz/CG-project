@@ -77,6 +77,11 @@ void renderScene(void) {
     // Draw Geometric Figure
     //drawCylinder(1,2,320);
 
+    
+    //GeometricShape * plane = new Plane(1, 3);
+    //vector<Point> points = plane->getPoints();
+
+
     /*
     GeometricShape * cone = new Cone(1, 0.5, 30, 10);
     vector<Point> points = cone->getPoints();
