@@ -78,3 +78,6 @@ int main() {
     cout << "Output file: " << input.outputFile << '\n';
     return 0;
 }
+
+
+// montar um constructor no World que recebe um World para conseguir aceder variaveis privadas
