@@ -2,12 +2,12 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "tinyxml2/tinyxml2.cpp"
+#include <tinyxml2.h>
 
 using namespace std;
 using namespace tinyxml2;
 
-bool parseXML(string filepath) {
+bool parseXML(const string &filepath) {
     XMLDocument xml_doc;
 
     XMLError read_result = xml_doc.LoadFile(filepath.c_str());
@@ -32,6 +32,6 @@ bool parseXML(string filepath) {
 }
 
 int main() {
-    bool result = parseXML("./config/config.xml");
+    bool result = parseXML("../config/config.xml");
     cout << result << endl;
 }
