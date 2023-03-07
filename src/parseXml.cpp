@@ -210,11 +210,11 @@ World* parseXML(const string& filepath) {
 }
 
 int main() {
-    World* world = parseXML("file.xml");
-    std::vector<std::string> fic = world->files;
+    World* world_struct = parseXML("../config/config.xml");
+    std::vector<std::string> fic = world_struct->getFiles();
     for (int i = 0; i < fic.size(); i++) {
         std::cout << fic[i] << std::endl;
     }
-    delete world;
+    delete world_struct;
     return 0;
 }

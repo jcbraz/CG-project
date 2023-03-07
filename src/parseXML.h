@@ -9,10 +9,6 @@
 
 using namespace std;
 
-struct XMLException : public exception {
-    
-};
-
 /*
  * CAMERA SECTION
  */
@@ -72,6 +68,9 @@ class World {
     World();
     World(int width, int height, vector<string> files);
     World(const Camera& camera, int width, int height, vector<string> files);
+    vector<string> getFiles() {
+        return files;
+    };
 };
 
 #endif  // GROUP_PROJECT_PARSEXML_H
