@@ -77,14 +77,16 @@ void renderScene(void) {
     // Draw Geometric Figure
     //drawCylinder(1,2,320);
 
-    
-    //GeometricShape * plane = new Plane(1, 3);
-    //vector<Point> points = plane->getPoints();
+
+    GeometricShape * plane = new Plane(1, 3);
+    vector<Point> points = plane->getPoints();
+    GeometricShape::drawObject(points);
 
 
     /*
-    GeometricShape * cone = new Cone(1, 0.5, 30, 10);
+    GeometricShape * cone = new Cone(1, 2, 30, 10);
     vector<Point> points = cone->getPoints();
+    GeometricShape::drawObject(points);
     */
 
     /*
@@ -94,10 +96,11 @@ void renderScene(void) {
     GeometricShape::drawObject(GeometricShape::readFrom3DFile(box->getFileName()));
     */
 
-
-    GeometricShape * sphere = new Sphere(2, 100, 100);
+    /*
+    GeometricShape * sphere = new Sphere(2, 10, 10);
     vector<Point> points = sphere->getPoints();
     GeometricShape::drawObject(points);
+    */
 
      // End of frame
     glutSwapBuffers();

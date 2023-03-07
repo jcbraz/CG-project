@@ -105,6 +105,7 @@ class Plane : public GeometricShape {
     public:
         Plane();
         Plane(float length, int divisions);
+        Plane(float length, int divisions, string fileName);
         vector<Point> getPoints() override;
 
     protected:

@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "geometricShapes.h"
@@ -52,27 +53,36 @@ Point::Point() {
 Plane::Plane() {
     Plane::length = 1.0f;
     Plane::divisions = 3;
+    Plane::fileName = "plane.3d";
 }
 
 Plane::Plane(float length, int divisions) {
     Plane::length = length;
     Plane::divisions = divisions;
+    Plane::fileName = "plane.3d";
+
 }
 
+Plane::Plane(float length, int divisions, string fileName) {
+    Plane::length = length;
+    Plane::divisions = divisions;
+    Plane::fileName = std::move(fileName);
+}
 
 vector<Point> Plane::getPoints() {
     vector<Point> points;
-    int n_d = (float) length / (float) divisions;
+    float n_d = (float) length / (float) divisions;
+    float h_l = (float) length / 2;
     for (int i = 0; i < divisions; i++) {
         for (int j = 0; j < divisions; j++) {
             //primeiro triangulo
-            points.push_back(Point(-length + n_d * j, 0, -length+ n_d * i));
-            points.push_back(Point(-length + n_d * (j+1), 0, -length + n_d * i));
-            points.push_back(Point(-length + n_d * j, 0, -length + n_d * (i+1)));
+            points.push_back(Point(-h_l + n_d * j, 0, -h_l+ n_d * i));
+            points.push_back(Point(-h_l + n_d * (j+1), 0, -h_l + n_d * i));
+            points.push_back(Point(-h_l + n_d * j, 0, -h_l + n_d * (i+1)));
             //segundo triangulo
-            points.push_back(Point(-length + n_d * (j+1), 0, -length + n_d * i));
-            points.push_back(Point(-length + n_d * (j+1), 0, -length + n_d * (i+1)));
-            points.push_back(Point(-length + n_d * j, 0, -length + n_d * (i+1)));
+            points.push_back(Point(-h_l + n_d * j, 0, -h_l + n_d * (i+1)));
+            points.push_back(Point(-h_l + n_d * (j+1), 0, -h_l + n_d * (i+1)));
+            points.push_back(Point(-h_l + n_d * (j+1), 0, -h_l + n_d * i));
         }
     }
 
@@ -110,7 +120,7 @@ Box::Box(float length, int divisions) {
 Box::Box(float length, int divisions, string pathFile) {
     Box::length = length;
     Box::divisions = divisions;
-    Box::fileName = pathFile;
+    Box::fileName = std::move(pathFile);
 }
 
 
@@ -245,7 +255,7 @@ Sphere::Sphere(float radius, int slices, int stacks, string fileName) {
     Sphere::radius = radius;
     Sphere::slices = slices;
     Sphere::stacks = stacks;
-    fileName = fileName;
+    Sphere::fileName = std::move(fileName);
 }
 
 vector<Point> Sphere::getPoints() {
@@ -319,7 +329,7 @@ Cone::Cone(float radius, float height, int slices, int stacks, string pathFile) 
     Cone::height = height;
     Cone::slices = slices;
     Cone::stacks = stacks;
-    Cone::fileName = pathFile;
+    Cone::fileName = std::move(pathFile);
 }
 
 
