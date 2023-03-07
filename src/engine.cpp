@@ -80,14 +80,21 @@ void renderScene(void) {
     /*
     GeometricShape * cone = new Cone(1, 0.5, 30, 10);
     vector<Point> points = cone->getPoints();
-*/
+    */
 
+    /*
     GeometricShape * box = new Box(2, 3);
     vector<Point> points = box->getPoints();
+    GeometricShape::writeTo3DFile(points, box->getFileName());
+    GeometricShape::drawObject(GeometricShape::readFrom3DFile(box->getFileName()));
+    */
 
+
+    GeometricShape * sphere = new Sphere(2, 100, 100);
+    vector<Point> points = sphere->getPoints();
     GeometricShape::drawObject(points);
 
-    // End of frame
+     // End of frame
     glutSwapBuffers();
 }
 
@@ -125,8 +132,7 @@ void createGeometricShape() {
     //  OpenGL settings
     glEnable(GL_DEPTH_TEST);
     //glEnable(GL_CULL_FACE);
-    glPolygonMode(GL_BACK, GL_LINE);
-
+    //glCullFace(GL_FRONT);
     // Glut's main cycle
     glutMainLoop();
 

@@ -66,11 +66,6 @@ Box::Box(float length, int divisions, string pathFile) {
     Box::fileName = pathFile;
 }
 
-void Box::Print(ostream &) const {
-    cout << "Geometric Shape: Box" << endl;
-    cout << "Length" << Box::length << endl;
-    cout << "Divisions" << Box::divisions << endl;
-}
 
 vector<Point> Box::getPoints() {
     vector<Point> points;
@@ -133,7 +128,7 @@ vector<Point> Box::getPoints() {
 
         }
     }
-    
+
 
     // Right & Left
     for (int i = 0; i < divisions; i++) {
@@ -166,9 +161,88 @@ vector<Point> Box::getPoints() {
     return points;
 }
 
+
+void Box::Print(ostream &) const {
+    cout << "Geometric Shape: Box" << endl;
+    cout << "Length:" << Box::length << endl;
+    cout << "Divisions:" << Box::divisions << endl;
+}
+
 /*
  *
  * END BOX CLASS
+ *
+ */
+
+/*
+ *
+ * SPHERE CLASS
+ *
+ */
+
+Sphere::Sphere() {
+    radius = 1;
+    slices = 10;
+    stacks = 3;
+    fileName = "sphere.3d";
+}
+
+Sphere::Sphere(float radius, int slices, int stacks) {
+    Sphere::radius = radius;
+    Sphere::slices = slices;
+    Sphere::stacks = stacks;
+    fileName = "sphere.3d";
+}
+
+Sphere::Sphere(float radius, int slices, int stacks, string fileName) {
+    Sphere::radius = radius;
+    Sphere::slices = slices;
+    Sphere::stacks = stacks;
+    fileName = fileName;
+}
+
+vector<Point> Sphere::getPoints() {
+    vector<Point> points;
+
+    float _alpha = 2 * M_PI / slices;
+    float _beta = M_PI / stacks;
+    float r = radius;
+    for (int j = 0; j < stacks/2; j++) {
+        for (int i = 0; i < slices; i++) {
+            float av = i * _alpha;
+            float bv = j * _beta;
+            float ahv = (i+1) * _alpha;
+            float bhv = (j+1) * _beta;
+            points.push_back(Point(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));
+            points.push_back(Point(r * cos(bv) * sin(ahv), r * sin(bv) ,r * cos(bv) * cos(ahv)));
+            points.push_back(Point(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
+
+            points.push_back(Point(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));
+            points.push_back(Point(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
+            points.push_back(Point(r * cos(bhv) * sin(av), r * sin(bhv) ,r * cos(bhv) * cos(av)));
+
+            points.push_back(Point(r * cos(bv) * sin(av), -r * sin(bv) ,r * cos(bv) * cos(av)));
+            points.push_back(Point(r * cos(bv) * sin(ahv), -r * sin(bv) ,r * cos(bv) * cos(ahv)));
+            points.push_back(Point(r * cos(bhv) * sin(ahv), -r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
+
+            points.push_back(Point(r * cos(bv) * sin(av), -r * sin(bv) ,r * cos(bv) * cos(av)));
+            points.push_back(Point(r * cos(bhv) * sin(ahv), -r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
+            points.push_back(Point(r * cos(bhv) * sin(av), -r * sin(bhv) ,r * cos(bhv) * cos(av)));
+
+        }
+    }
+    return points;
+}
+
+void Sphere::Print(ostream &) const {
+    cout << "Geometric Shape: Sphere" << endl;
+    cout << "Radius:" << Sphere::radius << endl;
+    cout << "Slices:" << Sphere::slices << endl;
+    cout << "Stacks:" << Sphere::stacks << endl;
+}
+/*
+ *
+ * END SPHERE CLASS
  *
  */
 
@@ -318,3 +392,4 @@ vector<Point> GeometricShape::readFrom3DFile(string fName) {
     }
     return points;
 }
+

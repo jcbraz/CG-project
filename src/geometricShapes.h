@@ -154,6 +154,8 @@ class Sphere : public GeometricShape {
     public:
         Sphere();
         Sphere(float radius, int slices, int stacks);
+        Sphere(float radius, int slices, int stacks, string pathFile);
+        vector<Point> getPoints() override;
 
     protected:
         void Print(ostream &) const override;};
