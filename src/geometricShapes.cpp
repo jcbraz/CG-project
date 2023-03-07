@@ -42,6 +42,53 @@ Point::Point() {
     Point::z = 0;
 }
 
+/*
+ *
+ *PLANE 
+ *
+ */
+
+
+Plane::Plane() {
+    Plane::length = 1.0f;
+    Plane::divisions = 3;
+}
+
+Plane::Plane(float length, int divisions) {
+    Plane::length = length;
+    Plane::divisions = divisions;
+}
+
+
+vector<Point> Plane::getPoints() {
+    vector<Point> points;
+    int n_d = (float) length / (float) divisions;
+    for (int i = 0; i < divisions; i++) {
+        for (int j = 0; j < divisions; j++) {
+            //primeiro triangulo
+            points.push_back(Point(-length + n_d * j, 0, -length+ n_d * i));
+            points.push_back(Point(-length + n_d * (j+1), 0, -length + n_d * i));
+            points.push_back(Point(-length + n_d * j, 0, -length + n_d * (i+1)));
+            //segundo triangulo
+            points.push_back(Point(-length + n_d * (j+1), 0, -length + n_d * i));
+            points.push_back(Point(-length + n_d * (j+1), 0, -length + n_d * (i+1)));
+            points.push_back(Point(-length + n_d * j, 0, -length + n_d * (i+1)));
+        }
+    }
+
+    return points;
+}
+
+void Plane::Print(ostream &) const {
+    cout << "Geometric Shape:Plane" << endl;
+    cout << "Length:" << Plane::length << endl;
+    cout << "Divisions:" << Plane::divisions << endl;
+}
+
+
+
+
+
 
 /*
  *
@@ -251,22 +298,6 @@ void Cone::Print(ostream &) const {
  * END CONE CLASS
  *
  */
-
-Plane::Plane() {
-    Plane::length = 1.0f;
-    Plane::divisions = 3;
-}
-
-Plane::Plane(float length, int divisions) {
-    Plane::length = length;
-    Plane::divisions = divisions;
-}
-
-void Plane::Print(ostream &) const {
-    cout << "Geometric Shape:Plane" << endl;
-    cout << "Length:" << Plane::length << endl;
-    cout << "Divisions:" << Plane::divisions << endl;
-}
 
 /*
  *
