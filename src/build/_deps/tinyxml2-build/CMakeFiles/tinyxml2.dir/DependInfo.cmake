@@ -11,8 +11,8 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/jcbraz/Projects/CG-project/src/build/_deps/tinyxml2-src/tinyxml2.cpp" "_deps/tinyxml2-build/CMakeFiles/tinyxml2.dir/tinyxml2.cpp.o" "gcc" "_deps/tinyxml2-build/CMakeFiles/tinyxml2.dir/tinyxml2.cpp.o.d"
   )
 
-# Targets to which this target links which contain Fortran sources.
-set(CMAKE_Fortran_TARGET_LINKED_INFO_FILES
+# Targets to which this target links.
+set(CMAKE_TARGET_LINKED_INFO_FILES
   )
 
 # Fortran module output directory.

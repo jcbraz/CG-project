@@ -15,7 +15,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(
 	tinyxml2
 )
-#add_executable(${PROJECT_NAME} generator.cpp geometricShapes.cpp)
+#add_executable(${PROJECT_NAME} engine.cpp geometricShapes.cpp)
 add_executable(${PROJECT_NAME} engine.cpp geometricShapes.cpp geometricShapes.h parseXML.cpp)
 target_link_libraries(${PROJECT_NAME} tinyxml2::tinyxml2)
 

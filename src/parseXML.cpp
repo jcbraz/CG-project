@@ -1,5 +1,4 @@
 #include "parseXML.h"
-
 #include <tinyxml2.h>
 
 using namespace std;
