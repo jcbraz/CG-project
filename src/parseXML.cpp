@@ -64,7 +64,8 @@ Camera::Camera(int position_x, int position_y, int position_z, int lookAt_x,
  * WORLD SECTION
  */
 
-// World::elementChildrenConsistency(XMLElement* parent,, const char* tag_name) {
+// World::elementChildrenConsistency(XMLElement* parent,, const char* tag_name)
+// {
 
 // }
 
@@ -78,13 +79,13 @@ World::World(int width, int height, vector<string> files) {
     World::files = files;
 };
 
-World::World(const Camera& camera, int width, int height, vector<string> files) {
+World::World(const Camera& camera, int width, int height,
+             vector<string> files) {
     World::width = width;
     World::height = height;
     World::camera = Camera(camera);
     World::files = files;
 };
-
 
 World::World(const string& filepath) {
     XMLDocument xml_doc;
@@ -95,7 +96,7 @@ World::World(const string& filepath) {
     } catch (XMLError read_result) {
         cout << "Error loading XML file: " << read_result << endl;
     }
-    
+
     XMLNode* world;
     try {
         world = xml_doc.FirstChild();
@@ -111,7 +112,7 @@ World::World(const string& filepath) {
             throw "Error finding element 'window'";
         }
     } catch (const char* message) {
-        
+        cout << message << endl;
     }
 
     int width = window->IntAttribute("width");
@@ -122,16 +123,15 @@ World::World(const string& filepath) {
         camera = world->FirstChildElement("camera");
         if (camera == nullptr) throw "Error finding element 'camera'";
     } catch (const char* message) {
-
+        cout << message << endl;
     }
-
 
     XMLElement* position;
     try {
         position = camera->FirstChildElement("position");
         if (position == nullptr) throw "Error finding element 'position'";
     } catch (const char* message) {
-
+        cout << message << endl;
     }
     int position_x = position->IntAttribute("x");
     int position_y = position->IntAttribute("y");
@@ -142,7 +142,7 @@ World::World(const string& filepath) {
         lookAt = camera->FirstChildElement("lookAt");
         if (lookAt == nullptr) throw "Error finding element 'lookAt'";
     } catch (const char* message) {
-        
+        cout << message << endl;
     }
 
     int lookAt_x = lookAt->IntAttribute("x");
@@ -154,7 +154,7 @@ World::World(const string& filepath) {
         up = camera->FirstChildElement("up");
         if (up == nullptr) throw "Error finding element 'up'";
     } catch (const char* message) {
-        
+        cout << message << endl;
     }
 
     int up_x = up->IntAttribute("x");
@@ -166,7 +166,7 @@ World::World(const string& filepath) {
         projection = camera->FirstChildElement("projection");
         if (projection == nullptr) throw "Error finding element 'projection'";
     } catch (const char* message) {
-        
+        cout << message << endl;
     }
 
     int projection_fov = projection->IntAttribute("fov");
@@ -178,7 +178,7 @@ World::World(const string& filepath) {
         group = world->FirstChildElement("group");
         if (group == nullptr) throw "Error finding element 'group'";
     } catch (const char* message) {
-        
+        cout << message << endl;
     }
 
     XMLElement* models;
@@ -186,7 +186,7 @@ World::World(const string& filepath) {
         models = group->FirstChildElement("models");
         if (models == nullptr) throw "Error finding element 'models'";
     } catch (const char* message) {
-        
+        cout << message << endl;
     }
 
     vector<string> files;
@@ -196,7 +196,7 @@ World::World(const string& filepath) {
         model = models->FirstChildElement();
         if (model == nullptr) throw "Error finding element 'model'";
     } catch (const char* message) {
-        
+        cout << message << endl;
     }
 
     while (model != nullptr) {
@@ -207,15 +207,13 @@ World::World(const string& filepath) {
     try {
         if (files.size() == 0) throw "No models found";
     } catch (const char* message) {
-        
+        cout << message << endl;
     }
 
-    World::camera = Camera(
-            position_x, position_y, position_z, lookAt_x, lookAt_y, lookAt_z, up_x,
-            up_y, up_z, projection_fov, projection_near, projection_far);
+    World::camera = Camera(position_x, position_y, position_z, lookAt_x,
+                           lookAt_y, lookAt_z, up_x, up_y, up_z, projection_fov,
+                           projection_near, projection_far);
     World::width = width;
     World::height = height;
     World::files = files;
-
 }
-
