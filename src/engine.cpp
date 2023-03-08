@@ -21,8 +21,17 @@
 #define HEIGHT 2
 
 #include "geometricShapes.h"
+#include "parseXML.h"
 
 using namespace std;
+
+World * world;
+vector<Point> points;
+Camera c;
+Position p;
+LookAt la;
+Up up;
+Projection proj;
 
 void changeSize(int w, int h) {
 
@@ -43,7 +52,7 @@ void changeSize(int w, int h) {
     glViewport(0, 0, w, h);
 
     // Set perspective
-    gluPerspective(45.0f ,ratio, 1.0f ,1000.0f);
+    gluPerspective(proj.fov ,ratio, proj.near ,proj.far);
 
     // return to the model view matrix mode
     glMatrixMode(GL_MODELVIEW);
@@ -56,9 +65,13 @@ void renderScene(void) {
 
     // set the camera
     glLoadIdentity();
-    gluLookAt(5.0f, 5.0f, 5.0f,
-              0.0,0.0,0.0,
-              0.0f,1.0f,0.0f);
+
+
+    gluLookAt(p.x, p.y, p.z,
+              la.x, la.y, la.z,
+              up.x, up.y, up.z);
+
+    //gluLookAt(0.5f, 0.5f, 0.5f, 0, 0, 0, 0, 1, 0);
 
     glBegin(GL_LINES);
     glColor3f(1.0f, 0.0f, 0.0f);
@@ -74,14 +87,15 @@ void renderScene(void) {
     glVertex3f(0.0f, 0.0f, 100.0f);
     glEnd();
 
+    GeometricShape::drawObject(points);
     // Draw Geometric Figure
     //drawCylinder(1,2,320);
 
-
+    /*
     GeometricShape * plane = new Plane(1, 3);
     vector<Point> points = plane->getPoints();
     GeometricShape::drawObject(points);
-
+    */
 
     /*
     GeometricShape * cone = new Cone(1, 2, 30, 10);
@@ -110,9 +124,9 @@ int is_skeleton = 0;
 void processKeys(unsigned char key, int x, int y) {
     if (key == 'x') {
         if (is_skeleton)
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            glPolygonMode(GL_FRONT, GL_FILL);
         else
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            glPolygonMode(GL_FRONT, GL_LINE);
         is_skeleton = !is_skeleton;
         cout << "Pressed: " << key << endl;
     }
@@ -126,8 +140,9 @@ void createGeometricShape() {
     glutInit(&f, s);
     glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
     glutInitWindowPosition(100, 100);
-    glutInitWindowSize(800, 800);
-    glutCreateWindow("Generator");
+    //glutInitWindowSize(800, 800);
+    glutInitWindowSize(world->getWidth(), world->getHeight());
+    glutCreateWindow("Engine");
 
     // Required callback registry
     glutDisplayFunc(renderScene);
@@ -139,8 +154,8 @@ void createGeometricShape() {
 
     //  OpenGL settings
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_FRONT);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     // Glut's main cycle
     glutMainLoop();
 
@@ -151,7 +166,27 @@ void createGeometricShape() {
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
 int main(int argc, char ** argv) {
 
+    world = new World("../config/config.xml");
+    vector<string> fic = world->getFiles();
+    proj = world->getCamera().getProjection();
+
+
+    c = world->getCamera();
+    p = c.getPosition();
+    la = c.getLookAt();
+    up = c.getUp();
+
+    for (auto elem : world->getFiles()) {
+        vector<Point> tmp = GeometricShape::readFrom3DFile(elem);
+        for (auto p: tmp) {
+            points.push_back(p);
+            cout << p.x << endl;
+        }
+
+    }
+
     createGeometricShape();
 
     return 0;
 }
+

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25.2)
+cmake_minimum_required(VERSION 3.24.2)
 
 # Project Name
 PROJECT(group_project)
@@ -15,7 +15,8 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(
 	tinyxml2
 )
-add_executable(${PROJECT_NAME} parseXML.cpp)
+#add_executable(${PROJECT_NAME} generator.cpp geometricShapes.cpp)
+add_executable(${PROJECT_NAME} engine.cpp geometricShapes.cpp geometricShapes.h parseXML.cpp)
 target_link_libraries(${PROJECT_NAME} tinyxml2::tinyxml2)
 
 find_package(OpenGL REQUIRED)

@@ -1,1 +1,1 @@
-/usr/bin/c++ -g CMakeFiles/group_project.dir/engine.cpp.o CMakeFiles/group_project.dir/geometricShapes.cpp.o -o group_project  /usr/lib/libGL.so /usr/lib/libGLU.so -lglut 
+/usr/bin/c++ -g CMakeFiles/group_project.dir/engine.cpp.o CMakeFiles/group_project.dir/geometricShapes.cpp.o CMakeFiles/group_project.dir/parseXML.cpp.o -o group_project  _deps/tinyxml2-build/libtinyxml2.a /usr/lib/libOpenGL.so /usr/lib/libGLX.so /usr/lib/libGLU.so -lglut _deps/tinyxml2-build/libtinyxml2.a 

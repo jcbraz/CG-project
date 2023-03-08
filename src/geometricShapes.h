@@ -36,24 +36,29 @@ public:
  */
 
 class GeometricShape {
-    protected:
-        int vertices;
-        string fileName;
+protected:
+    int vertices;
+    string fileName;
 
-    public:
+public:
     virtual vector<Point> getPoints() = 0;
+
     static void drawObject(vector<Point> points);
+
     static void writeTo3DFile(vector<Point> points, string fName);
+
     static vector<Point> readFrom3DFile(string fName);
+
     string getFileName() { return fileName; }
+
 
     friend ostream &operator<<(ostream &out, const GeometricShape &go) {
         go.Print(out);
         return out;
     }
 
-    private:
-    virtual void Print(ostream&) const = 0;
+private:
+    virtual void Print(ostream &) const = 0;
 };
 
 /*

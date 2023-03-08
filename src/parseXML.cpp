@@ -83,7 +83,9 @@ World::World(const Camera& camera, int width, int height, vector<string> files) 
     World::files = files;
 };
 
-World* parseXML(const string& filepath) {
+// teste((*void ))
+
+World::World(const string& filepath) {
     XMLDocument xml_doc;
 
     try {
@@ -119,12 +121,20 @@ World* parseXML(const string& filepath) {
         camera = world->FirstChildElement("camera");
         if (camera == nullptr) throw "Error finding element 'camera'";
     } catch (const char* message) {
-        
+
     }
 
-    int position_x = camera->IntAttribute("x");
-    int position_y = camera->IntAttribute("y");
-    int position_z = camera->IntAttribute("z");
+
+    XMLElement* position;
+    try {
+        position = camera->FirstChildElement("position");
+        if (position == nullptr) throw "Error finding element 'position'";
+    } catch (const char* message) {
+
+    }
+    int position_x = position->IntAttribute("x");
+    int position_y = position->IntAttribute("y");
+    int position_z = position->IntAttribute("z");
 
     XMLElement* lookAt;
     try {
@@ -178,7 +188,7 @@ World* parseXML(const string& filepath) {
         
     }
 
-    vector<string> files = vector<string>(1);
+    vector<string> files;
 
     XMLElement* model;
     try {
@@ -198,23 +208,13 @@ World* parseXML(const string& filepath) {
     } catch (const char* message) {
         
     }
-    
-    Camera* cameraForFinalConstructor = new Camera(
-        position_x, position_y, position_z, lookAt_x, lookAt_y, lookAt_z, up_x,
-        up_y, up_z, projection_fov, projection_near, projection_far);
 
+    World::camera = Camera(
+            position_x, position_y, position_z, lookAt_x, lookAt_y, lookAt_z, up_x,
+            up_y, up_z, projection_fov, projection_near, projection_far);
+    World::width = width;
+    World::height = height;
+    World::files = files;
 
-    World* finalWorld = new World(*cameraForFinalConstructor, width, height, files);
-
-    return finalWorld;
 }
 
-int main() {
-    World* world_struct = parseXML("../config/config.xml");
-    std::vector<std::string> fic = world_struct->getFiles();
-    for (int i = 0; i < fic.size(); i++) {
-        std::cout << fic[i] << std::endl;
-    }
-    delete world_struct;
-    return 0;
-}

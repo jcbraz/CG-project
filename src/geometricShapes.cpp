@@ -77,8 +77,8 @@ vector<Point> Plane::getPoints() {
         for (int j = 0; j < divisions; j++) {
             //primeiro triangulo
             points.push_back(Point(-h_l + n_d * j, 0, -h_l+ n_d * i));
-            points.push_back(Point(-h_l + n_d * (j+1), 0, -h_l + n_d * i));
             points.push_back(Point(-h_l + n_d * j, 0, -h_l + n_d * (i+1)));
+            points.push_back(Point(-h_l + n_d * (j+1), 0, -h_l + n_d * i));
             //segundo triangulo
             points.push_back(Point(-h_l + n_d * j, 0, -h_l + n_d * (i+1)));
             points.push_back(Point(-h_l + n_d * (j+1), 0, -h_l + n_d * (i+1)));
@@ -278,13 +278,13 @@ vector<Point> Sphere::getPoints() {
             points.push_back(Point(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
             points.push_back(Point(r * cos(bhv) * sin(av), r * sin(bhv) ,r * cos(bhv) * cos(av)));
 
-            points.push_back(Point(r * cos(bv) * sin(av), -r * sin(bv) ,r * cos(bv) * cos(av)));
+            points.push_back(Point(r * cos(bhv) * sin(ahv), -r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
             points.push_back(Point(r * cos(bv) * sin(ahv), -r * sin(bv) ,r * cos(bv) * cos(ahv)));
-            points.push_back(Point(r * cos(bhv) * sin(ahv), -r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
-
             points.push_back(Point(r * cos(bv) * sin(av), -r * sin(bv) ,r * cos(bv) * cos(av)));
-            points.push_back(Point(r * cos(bhv) * sin(ahv), -r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
+
             points.push_back(Point(r * cos(bhv) * sin(av), -r * sin(bhv) ,r * cos(bhv) * cos(av)));
+            points.push_back(Point(r * cos(bhv) * sin(ahv), -r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
+            points.push_back(Point(r * cos(bv) * sin(av), -r * sin(bv) ,r * cos(bv) * cos(av)));
 
         }
     }
@@ -342,26 +342,26 @@ vector<Point> Cone::getPoints() {
     // Base
     for (int i = 0; i < slices; i++) {
         points.push_back(Point(0, 0, 0));
-        points.push_back(Point(radius * sin(alpha * i), 0, radius * cos(alpha * i)));
         points.push_back(Point(radius * sin(alpha * (i + 1)), 0, radius * cos(alpha * (i + 1))));
+        points.push_back(Point(radius * sin(alpha * i), 0, radius * cos(alpha * i)));
 
         for (int j = 0; j < stacks-1; j++) {
 
             points.push_back(Point((radius - v_r * j) * sin(alpha * i), j * v_h,(radius - v_r * j) * cos(alpha * i)));
-            points.push_back(Point((radius - v_r * (j+1)) * sin(alpha * (i+1)), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * (i+1))));
             points.push_back(Point((radius - v_r * j) * sin(alpha * (i+1)), j * v_h, (radius - v_r * j) * cos(alpha * (i+1))));
+            points.push_back(Point((radius - v_r * (j+1)) * sin(alpha * (i+1)), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * (i+1))));
 
             points.push_back(Point((radius - v_r * j) * sin (alpha * i), j * v_h, (radius - v_r * j) * cos(alpha * i)));
-            points.push_back(Point((radius - v_r * (j+1)) * sin (alpha * i), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * i)));
             points.push_back(Point((radius - v_r * (j+1)) * sin (alpha * (i+1)), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * (i+1))));
+            points.push_back(Point((radius - v_r * (j+1)) * sin (alpha * i), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * i)));
 
         }
     }
 
     for (int i = 0; i < slices; i++) {
         points.push_back(Point((radius - v_r * (stacks-1)) * sin(alpha * i), (stacks-1) * v_h,(radius - v_r * (stacks-1)) * cos(alpha * i)));
-        points.push_back(Point((radius - v_r * stacks) * sin(alpha * (i+1)), stacks * v_h, (radius - v_r * stacks) * cos(alpha * (i+1))));
         points.push_back(Point((radius - v_r * (stacks-1)) * sin(alpha * (i+1)), (stacks-1) * v_h, (radius - v_r * (stacks-1)) * cos(alpha * (i+1))));
+        points.push_back(Point((radius - v_r * stacks) * sin(alpha * (i+1)), stacks * v_h, (radius - v_r * stacks) * cos(alpha * (i+1))));
     }
 
     return points;
@@ -404,15 +404,22 @@ void GeometricShape::writeTo3DFile(vector<Point> points, string fName) {
     }
     file << endl;
     file.close();
+    cout << "Done!" << endl;
 }
 
 vector<Point> GeometricShape::readFrom3DFile(string fName) {
+    vector<Point> points;
     ifstream file(fName);
+
+    if (!file) {
+        cout << "File " << fName << " doesn't exist!" << endl;
+        return points;
+    }
+
     string line;
     cout << "Reading From:" << fName << endl;
     getline(file, line);
 
-    vector<Point> points;
     vector<float> nms;
     char buf[32];
     int j = 0;
@@ -431,6 +438,7 @@ vector<Point> GeometricShape::readFrom3DFile(string fName) {
             nms.clear();
         }
     }
+    cout << "Done!" << endl;
     return points;
 }
 

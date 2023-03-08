@@ -1,0 +1,3 @@
+/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/CMakeFiles/tinyxml2-populate.dir
+/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/CMakeFiles/edit_cache.dir
+/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/CMakeFiles/rebuild_cache.dir
