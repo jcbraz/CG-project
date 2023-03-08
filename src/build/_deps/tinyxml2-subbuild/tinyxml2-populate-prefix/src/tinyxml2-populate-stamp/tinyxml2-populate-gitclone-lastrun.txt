@@ -3,7 +3,7 @@
 # No other meaning or use of this file is supported.
 
 method=git
-command=/opt/homebrew/Cellar/cmake/3.25.2/bin/cmake;-P;/Users/jcbraz/Projects/CG-project/src/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/tmp/tinyxml2-populate-gitclone.cmake
+command=/Applications/CMake.app/Contents/bin/cmake;-P;/Users/jcbraz/Projects/CG-project/src/build/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/tmp/tinyxml2-populate-gitclone.cmake
 source_dir=/Users/jcbraz/Projects/CG-project/src/build/_deps/tinyxml2-src
 work_dir=/Users/jcbraz/Projects/CG-project/src/build/_deps
 repository=https://github.com/leethomason/tinyxml2.git

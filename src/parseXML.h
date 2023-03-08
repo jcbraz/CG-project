@@ -6,6 +6,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <tinyxml2.h>
 
 using namespace std;
 

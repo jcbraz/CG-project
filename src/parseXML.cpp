@@ -1,5 +1,4 @@
 #include "parseXML.h"
-#include <tinyxml2.h>
 
 using namespace std;
 using namespace tinyxml2;
@@ -65,6 +64,10 @@ Camera::Camera(int position_x, int position_y, int position_z, int lookAt_x,
  * WORLD SECTION
  */
 
+// World::elementChildrenConsistency(XMLElement* parent,, const char* tag_name) {
+
+// }
+
 World::World() {
     World::camera = Camera();
     World::files = vector<string>(2);
@@ -82,7 +85,6 @@ World::World(const Camera& camera, int width, int height, vector<string> files) 
     World::files = files;
 };
 
-// teste((*void ))
 
 World::World(const string& filepath) {
     XMLDocument xml_doc;
@@ -93,7 +95,7 @@ World::World(const string& filepath) {
     } catch (XMLError read_result) {
         cout << "Error loading XML file: " << read_result << endl;
     }
-
+    
     XMLNode* world;
     try {
         world = xml_doc.FirstChild();
