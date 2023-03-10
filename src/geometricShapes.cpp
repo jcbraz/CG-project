@@ -264,12 +264,13 @@ vector<Point> Sphere::getPoints() {
     float _alpha = 2 * M_PI / slices;
     float _beta = M_PI / stacks;
     float r = radius;
-    for (int j = 0; j < stacks/2; j++) {
+    for (int j = 0; j < stacks; j++) {
+        float bv = -M_PI/2 + j * _beta;
+        float bhv = bv + _beta;
+
         for (int i = 0; i < slices; i++) {
             float av = i * _alpha;
-            float bv = j * _beta;
-            float ahv = (i+1) * _alpha;
-            float bhv = (j+1) * _beta;
+            float ahv = av + _alpha;
             points.push_back(Point(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));
             points.push_back(Point(r * cos(bv) * sin(ahv), r * sin(bv) ,r * cos(bv) * cos(ahv)));
             points.push_back(Point(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
@@ -277,15 +278,6 @@ vector<Point> Sphere::getPoints() {
             points.push_back(Point(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));
             points.push_back(Point(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
             points.push_back(Point(r * cos(bhv) * sin(av), r * sin(bhv) ,r * cos(bhv) * cos(av)));
-
-            points.push_back(Point(r * cos(bhv) * sin(ahv), -r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
-            points.push_back(Point(r * cos(bv) * sin(ahv), -r * sin(bv) ,r * cos(bv) * cos(ahv)));
-            points.push_back(Point(r * cos(bv) * sin(av), -r * sin(bv) ,r * cos(bv) * cos(av)));
-
-            points.push_back(Point(r * cos(bhv) * sin(av), -r * sin(bhv) ,r * cos(bhv) * cos(av)));
-            points.push_back(Point(r * cos(bhv) * sin(ahv), -r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
-            points.push_back(Point(r * cos(bv) * sin(av), -r * sin(bv) ,r * cos(bv) * cos(av)));
-
         }
     }
     return points;
