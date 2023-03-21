@@ -27,7 +27,7 @@ SubmitInactivityTimeout:
 NightlyStartTime: 00:00:00 EDT
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "/var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake" "/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-src"
+ConfigureCommand: "/var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake" "/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-src"
 MakeCommand: /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}"
 DefaultCTestConfigurationType: Release
 

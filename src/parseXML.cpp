@@ -169,9 +169,9 @@ World::World(const string& filepath) {
         cout << message << endl;
     }
 
-    int projection_fov = projection->IntAttribute("fov");
-    int projection_near = projection->IntAttribute("near");
-    int projection_far = projection->IntAttribute("far");
+    float projection_fov = projection->FloatAttribute("fov");
+    float projection_near = projection->FloatAttribute("near");
+    float projection_far = projection->FloatAttribute("far");
 
     XMLElement* group;
     try {

@@ -139,7 +139,7 @@ void createGeometricShape() {
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
 int main(int argc, char ** argv) {
 
-    world = new World("../config/config.xml");
+    world = new World("../../conf/config.xml");
     vector<string> fic = world->getFiles();
     proj = world->getCamera().getProjection();
 
@@ -153,7 +153,6 @@ int main(int argc, char ** argv) {
         vector<Point> tmp = GeometricShape::readFrom3DFile(elem);
         for (auto p: tmp) {
             points.push_back(p);
-            cout << p.x << endl;
         }
 
     }

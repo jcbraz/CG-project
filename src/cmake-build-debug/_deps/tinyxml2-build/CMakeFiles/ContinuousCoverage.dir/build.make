@@ -44,10 +44,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake
+CMAKE_COMMAND = /var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake
 
 # The command to remove a file.
-RM = /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E rm -f
+RM = /var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -67,7 +67,7 @@ include _deps/tinyxml2-build/CMakeFiles/ContinuousCoverage.dir/compiler_depend.m
 include _deps/tinyxml2-build/CMakeFiles/ContinuousCoverage.dir/progress.make
 
 _deps/tinyxml2-build/CMakeFiles/ContinuousCoverage:
-	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/ctest -D ContinuousCoverage
+	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/ctest -D ContinuousCoverage
 
 ContinuousCoverage: _deps/tinyxml2-build/CMakeFiles/ContinuousCoverage
 ContinuousCoverage: _deps/tinyxml2-build/CMakeFiles/ContinuousCoverage.dir/build.make

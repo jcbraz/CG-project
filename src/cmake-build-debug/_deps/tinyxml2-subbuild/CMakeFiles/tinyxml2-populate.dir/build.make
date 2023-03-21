@@ -44,10 +44,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake
+CMAKE_COMMAND = /var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake
 
 # The command to remove a file.
-RM = /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E rm -f
+RM = /var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -78,56 +78,56 @@ CMakeFiles/tinyxml2-populate-complete: tinyxml2-populate-prefix/src/tinyxml2-pop
 CMakeFiles/tinyxml2-populate-complete: tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-install
 CMakeFiles/tinyxml2-populate-complete: tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-test
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Completed 'tinyxml2-populate'"
-	/var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E make_directory /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/CMakeFiles
-	/var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/CMakeFiles/tinyxml2-populate-complete
-	/var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-done
+	/var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E make_directory /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/CMakeFiles
+	/var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/CMakeFiles/tinyxml2-populate-complete
+	/var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-done
 
 tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-update:
 .PHONY : tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-update
 
 tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-build: tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-configure
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "No build step for 'tinyxml2-populate'"
-	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E echo_append
-	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-build
+	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E echo_append
+	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-build
 
 tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-configure: tinyxml2-populate-prefix/tmp/tinyxml2-populate-cfgcmd.txt
 tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-configure: tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-patch
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "No configure step for 'tinyxml2-populate'"
-	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E echo_append
-	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-configure
+	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E echo_append
+	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-configure
 
 tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-download: tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-gitinfo.txt
 tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-download: tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-mkdir
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Performing download step (git clone) for 'tinyxml2-populate'"
-	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps && /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -P /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/tmp/tinyxml2-populate-gitclone.cmake
-	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps && /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-download
+	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps && /var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -P /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/tmp/tinyxml2-populate-gitclone.cmake
+	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps && /var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-download
 
 tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-install: tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "No install step for 'tinyxml2-populate'"
-	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E echo_append
-	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-install
+	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E echo_append
+	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-install
 
 tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-mkdir:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Creating directories for 'tinyxml2-populate'"
-	/var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -Dcfgdir= -P /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/tmp/tinyxml2-populate-mkdirs.cmake
-	/var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-mkdir
+	/var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -Dcfgdir= -P /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/tmp/tinyxml2-populate-mkdirs.cmake
+	/var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-mkdir
 
 tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-patch: tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-update
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "No patch step for 'tinyxml2-populate'"
-	/var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E echo_append
-	/var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-patch
+	/var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E echo_append
+	/var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-patch
 
 tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-update:
 .PHONY : tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-update
 
 tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-test: tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-install
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "No test step for 'tinyxml2-populate'"
-	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E echo_append
-	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-test
+	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E echo_append
+	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-build && /var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -E touch /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-test
 
 tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-update: tinyxml2-populate-prefix/src/tinyxml2-populate-stamp/tinyxml2-populate-download
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Performing update step for 'tinyxml2-populate'"
-	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-src && /var/lib/snapd/snap/clion/222/bin/cmake/linux/x64/bin/cmake -P /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/tmp/tinyxml2-populate-gitupdate.cmake
+	cd /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-src && /var/lib/snapd/snap/clion/229/bin/cmake/linux/x64/bin/cmake -P /home/user13/Desktop/Github/CG-project/src/cmake-build-debug/_deps/tinyxml2-subbuild/tinyxml2-populate-prefix/tmp/tinyxml2-populate-gitupdate.cmake
 
 tinyxml2-populate: CMakeFiles/tinyxml2-populate
 tinyxml2-populate: CMakeFiles/tinyxml2-populate-complete
