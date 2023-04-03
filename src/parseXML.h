@@ -11,6 +11,7 @@
 #include <vector>
 
 using namespace std;
+using namespace tinyxml2;
 
 /*
  * CAMERA SECTION
@@ -66,7 +67,7 @@ class Camera {
 
 class Action {
    public:
-    virtual ~Action() = default;
+    Action() = default;
     virtual void apply() const = 0;
 };
 
@@ -111,7 +112,7 @@ class Scale : public Action {
 
 class Transformation {
    private:
-    std::vector<std::unique_ptr<Action>> action_list;
+    std::vector<std::unique_ptr<Action> > action_list;
 
    public:
     Transformation() = default;
@@ -163,13 +164,12 @@ class World {
     int getWidth() { return width; };
     int getHeight() { return height; };
     Camera getCamera() { return camera; }
-    map<int, TransformationsPerFile> getTransformationChain() {
-        return transformation_chain;
-    }
     vector<string> handleFiles(XMLElement* element);
     void handleChainedTransformations(Transformation transformation,
                                       vector<string> files);
-    map<int, TransformationsPerFile> getTransformationChain();
+    map<int, TransformationsPerFile> getTransformationChain() {
+        return transformation_chain;
+    }
 };
 
 #endif  // GROUP_PROJECT_PARSEXML_H

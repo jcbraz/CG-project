@@ -158,10 +158,6 @@ void World::handleChainedTransformations(Transformation transformation,
         keyToFollow + 1, transformationsPerFile));
 };
 
-map<int, TransformationsPerFile> World::getTransformationChain() {
-    return World::transformation_chain;
-}
-
 World::World(const string& filepath) {
     XMLDocument xml_doc;
 
