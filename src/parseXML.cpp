@@ -60,23 +60,49 @@ Camera::Camera(int position_x, int position_y, int position_z, int lookAt_x,
     Camera::projection.far = projection_far;
 };
 
+Transformation Transformation::handleTransformation(XMLElement* element) {
+    Transformation transformation;
+
+    const XMLElement* translationElement =
+        element->FirstChildElement("translation");
+    if (translationElement != nullptr) {
+        transformation.addTranslation(translationElement->FloatAttribute("x"),
+                                      translationElement->FloatAttribute("y"),
+                                      translationElement->FloatAttribute("z"));
+    }
+
+    const XMLElement* rotationElement = element->FirstChildElement("rotation");
+    if (rotationElement != nullptr) {
+        transformation.addRotation(rotationElement->FloatAttribute("angle"),
+                                   rotationElement->FloatAttribute("x"),
+                                   rotationElement->FloatAttribute("y"),
+                                   rotationElement->FloatAttribute("z"));
+    }
+
+    const XMLElement* scaleElement = element->FirstChildElement("scale");
+    if (scaleElement != nullptr) {
+        transformation.addScale(scaleElement->FloatAttribute("x"),
+                                scaleElement->FloatAttribute("y"),
+                                scaleElement->FloatAttribute("z"));
+    }
+
+    return transformation;
+}
+
 /*
  * WORLD SECTION
  */
 
-// World::elementChildrenConsistency(XMLElement* parent,, const char* tag_name)
-// {
-
-// }
-
 World::World() {
     World::camera = Camera();
     World::files = vector<string>(2);
+    World::transformation_chain = map<int, TransformationsPerFile>();
 };
 
 World::World(int width, int height, vector<string> files) {
     World::camera = Camera();
     World::files = files;
+    World::transformation_chain = map<int, TransformationsPerFile>();
 };
 
 World::World(const Camera& camera, int width, int height,
@@ -85,7 +111,56 @@ World::World(const Camera& camera, int width, int height,
     World::height = height;
     World::camera = Camera(camera);
     World::files = files;
+    World::transformation_chain = map<int, TransformationsPerFile>();
 };
+
+vector<string> World::handleFiles(XMLElement* element) {
+    vector<string> files;
+    XMLElement* models;
+
+    try {
+        models = element->FirstChildElement("models");
+        if (models == nullptr) throw "Error finding element 'models'";
+    } catch (const char* message) {
+        cout << message << endl;
+    }
+
+    XMLElement* model;
+    try {
+        model = models->FirstChildElement();
+        if (model == nullptr) throw "Error finding element 'model'";
+    } catch (const char* message) {
+        cout << message << endl;
+    }
+
+    while (model != nullptr) {
+        files.push_back(model->Attribute("file"));
+        model = model->NextSiblingElement();
+    }
+
+    try {
+        if (files.size() == 0) throw "No models found";
+    } catch (const char* message) {
+        cout << message << endl;
+    }
+
+    return files;
+}
+
+void World::handleChainedTransformations(Transformation transformation,
+                                         vector<string> files) {
+    TransformationsPerFile transformationsPerFile;
+    transformationsPerFile.transformations = transformation;
+    transformationsPerFile.files = files;
+    int keyToFollow = World::transformation_chain.begin()->first;
+
+    World::transformation_chain.insert(pair<int, TransformationsPerFile>(
+        keyToFollow + 1, transformationsPerFile));
+};
+
+map<int, TransformationsPerFile> World::getTransformationChain() {
+    return World::transformation_chain;
+}
 
 World::World(const string& filepath) {
     XMLDocument xml_doc;
@@ -181,33 +256,62 @@ World::World(const string& filepath) {
         cout << message << endl;
     }
 
-    XMLElement* models;
+    XMLElement* transform;
     try {
-        models = group->FirstChildElement("models");
-        if (models == nullptr) throw "Error finding element 'models'";
+        transform = group->FirstChildElement("transform");
+        if (transform == nullptr) throw "Error finding element 'transform'";
     } catch (const char* message) {
         cout << message << endl;
     }
 
-    vector<string> files;
+    vector<string> files = handleFiles(group);
 
-    XMLElement* model;
-    try {
-        model = models->FirstChildElement();
-        if (model == nullptr) throw "Error finding element 'model'";
-    } catch (const char* message) {
-        cout << message << endl;
-    }
+    // XMLElement* models;
+    // try {
+    //     models = group->FirstChildElement("models");
+    //     if (models == nullptr) throw "Error finding element 'models'";
+    // } catch (const char* message) {
+    //     cout << message << endl;
+    // }
 
-    while (model != nullptr) {
-        files.push_back(model->Attribute("file"));
-        model = model->NextSiblingElement();
-    }
+    // vector<string> files;
 
-    try {
-        if (files.size() == 0) throw "No models found";
-    } catch (const char* message) {
-        cout << message << endl;
+    // XMLElement* model;
+    // try {
+    //     model = models->FirstChildElement();
+    //     if (model == nullptr) throw "Error finding element 'model'";
+    // } catch (const char* message) {
+    //     cout << message << endl;
+    // }
+
+    // while (model != nullptr) {
+    //     files.push_back(model->Attribute("file"));
+    //     model = model->NextSiblingElement();
+    // }
+
+    // try {
+    //     if (files.size() == 0) throw "No models found";
+    // } catch (const char* message) {
+    //     cout << message << endl;
+    // }
+
+    Transformation transformation = Transformation();
+    handleChainedTransformations(transformation.handleTransformation(transform),
+                                 files);
+    XMLElement* groupChild = group->FirstChildElement("group");
+    if (groupChild != nullptr) {
+        while (groupChild != nullptr) {
+            XMLElement* transformChild =
+                groupChild->FirstChildElement("transform");
+            if (transformChild != nullptr) {
+                Transformation transformationChild = Transformation();
+                Transformation handledTransformation =
+                    transformationChild.handleTransformation(transformChild);
+                vector<string> filesChild = handleFiles(groupChild);
+                handleChainedTransformations(handledTransformation, filesChild);
+            }
+            groupChild = groupChild->FirstChildElement("group");
+        }
     }
 
     World::camera = Camera(position_x, position_y, position_z, lookAt_x,
