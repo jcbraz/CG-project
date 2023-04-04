@@ -4,7 +4,6 @@
 #include <tinyxml2.h>
 
 #include <iostream>
-#include <map>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -64,11 +63,10 @@ class Camera {
 /**
  * TRANSFORMATION SECTION
  */
-
 class Action {
-   public:
-    Action() = default;
-    virtual void apply() const = 0;
+    public:
+     virtual void apply() const = 0;
+     virtual ~Action() { }
 };
 
 class Translation : public Action {
@@ -112,27 +110,27 @@ class Scale : public Action {
 
 class Transformation {
    private:
-    std::vector<std::unique_ptr<Action> > action_list;
+    vector<Action*> actions_list;
 
    public:
     Transformation() = default;
 
     void addTranslation(float x, float y, float z) {
-        action_list.emplace_back(new Translation(x, y, z));
+        actions_list.push_back(new Translation(x, y, z));
     }
 
     void addRotation(float angle, float x, float y, float z) {
-        action_list.emplace_back(new Rotation(angle, x, y, z));
+        actions_list.push_back(new Rotation(angle, x, y, z));
     }
 
     void addScale(float x, float y, float z) {
-        action_list.emplace_back(new Scale(x, y, z));
+        actions_list.push_back(new Scale(x, y, z));
     }
 
     Transformation handleTransformation(XMLElement* element);
 
     void apply() const {
-        for (const auto& transform : action_list) {
+        for (const auto& transform : actions_list) {
             transform->apply();
         }
     }
@@ -153,7 +151,7 @@ class World {
     int height;
     Camera camera;
     vector<string> files;
-    map<int, TransformationsPerFile> transformation_chain;
+    vector<TransformationsPerFile> transformation_chain;
 
    public:
     World();
@@ -167,7 +165,7 @@ class World {
     vector<string> handleFiles(XMLElement* element);
     void handleChainedTransformations(Transformation transformation,
                                       vector<string> files);
-    map<int, TransformationsPerFile> getTransformationChain() {
+    vector<TransformationsPerFile> getTransformationChain() {
         return transformation_chain;
     }
 };

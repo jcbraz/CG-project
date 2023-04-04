@@ -96,13 +96,13 @@ Transformation Transformation::handleTransformation(XMLElement* element) {
 World::World() {
     World::camera = Camera();
     World::files = vector<string>(2);
-    World::transformation_chain = map<int, TransformationsPerFile>();
+    World::transformation_chain = vector<TransformationsPerFile>();
 };
 
 World::World(int width, int height, vector<string> files) {
     World::camera = Camera();
     World::files = files;
-    World::transformation_chain = map<int, TransformationsPerFile>();
+    World::transformation_chain = vector<TransformationsPerFile>();
 };
 
 World::World(const Camera& camera, int width, int height,
@@ -111,7 +111,7 @@ World::World(const Camera& camera, int width, int height,
     World::height = height;
     World::camera = Camera(camera);
     World::files = files;
-    World::transformation_chain = map<int, TransformationsPerFile>();
+    World::transformation_chain = vector<TransformationsPerFile>();
 };
 
 vector<string> World::handleFiles(XMLElement* element) {
@@ -152,10 +152,7 @@ void World::handleChainedTransformations(Transformation transformation,
     TransformationsPerFile transformationsPerFile;
     transformationsPerFile.transformations = transformation;
     transformationsPerFile.files = files;
-    int keyToFollow = World::transformation_chain.begin()->first;
-
-    World::transformation_chain.insert(pair<int, TransformationsPerFile>(
-        keyToFollow + 1, transformationsPerFile));
+    World::transformation_chain.push_back(transformationsPerFile);
 };
 
 World::World(const string& filepath) {
