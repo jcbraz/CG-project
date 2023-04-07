@@ -1,3 +1,0 @@
-/Users/jcbraz/University/3A2S/CG/CG-project/src/build/_deps/tinyxml2-subbuild/CMakeFiles/tinyxml2-populate.dir
-/Users/jcbraz/University/3A2S/CG/CG-project/src/build/_deps/tinyxml2-subbuild/CMakeFiles/edit_cache.dir
-/Users/jcbraz/University/3A2S/CG/CG-project/src/build/_deps/tinyxml2-subbuild/CMakeFiles/rebuild_cache.dir

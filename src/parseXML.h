@@ -163,8 +163,8 @@ class World {
     int getHeight() { return height; };
     Camera getCamera() { return camera; }
     vector<string> handleFiles(XMLElement* element);
-    void handleChainedTransformations(Transformation transformation,
-                                      vector<string> files);
+    TransformationsPerFile generateTransformationPerFile(Transformation Transformation, vector<string> files);
+    vector<TransformationsPerFile> handleChainedTransformations(Transformation transformation, vector<string> files, XMLElement *transform, XMLElement *group);
     vector<TransformationsPerFile> getTransformationChain() {
         return transformation_chain;
     }
