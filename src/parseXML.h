@@ -10,6 +10,7 @@
 #include <vector>
 
 using namespace std;
+using namespace tinyxml2;
 
 /*
  * CAMERA SECTION
@@ -59,6 +60,87 @@ class Camera {
     Projection getProjection() { return projection; }
 };
 
+/**
+ * TRANSFORMATION SECTION
+ */
+class Action {
+    public:
+     virtual void apply() const = 0;
+     virtual ~Action() { }
+};
+
+class Translation : public Action {
+   public:
+    Translation(float x, float y, float z)
+        : coordinate_x(x), coordinate_y(y), coordinate_z(z) {}
+
+    void apply() const override {
+        // apply translation
+    }
+
+   private:
+    float coordinate_x, coordinate_y, coordinate_z;
+};
+
+class Rotation : public Action {
+   public:
+    Rotation(float angle, float x, float y, float z)
+        : angle(angle), coordinate_x(x), coordinate_y(y), coordinate_z(z) {}
+
+    void apply() const override {
+        // apply rotation
+    }
+
+   private:
+    float angle, coordinate_x, coordinate_y, coordinate_z;
+};
+
+class Scale : public Action {
+   public:
+    Scale(float x, float y, float z)
+        : coordinate_x(x), coordinate_y(y), coordinate_z(z) {}
+
+    void apply() const override {
+        // apply scaling
+    }
+
+   private:
+    float coordinate_x, coordinate_y, coordinate_z;
+};
+
+class Transformation {
+   private:
+    vector<Action*> actions_list;
+
+   public:
+    Transformation() = default;
+
+    void addTranslation(float x, float y, float z) {
+        actions_list.push_back(new Translation(x, y, z));
+    }
+
+    void addRotation(float angle, float x, float y, float z) {
+        actions_list.push_back(new Rotation(angle, x, y, z));
+    }
+
+    void addScale(float x, float y, float z) {
+        actions_list.push_back(new Scale(x, y, z));
+    }
+
+    Transformation handleTransformation(XMLElement* element);
+
+    void apply() const {
+        for (const auto& transform : actions_list) {
+            transform->apply();
+        }
+    }
+};
+
+struct TransformationsPerFile {
+    vector<string> files;
+    Transformation transformations;
+};
+
 /*
  * WORLD SECTION
  */
@@ -69,6 +151,7 @@ class World {
     int height;
     Camera camera;
     vector<string> files;
+    vector<TransformationsPerFile> transformation_chain;
 
    public:
     World();
@@ -77,10 +160,14 @@ class World {
     World(const string& filepath);
     vector<string> getFiles() { return files; };
     int getWidth() { return width; };
-
     int getHeight() { return height; };
-
     Camera getCamera() { return camera; }
+    vector<string> handleFiles(XMLElement* element);
+    TransformationsPerFile generateTransformationPerFile(Transformation Transformation, vector<string> files);
+    vector<TransformationsPerFile> handleChainedTransformations(Transformation transformation, vector<string> files, XMLElement *transform, XMLElement *group);
+    vector<TransformationsPerFile> getTransformationChain() {
+        return transformation_chain;
+    }
 };
 
 #endif  // GROUP_PROJECT_PARSEXML_H
