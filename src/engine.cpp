@@ -139,10 +139,15 @@ void createGeometricShape() {
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
 int main(int argc, char ** argv) {
 
-    world = new World("../../conf/config.xml");
+    world = new World("../../test_files/test_files_phase_2/test_2_2.xml");
     vector<string> fic = world->getFiles();
     proj = world->getCamera().getProjection();
 
+    for (const auto &elem : world->getTransformationMap()) {
+        for (const auto &elem2 : elem.first) {
+            cout << elem2 << "\n";
+        }
+    }
 
     c = world->getCamera();
     p = c.getPosition();
@@ -154,7 +159,6 @@ int main(int argc, char ** argv) {
         for (auto p: tmp) {
             points.push_back(p);
         }
-
     }
 
     createGeometricShape();

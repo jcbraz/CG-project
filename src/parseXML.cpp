@@ -100,13 +100,7 @@ Transformation Transformation::handleTransformation(XMLElement* element) {
 World::World() {
     World::camera = Camera();
     World::files = vector<string>(2);
-    World::transformation_chain = vector<TransformationsPerFile>();
-};
-
-World::World(int width, int height, vector<string> files) {
-    World::camera = Camera();
-    World::files = files;
-    World::transformation_chain = vector<TransformationsPerFile>();
+    World::transformation_map = map<string, vector<Transformation> >();
 };
 
 World::World(const Camera& camera, int width, int height,
@@ -115,13 +109,17 @@ World::World(const Camera& camera, int width, int height,
     World::height = height;
     World::camera = Camera(camera);
     World::files = files;
-    World::transformation_chain = vector<TransformationsPerFile>();
+    World::transformation_map = map<string, vector<Transformation> >();
+
+    for (int i = 0; i < files.size(); i++) {
+        World::transformation_map[files[i]] = vector<Transformation>();
+    }
 };
 
 vector<string> World::handleFiles(XMLElement* element) {
-    vector<string> files;
-    XMLElement* models;
+    vector<string> repeated_files = vector<string>();
 
+    XMLElement* models;
     try {
         models = element->FirstChildElement("models");
         if (models == nullptr) throw "Error finding element 'models'";
@@ -138,60 +136,67 @@ vector<string> World::handleFiles(XMLElement* element) {
     }
 
     while (model != nullptr) {
-        files.push_back(model->Attribute("file"));
+        // if the file key doesn't exist, create it
+        if (!World::transformation_map.count(model->Attribute("file"))) {
+            World::transformation_map[model->Attribute("file")] =
+                vector<Transformation>();
+        } else {
+            // add to the vector of repeated files
+            repeated_files.push_back(model->Attribute("file"));
+        }
+
         model = model->NextSiblingElement();
     }
 
-    try {
-        if (files.size() == 0) throw "No models found";
-    } catch (const char* message) {
-        cout << message << endl;
-    }
-
-    return files;
+    return repeated_files;
 }
 
-TransformationsPerFile World::generateTransformationPerFile(
-    Transformation transformation, vector<string> files) {
-    TransformationsPerFile transformationsPerFile;
-    transformationsPerFile.transformations = transformation;
-    transformationsPerFile.files = files;
+void World::handleChainedTransformations(XMLElement* group) {
+    // create buffers to store the transformations and repeated files
+    vector<Transformation> transformations_buffer = vector<Transformation>();
+    vector<string> repeated_files_buffer = World::handleFiles(group);
 
-    return transformationsPerFile;
-};
+    XMLElement* transform = group->FirstChildElement("transform");
+    if (transform) {
+        Transformation new_transformation = Transformation();
+        new_transformation.handleTransformation(transform);
 
-vector<TransformationsPerFile> World::handleChainedTransformations(
-    Transformation transformation, vector<string> files, XMLElement* transform,
-    XMLElement* group) {
-    vector<TransformationsPerFile> transformationsPerFile =
-        vector<TransformationsPerFile>();
+        transformations_buffer.push_back(new_transformation);
+        for (const auto& elem : World::transformation_map) {
+            World::setTransformationsToFile(elem.first, transformations_buffer);
+        }
 
-    Transformation transformationData = Transformation();
-    TransformationsPerFile tpf = generateTransformationPerFile(
-        transformationData.handleTransformation(transform), files);
-    transformationsPerFile.push_back(tpf);
-
-    XMLElement* groupChild = group->FirstChildElement("group");
-    if (groupChild != nullptr) {
-        while (groupChild != nullptr) {
-            XMLElement* transformChild =
-                groupChild->FirstChildElement("transform");
-            if (transformChild != nullptr) {
-                Transformation transformationChild = Transformation();
-
-                Transformation handledTransformation =
+        XMLElement* groupChild = group->FirstChildElement("group");
+        if (groupChild != nullptr) {
+            while (groupChild != nullptr) {
+                repeated_files_buffer = World::handleFiles(groupChild);
+                XMLElement* transformChild =
+                    groupChild->FirstChildElement("transform");
+                if (transformChild != nullptr) {
+                    // create a new transformation based on the transform child
+                    // node
+                    Transformation transformationChild = Transformation();
                     transformationChild.handleTransformation(transformChild);
-                vector<string> filesChild = handleFiles(groupChild);
-                TransformationsPerFile tpf_child =
-                    generateTransformationPerFile(handledTransformation,
-                                                  filesChild);
-                transformationsPerFile.push_back(tpf_child);
+                    transformations_buffer.push_back(transformationChild);
+
+                    for (const auto& elem : World::transformation_map) {
+                        // check if the file is repeated or if it has no
+                        // transformations
+                        if (find(repeated_files_buffer.begin(),
+                                 repeated_files_buffer.end(),
+                                 elem.first) != repeated_files_buffer.end() ||
+                            elem.second.size() == 0) {
+                            // set the transformations list to the buffer with
+                            // the chained transformations
+                            World::setTransformationsToFile(
+                                elem.first, transformations_buffer);
+                        }
+                    }
+                }
+                groupChild = groupChild->NextSiblingElement("group");
             }
-            groupChild = groupChild->FirstChildElement("group");
         }
     }
-
-    return transformationsPerFile;
 }
 
 World::World(const string& filepath) {
@@ -296,47 +301,12 @@ World::World(const string& filepath) {
         cout << message << endl;
     }
 
-
-    
-    vector<string> filesXML = handleFiles(group);
-
-    World::transformation_chain = World::handleChainedTransformations(
-        Transformation(), filesXML, transform, group);
+    World::handleChainedTransformations(group);
 
     World::camera = Camera(position_x, position_y, position_z, lookAt_x,
                            lookAt_y, lookAt_z, up_x, up_y, up_z, projection_fov,
                            projection_near, projection_far);
     World::width = width;
     World::height = height;
-    World::files = filesXML;
+    World::files = handleFiles(group);
 }
-
-
-// XMLElement* models;
-// try {
-//     models = group->FirstChildElement("models");
-//     if (models == nullptr) throw "Error finding element 'models'";
-// } catch (const char* message) {
-//     cout << message << endl;
-// }
-
-// vector<string> files;
-
-// XMLElement* model;
-// try {
-//     model = models->FirstChildElement();
-//     if (model == nullptr) throw "Error finding element 'model'";
-// } catch (const char* message) {
-//     cout << message << endl;
-// }
-
-// while (model != nullptr) {
-//     files.push_back(model->Attribute("file"));
-//     model = model->NextSiblingElement();
-// }
-
-// try {
-//     if (files.size() == 0) throw "No models found";
-// } catch (const char* message) {
-//     cout << message << endl;
-// }
