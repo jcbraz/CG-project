@@ -75,7 +75,7 @@ class Translation : public Action {
         : coordinate_x(x), coordinate_y(y), coordinate_z(z) {}
 
     void apply() const override {
-        printf("Translation\n");
+        cout << "Translation\n";
     }
 
    private:
@@ -88,7 +88,7 @@ class Rotation : public Action {
         : angle(angle), coordinate_x(x), coordinate_y(y), coordinate_z(z) {}
 
     void apply() const override {
-        printf("Rotation\n");
+        cout << "Rotation\n";
     }
 
    private:
@@ -101,7 +101,7 @@ class Scale : public Action {
         : coordinate_x(x), coordinate_y(y), coordinate_z(z) {}
 
     void apply() const override {
-        printf("Scale\n");
+        cout << "Scale\n";
     }
 
    private:
@@ -140,14 +140,19 @@ class Transformation {
  * WORLD SECTION
  */
 
+struct TransformationsPerFile {
+    string file;
+    vector<Transformation> transformations;
+};
+
+
 class World {
    private:
     int width;
     int height;
     Camera camera;
     vector<string> files;
-    map<string, vector<Transformation> > transformation_map;
-    // vector<TransformationsPerFile> transformation_chain;
+    vector<TransformationsPerFile> transformation_chain;
 
    public:
     World();
@@ -156,13 +161,9 @@ class World {
     vector<string> getFiles() { return files; };
     int getWidth() { return width; };
     int getHeight() { return height; };
-    Camera getCamera() { return camera; }
-    map<string, vector<Transformation> > getTransformationMap() { return transformation_map; }
-    void setTransformationsToFile(string file, vector<Transformation> transformations) {
-        transformation_map[file] = transformations;
-    }
-    void addTransformationToFile(string file, Transformation transformation) {
-        transformation_map[file].push_back(transformation);
+    Camera getCamera() { return camera; };
+    vector<TransformationsPerFile> getTransformationChain() {
+        return transformation_chain;
     };
     vector<string> handleFiles(XMLElement* element);
     void handleChainedTransformations(XMLElement* group);

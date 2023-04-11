@@ -143,9 +143,10 @@ int main(int argc, char ** argv) {
     vector<string> fic = world->getFiles();
     proj = world->getCamera().getProjection();
 
-    for (const auto &elem : world->getTransformationMap()) {
-        for (const auto &elem2 : elem.first) {
-            cout << elem2 << "\n";
+    for (const auto &elem : world->getTransformationChain()) {
+        for (const auto &elem3 : elem.transformations) {
+            elem3.apply();
+            cout << "sucess" << endl;
         }
     }
 

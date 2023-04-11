@@ -100,7 +100,7 @@ Transformation Transformation::handleTransformation(XMLElement* element) {
 World::World() {
     World::camera = Camera();
     World::files = vector<string>(2);
-    World::transformation_map = map<string, vector<Transformation> >();
+    World::transformation_chain = vector<TransformationsPerFile>();
 };
 
 World::World(const Camera& camera, int width, int height,
@@ -109,10 +109,13 @@ World::World(const Camera& camera, int width, int height,
     World::height = height;
     World::camera = Camera(camera);
     World::files = files;
-    World::transformation_map = map<string, vector<Transformation> >();
+    World::transformation_chain = vector<TransformationsPerFile>();
 
     for (int i = 0; i < files.size(); i++) {
-        World::transformation_map[files[i]] = vector<Transformation>();
+        TransformationsPerFile transformationsPerFile;
+        transformationsPerFile.file = files[i];
+        transformationsPerFile.transformations = vector<Transformation>();
+        World::transformation_chain.push_back(transformationsPerFile);
     }
 };
 
@@ -136,13 +139,18 @@ vector<string> World::handleFiles(XMLElement* element) {
     }
 
     while (model != nullptr) {
+        vector<string> allFiles = vector<string>();
+        for (auto& elem : World::transformation_chain) {
+            allFiles.push_back(elem.file);
+        }
+
         // if the file key doesn't exist, create it
-        if (!World::transformation_map.count(model->Attribute("file"))) {
-            World::transformation_map[model->Attribute("file")] =
-                vector<Transformation>();
-        } else {
-            // add to the vector of repeated files
-            repeated_files.push_back(model->Attribute("file"));
+        if (find(allFiles.begin(), allFiles.end(), model->Attribute("file")) ==
+            allFiles.end()) {
+            TransformationsPerFile transformationsPerFile;
+            transformationsPerFile.file = model->Attribute("file");
+            transformationsPerFile.transformations = vector<Transformation>();
+            World::transformation_chain.push_back(transformationsPerFile);
         }
 
         model = model->NextSiblingElement();
@@ -156,14 +164,18 @@ void World::handleChainedTransformations(XMLElement* group) {
     vector<Transformation> transformations_buffer = vector<Transformation>();
     vector<string> repeated_files_buffer = World::handleFiles(group);
 
+    // parse parent
     XMLElement* transform = group->FirstChildElement("transform");
     if (transform) {
         Transformation new_transformation = Transformation();
         new_transformation.handleTransformation(transform);
 
         transformations_buffer.push_back(new_transformation);
-        for (const auto& elem : World::transformation_map) {
-            World::setTransformationsToFile(elem.first, transformations_buffer);
+        for (int i = 0; i < transformations_buffer.size(); ++i) {
+            for (int j = 0; j < World::transformation_chain.size(); ++j) {
+                World::transformation_chain[j].transformations.push_back(
+                    transformations_buffer[i]);
+            }
         }
 
         XMLElement* groupChild = group->FirstChildElement("group");
@@ -179,21 +191,27 @@ void World::handleChainedTransformations(XMLElement* group) {
                     transformationChild.handleTransformation(transformChild);
                     transformations_buffer.push_back(transformationChild);
 
-                    for (const auto& elem : World::transformation_map) {
+                    for (int k = 0; k < World::transformation_chain.size();
+                         ++k) {
                         // check if the file is repeated or if it has no
                         // transformations
                         if (find(repeated_files_buffer.begin(),
                                  repeated_files_buffer.end(),
-                                 elem.first) != repeated_files_buffer.end() ||
-                            elem.second.size() == 0) {
+                                 World::transformation_chain[k].file) !=
+                                repeated_files_buffer.end() ||
+                            World::transformation_chain[k]
+                                    .transformations.size() == 0) {
                             // set the transformations list to the buffer with
                             // the chained transformations
-                            World::setTransformationsToFile(
-                                elem.first, transformations_buffer);
+                            World::transformation_chain[k].transformations =
+                                transformations_buffer;
                         }
                     }
                 }
-                groupChild = groupChild->NextSiblingElement("group");
+                // can be sibling or child
+                groupChild->NextSiblingElement("group")
+                    ? groupChild = groupChild->NextSiblingElement("group")
+                    : groupChild = groupChild->FirstChildElement("group");
             }
         }
     }
