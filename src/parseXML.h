@@ -2,7 +2,7 @@
 #define GROUP_PROJECT_PARSEXML_H
 
 #include <tinyxml2.h>
-
+#include <map>
 #include <iostream>
 #include <ostream>
 #include <sstream>
@@ -75,7 +75,7 @@ class Translation : public Action {
         : coordinate_x(x), coordinate_y(y), coordinate_z(z) {}
 
     void apply() const override {
-        // apply translation
+        cout << "Translation\n";
     }
 
    private:
@@ -88,7 +88,7 @@ class Rotation : public Action {
         : angle(angle), coordinate_x(x), coordinate_y(y), coordinate_z(z) {}
 
     void apply() const override {
-        // apply rotation
+        cout << "Rotation\n";
     }
 
    private:
@@ -101,7 +101,7 @@ class Scale : public Action {
         : coordinate_x(x), coordinate_y(y), coordinate_z(z) {}
 
     void apply() const override {
-        // apply scaling
+        cout << "Scale\n";
     }
 
    private:
@@ -136,14 +136,15 @@ class Transformation {
     }
 };
 
-struct TransformationsPerFile {
-    vector<string> files;
-    Transformation transformations;
-};
-
 /*
  * WORLD SECTION
  */
+
+struct TransformationsPerFile {
+    string file;
+    vector<Transformation> transformations;
+};
+
 
 class World {
    private:
@@ -155,19 +156,17 @@ class World {
 
    public:
     World();
-    World(int width, int height, vector<string> files);
     World(const Camera& camera, int width, int height, vector<string> files);
     World(const string& filepath);
     vector<string> getFiles() { return files; };
     int getWidth() { return width; };
     int getHeight() { return height; };
-    Camera getCamera() { return camera; }
-    vector<string> handleFiles(XMLElement* element);
-    TransformationsPerFile generateTransformationPerFile(Transformation Transformation, vector<string> files);
-    vector<TransformationsPerFile> handleChainedTransformations(Transformation transformation, vector<string> files, XMLElement *transform, XMLElement *group);
+    Camera getCamera() { return camera; };
     vector<TransformationsPerFile> getTransformationChain() {
         return transformation_chain;
-    }
+    };
+    vector<string> handleFiles(XMLElement* element);
+    void handleChainedTransformations(XMLElement* group);
 };
 
 #endif  // GROUP_PROJECT_PARSEXML_H
