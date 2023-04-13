@@ -4,9 +4,25 @@
 #include <vector>
 #include "geometricShapes.h"
 
+enum Action {
+    PUSH_MATRIX,
+    POP_MATRIX,
+    TRANSLATE,
+    ROTATE,
+    SCALE
+};
 
-struct Transformations {
-    vector<void *> transformations;
+class Content {
+    private:
+        vector<Action> actions;
+        vector<float> arguments;
+
+    public:
+        void insert_PUSH_MATRIX();
+        void insert_POP_MATRIX();
+        void insert_TRANSLATE(Point p);
+        void insert_ROTATE(float angle, Point p);
+        void insert_SCALE(Point p);
 };
 
 class Window {
@@ -52,9 +68,9 @@ class World {
 
 void enterGroup();
 void leaveGroup();
-void applyTranslation(Point p);
+void * applyTranslation(Point p);
 void applyScale(Point p);
 void applyRotation(float angle, Point p);
-void drawModel(std::vector<Point> pts);
+void * drawModel(std::vector<Point> pts);
 
 #endif // ENGINE_H

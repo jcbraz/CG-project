@@ -1,6 +1,4 @@
 #include <vector>
-#include "engineMaterials.h"
-
 #include <chrono>
 #include <iostream>
 #include <string>
@@ -13,6 +11,7 @@
 #endif
 #define GLUT_
 #include "geometricShapes.h"
+#include "engineMaterials.h"
 
 using namespace std;
 
@@ -35,7 +34,7 @@ void leaveGroup() {
 }
 
 // Transforms
-void applyTranslation(Point p) {
+void * applyTranslation(Point p) {
     glTranslatef(p.x, p.y, p.z);
 }
 
@@ -48,7 +47,7 @@ void applyRotation(float angle, Point p) {
 }
 
 // Models
-void drawModel(vector<Point> pts) {
+void * drawModel(vector<Point> pts) {
     cout << "boas" << endl;
 }
 

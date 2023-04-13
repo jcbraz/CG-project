@@ -87,6 +87,17 @@ void renderScene(void) {
     glVertex3f(0.0f, 0.0f, 100.0f);
     glEnd();
 
+    using transformatonFunc = void(*)(...);
+    for (auto transf : trans->transformations) {
+        transformatonFunc function = reinterpret_cast<transformatonFunc>(transf);
+        
+        if (function == reinterpret_cast<transformatonFunc>(&applyTranslation)) {
+
+        }
+    
+    }
+
+
     // End of frame
     glutSwapBuffers();
 }
@@ -120,7 +131,10 @@ int main(int argc, char ** argv) {
             Point(60, 1, 1000)
      ));
     cout << "aqui2" << endl;
-
+    
+    trans->transformations.push_back(applyTranslation(Point(0, 1, 0)));
+    trans->transformations.push_back(drawModel(GeometricShape::readFrom3DFile("cone_1_2_4_3.3d")));
+    trans->transformations.push_back(applyTranslation(Point(0, 3, 0)));
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
