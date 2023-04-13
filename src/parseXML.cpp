@@ -89,7 +89,7 @@ World parseWorld(const string& filepath) {
     if (group) {
         parseGroup(group);
     }
-    return World(Window(width, height),
+    return new World(Window(width, height),
                  Camera(Point(position_x, position_y, position_z),
                         Point(lookAt_x, lookAt_y, lookAt_z),
                         Point(up_x, up_y, up_z),

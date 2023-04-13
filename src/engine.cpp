@@ -17,6 +17,7 @@
 
 #include "geometricShapes.h"
 #include "engineMaterials.h"
+#include "parseXML.h"
 
 using namespace std;
 
@@ -103,12 +104,13 @@ void processKeys(unsigned char key, int x, int y) {
 int main(int argc, char ** argv) {
 
     // init glut and window
+    world = parseWorld("../../test_files/test_files_phase_2/test_2_2.xml");
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
     glutInitWindowPosition(100, 100);
     //glutInitWindowSize(800, 800);
-    glutInitWindowSize(world->getWidth(), world->getHeight());
+    glutInitWindowSize(world->getWindow().getWidth(), world->getWindow().getHeight());
     glutCreateWindow("Engine");
 
     // Required callback registry

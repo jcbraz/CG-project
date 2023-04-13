@@ -8,5 +8,5 @@
 using namespace std;
 using namespace tinyxml2;
 
-World parseWorld(const string& filepath);
+World* parseWorld(const string& filepath);
 void parseGroup(XMLElement* group);

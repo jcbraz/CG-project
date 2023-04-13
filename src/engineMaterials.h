@@ -48,6 +48,8 @@ class World {
         Camera camera;
     public:
         World(Window w, Camera c);
+        Window getWindow() { return window; };
+        Camera getCamera() {return camera; };
 };
 
 void enterGroup();
