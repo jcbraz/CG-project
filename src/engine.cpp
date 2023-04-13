@@ -14,12 +14,6 @@
 #endif
 #define GLUT_
 
-#define STACKS 0
-#define DIMENSION 1
-#define DIVISION_EDGE 0
-#define SLICES 1
-#define HEIGHT 2
-
 #include "geometricShapes.h"
 #include "parseXML.h"
 
