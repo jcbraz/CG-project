@@ -1,4 +1,5 @@
-#include <tinyxml2.h>
+#include <vector>
+#include "engineMaterials.h"
 
 #include <iostream>
 #include <string>
@@ -15,42 +16,37 @@
 using namespace std;
 using namespace tinyxml2;
 
-struct Point {
-    float x;
-    float y;
-    float z;
 
-    Point(float x, float y, float z) : x(x), y(y), z(z) {}
-};
+Point::Point(float x, float y, float z) : x(x), y(y), z(z) {};
 
-class Window {
-   private:
-    float witdh;
-    float height;
+Window::Window(float w, float h) : width(w), height(h) {};
 
-   public:
-    Window(float w, float h) : witdh(w), height(h) {}
-};
-
-class Camera {
-   private:
-    Point position;
-    Point lookAt;
-    Point up;
-    Point projection;
-
-   public:
-    Camera(Point position, Point lookAt, Point up, Point projection);
-};
+Camera::Camera(Point position, Point lookAt, Point up, Point projection) :
+ position(position),
+ lookAt(lookAt),
+ up(up),
+ projection(projection) {};
 
 // Groups
-void enterGroup();
-void leaveGroup();
+void enterGroup() {
+    glPushMatrix();
+}
+void leaveGroup() {
+    glPopMatrix();
+}
 
 // Transforms
-void applyTranslation(Point p);
-void applyRotation(float angle, Point p);
-void applyScale(Point p);
+void applyTranslation(Point p) {
+    glTranslatef(p.x, p.y, p.z);
+}
+
+void applyScale(Point p) {
+    glScalef(p.x, p.y, p.z);
+}
+
+void applyRotation(float angle, Point p) {
+    glRotatef(angle, p.x, p.y, p.z);
+}
 
 // Models
 void drawModel(vector<Point> pts);
