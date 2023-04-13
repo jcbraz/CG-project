@@ -40,13 +40,22 @@ class Camera {
 };
 
 // Groups
-void enterGroup();
-void leaveGroup();
+void enterGroup() {
+    glPushMatrix();
+}
+void leaveGroup() {
+    glPopMatrix();
+}
 
 // Transforms
-void translate(Point p);
-void scale(Point p);
-void rotate(float angle, Point p);
-
+void translate(Point p) {
+    glTranslatef(p.x, p.y, p.z);
+}
+void scale(Point p) {
+    glScalef(p.x, p.y, p.z);
+}
+void rotate(float angle, Point p) {
+    glRotatef(angle, p.x, p.y, p.z);
+}
 // Models
 void drawModel(vector<Point> pts);
