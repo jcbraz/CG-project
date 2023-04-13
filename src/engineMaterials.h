@@ -48,13 +48,13 @@ class World {
         Camera camera;
     public:
         World(Window w, Camera c);
-}
+};
 
 void enterGroup();
 void leaveGroup();
-void translate(Point p);
-void scale(Point p);
-void rotate(float angle, Point p);
+void applyTranslation(Point p);
+void applyScale(Point p);
+void applyRotation(float angle, Point p);
 void drawModel(std::vector<Point> pts);
 
 #endif // ENGINE_H
