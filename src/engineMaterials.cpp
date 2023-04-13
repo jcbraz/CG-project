@@ -1,4 +1,5 @@
 #include <vector>
+#include "engineMaterials.h"
 
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
@@ -10,34 +11,17 @@
 
 using namespace std;
 
-struct Point {
-    float x;
-    float y;
-    float z;
 
-    Point(float x, float y, float z) : x(x), y(y), z(z) {}
-};
+Point::Point(float x, float y, float z) : x(x), y(y), z(z) {};
 
+Window::Window(float w, float h) : width(w), height(h) {};
 
-class Window {
-    private:
-        float witdh;
-        float height;
-    
-    public:
-        Window(float w, float h) : witdh(w), height(h) {}
-};
+Camera::Camera(Point position, Point lookAt, Point up, Point projection) :
+ position(position),
+ lookAt(lookAt),
+ up(up),
+ projection(projection) {};
 
-class Camera {
-    private:
-        Point position;
-        Point lookAt;
-        Point up;
-        Point projection;
-
-    public:
-        Camera(Point position, Point lookAt, Point up, Point projection);
-};
 
 // Groups
 void enterGroup() {

@@ -100,7 +100,7 @@ void processKeys(unsigned char key, int x, int y) {
     glutPostRedisplay();
 }
 
-void createGeometricShape() {
+void init() {
     // init glut and window
     int f = 1;
     char * s[1] = {" "};
@@ -133,6 +133,7 @@ void createGeometricShape() {
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
 int main(int argc, char ** argv) {
 
+    /*
     world = new World("../../test_files/test_files_phase_2/test_2_2.xml");
     vector<string> fic = world->getFiles();
     proj = world->getCamera().getProjection();
@@ -155,8 +156,9 @@ int main(int argc, char ** argv) {
             points.push_back(p);
         }
     }
+    */
 
-    createGeometricShape();
+    init();
 
     return 0;
 }
