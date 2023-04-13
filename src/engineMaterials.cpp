@@ -1,6 +1,7 @@
 #include <vector>
 #include "engineMaterials.h"
 
+#include <chrono>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -51,3 +52,28 @@ void applyRotation(float angle, Point p) {
 
 // Models
 void drawModel(vector<Point> pts);
+
+void displayFPS () {
+    static int framecount = 0;
+    static auto start = std::chrono::high_resolution_clock::now();
+
+    framecount ++;
+
+    auto end = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
+
+    //dar update dos frames a cada segundo (definido como 1000 milissegundos)
+
+    if (elapsed >1000){
+        float fps=framecount / (elapsed/1000.0f);
+        framecount=0;
+        start=end;
+        std::cout << "FPS: " << fps << std::endl;
+    }
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glutSwapBuffers();
+}
