@@ -1,6 +1,6 @@
 #include "parseXML.h"
 
-World parseWorld(const string& filepath) {
+World* parseWorld(const string& filepath) {
     XMLDocument doc;
     try {
         XMLError read_error = doc.LoadFile(filepath.c_str());
@@ -89,35 +89,37 @@ World parseWorld(const string& filepath) {
     if (group) {
         parseGroup(group);
     }
-    return new World(Window(width, height),
-                 Camera(Point(position_x, position_y, position_z),
-                        Point(lookAt_x, lookAt_y, lookAt_z),
-                        Point(up_x, up_y, up_z),
-                        Point(projection_fov, projection_near, projection_far)));
+    return new World(
+        Window(width, height),
+        Camera(Point(position_x, position_y, position_z),
+               Point(lookAt_x, lookAt_y, lookAt_z), Point(up_x, up_y, up_z),
+               Point(projection_fov, projection_near, projection_far)));
 }
 
 void parseGroup(XMLElement* group) {
-    enterGroup();
+    Content* content = new Content();
+    content->insert_PUSH_MATRIX();
+
     XMLElement* transform = group->FirstChildElement("transform");
     if (transform) {
         XMLElement* translate = transform->FirstChildElement("translate");
         if (translate) {
-            applyTranslation(Point(translate->FloatAttribute("x"),
-                                   translate->FloatAttribute("y"),
-                                   translate->FloatAttribute("z")));
+            content->insert_TRANSLATE(Point(translate->FloatAttribute("x"),
+                                            translate->FloatAttribute("y"),
+                                            translate->FloatAttribute("z")));
         }
         XMLElement* rotate = transform->FirstChildElement("rotate");
         if (rotate) {
-            applyRotation(
+            content->insert_ROTATE(
                 rotate->FloatAttribute("angle"),
                 Point(rotate->FloatAttribute("x"), rotate->FloatAttribute("y"),
                       rotate->FloatAttribute("z")));
         }
         XMLElement* scale = transform->FirstChildElement("scale");
         if (scale) {
-            applyScale(Point(scale->FloatAttribute("x"),
-                             scale->FloatAttribute("y"),
-                             scale->FloatAttribute("z")));
+            content->insert_SCALE(Point(scale->FloatAttribute("x"),
+                                        scale->FloatAttribute("y"),
+                                        scale->FloatAttribute("z")));
         }
     }
     XMLElement* models = group->FirstChildElement("models");
@@ -125,10 +127,7 @@ void parseGroup(XMLElement* group) {
         XMLElement* model = models->FirstChildElement("model");
         if (model) {
             while (model) {
-                string file = model->Attribute("file");
-                vector<Point> modelPoints =
-                    GeometricShape::readFrom3DFile(file);
-                drawModel(modelPoints);
+                content->insert_MODEL(model->Attribute("file"));
                 model = model->NextSiblingElement("model");
             }
         }
@@ -137,9 +136,9 @@ void parseGroup(XMLElement* group) {
     if (groupChild) {
         parseGroup(groupChild);
     } else if (group->NextSiblingElement("group")) {
-        leaveGroup();
+        content->insert_POP_MATRIX();
         parseGroup(group->NextSiblingElement("group"));
     } else {
-        leaveGroup();
+        content->insert_POP_MATRIX();
     }
 }

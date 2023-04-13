@@ -4,6 +4,8 @@
 #include <vector>
 #include "geometricShapes.h"
 
+using namespace std;
+
 enum Action {
     PUSH_MATRIX,
     POP_MATRIX,
@@ -23,6 +25,7 @@ class Content {
         void insert_TRANSLATE(Point p);
         void insert_ROTATE(float angle, Point p);
         void insert_SCALE(Point p);
+        void insert_MODEL(const string& filename);
 };
 
 class Window {
