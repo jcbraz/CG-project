@@ -27,6 +27,8 @@ Camera::Camera(Point position, Point lookAt, Point up, Point projection) :
  up(up),
  projection(projection) {};
 
+World::World(Window w, Camera c) : window(w), camera(c) {}
+
 // Groups
 void enterGroup() {
     glPushMatrix();

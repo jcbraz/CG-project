@@ -10,22 +10,19 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLUT/glut.h>
 #else
+#include <GL/glew.h>
 #include <GL/glut.h>
 #endif
 #define GLUT_
 
 #include "geometricShapes.h"
-#include "parseXML.h"
+#include "engineMaterials.h"
 
 using namespace std;
 
+GLuint vertices, verticeCount;
 World * world;
-vector<Point> points;
-Camera c;
-Position p;
-LookAt la;
-Up up;
-Projection proj;
+//vector<Point> vertexB;
 
 void changeSize(int w, int h) {
 
@@ -100,11 +97,14 @@ void processKeys(unsigned char key, int x, int y) {
     glutPostRedisplay();
 }
 
-void init() {
+
+
+// Para executar, ir para a pasta build, "make group_project", "./group_project"
+int main(int argc, char ** argv) {
+
     // init glut and window
-    int f = 1;
-    char * s[1] = {" "};
-    glutInit(&f, s);
+
+    glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
     glutInitWindowPosition(100, 100);
     //glutInitWindowSize(800, 800);
@@ -115,6 +115,12 @@ void init() {
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
 
+    // Glew
+    glewInit();
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glGenBuffers(1, &vertices);
+
+
     // Callback registration for keyboard processing
     glutKeyboardFunc(processKeys);
     //glutSpecialFunc(processSpecialKeys);
@@ -123,15 +129,10 @@ void init() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
+    
     // Glut's main cycle
     glutMainLoop();
 
-}
-
-
-
-// Para executar, ir para a pasta build, "make group_project", "./group_project"
-int main(int argc, char ** argv) {
 
     /*
     world = new World("../../test_files/test_files_phase_2/test_2_2.xml");
@@ -157,8 +158,6 @@ int main(int argc, char ** argv) {
         }
     }
     */
-
-    init();
 
     return 0;
 }

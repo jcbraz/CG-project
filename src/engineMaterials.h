@@ -42,6 +42,14 @@ class Camera {
         Point getProjection();
 };
 
+class World {
+    private:
+        Window window;
+        Camera camera;
+    public:
+        World(Window w, Camera c);
+}
+
 void enterGroup();
 void leaveGroup();
 void translate(Point p);
