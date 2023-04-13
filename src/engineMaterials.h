@@ -56,5 +56,6 @@ void applyTranslation(Point p);
 void applyScale(Point p);
 void applyRotation(float angle, Point p);
 void drawModel(std::vector<Point> pts);
+void displayFPS();
 
 #endif // ENGINE_H
