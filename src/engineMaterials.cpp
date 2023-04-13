@@ -16,9 +16,6 @@
 
 using namespace std;
 
-
-Point::Point(float x, float y, float z) : x(x), y(y), z(z) {};
-
 Window::Window(float w, float h) : width(w), height(h) {};
 
 Camera::Camera(Point position, Point lookAt, Point up, Point projection) :
@@ -51,9 +48,12 @@ void applyRotation(float angle, Point p) {
 }
 
 // Models
-void drawModel(vector<Point> pts);
+void drawModel(vector<Point> pts) {
+    cout << "boas" << endl;
+}
 
-void displayFPS () {
+/*
+void EngineMaterials::displayFPS () {
     static int framecount = 0;
     static auto start = std::chrono::high_resolution_clock::now();
 
@@ -77,3 +77,4 @@ void displayFPS () {
 
     glutSwapBuffers();
 }
+*/

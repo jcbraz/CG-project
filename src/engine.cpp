@@ -9,6 +9,7 @@
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
 #include <GLUT/glut.h>
+#include <GLUT/glew.h>
 #else
 #include <GL/glew.h>
 #include <GL/glut.h>
@@ -17,12 +18,13 @@
 
 #include "geometricShapes.h"
 #include "engineMaterials.h"
-#include "parseXML.h"
 
 using namespace std;
 
-GLuint vertices, verticeCount;
+//GLuint vertices, verticeCount;
+
 World * world;
+
 //vector<Point> vertexB;
 
 void changeSize(int w, int h) {
@@ -44,7 +46,9 @@ void changeSize(int w, int h) {
     glViewport(0, 0, w, h);
 
     // Set perspective
-    gluPerspective(proj.fov ,ratio, proj.near ,proj.far);
+    Point proj = world->getCamera().getProjection();
+
+    gluPerspective(proj.x ,ratio, proj.y ,proj.z);
 
     // return to the model view matrix mode
     glMatrixMode(GL_MODELVIEW);
@@ -58,9 +62,13 @@ void renderScene(void) {
     // set the camera
     glLoadIdentity();
 
+    Point position = world->getCamera().getPosition();
+    Point lookAt = world->getCamera().getLookAt();
+    Point up = world->getCamera().getUp();
+    
 
-    gluLookAt(p.x, p.y, p.z,
-              la.x, la.y, la.z,
+    gluLookAt(position.x, position.y, position.z,
+              lookAt.x, lookAt.y, lookAt.z,
               up.x, up.y, up.z);
 
     //gluLookAt(0.5f, 0.5f, 0.5f, 0, 0, 0, 0, 1, 0);
@@ -78,8 +86,6 @@ void renderScene(void) {
     glVertex3f(0.0f, 0.0f, -100.0f);
     glVertex3f(0.0f, 0.0f, 100.0f);
     glEnd();
-
-    GeometricShape::drawObject(points);
 
     // End of frame
     glutSwapBuffers();
@@ -103,13 +109,23 @@ void processKeys(unsigned char key, int x, int y) {
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
 int main(int argc, char ** argv) {
 
+    cout << "aqui" << endl;
     // init glut and window
-    world = parseWorld("../../test_files/test_files_phase_2/test_2_2.xml");
+    world = new World(
+        Window(800, 800),
+        Camera(
+            Point(5, 6, 15),
+            Point(0, 0, 0),
+            Point(0, 1, 0),
+            Point(60, 1, 1000)
+     ));
+    cout << "aqui2" << endl;
+
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
     glutInitWindowPosition(100, 100);
-    //glutInitWindowSize(800, 800);
+
     glutInitWindowSize(world->getWindow().getWidth(), world->getWindow().getHeight());
     glutCreateWindow("Engine");
 
@@ -118,9 +134,9 @@ int main(int argc, char ** argv) {
     glutReshapeFunc(changeSize);
 
     // Glew
-    glewInit();
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glGenBuffers(1, &vertices);
+    //glewInit();
+    //glEnableClientState(GL_VERTEX_ARRAY);
+    //glGenBuffers(1, &vertices);
 
 
     // Callback registration for keyboard processing

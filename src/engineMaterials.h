@@ -2,13 +2,11 @@
 #define ENGINE_H
 
 #include <vector>
+#include "geometricShapes.h"
 
-struct Point {
-    float x;
-    float y;
-    float z;
 
-    Point(float x, float y, float z);
+struct Transformations {
+    vector<void *> transformations;
 };
 
 class Window {
@@ -19,8 +17,8 @@ class Window {
     public:
         Window(float width, float height);
         void setSize(float width, float height);
-        float getWidth();
-        float getHeight();
+        float getWidth() { return width; };
+        float getHeight() { return height; };
 };
 
 class Camera {
@@ -32,14 +30,14 @@ class Camera {
 
     public:
         Camera(Point position, Point lookAt, Point up, Point projection);
-        void setPosition(Point position);
-        Point getPosition();
-        void setLookAt(Point lookAt);
-        Point getLookAt();
-        void setUp(Point up);
-        Point getUp();
-        void setProjection(Point projection);
-        Point getProjection();
+        void setPosition(Point position) { Camera::position = position; };
+        Point getPosition() { return position; };
+        void setLookAt(Point lookAt) { Camera::lookAt = lookAt; };
+        Point getLookAt() { return lookAt; };
+        void setUp(Point up) { Camera::up = up; };
+        Point getUp() {return up; };
+        void setProjection(Point projection) { Camera::projection = projection; };
+        Point getProjection() { return projection; };
 };
 
 class World {
@@ -58,6 +56,5 @@ void applyTranslation(Point p);
 void applyScale(Point p);
 void applyRotation(float angle, Point p);
 void drawModel(std::vector<Point> pts);
-void displayFPS();
 
 #endif // ENGINE_H
