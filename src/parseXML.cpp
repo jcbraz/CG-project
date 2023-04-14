@@ -109,28 +109,33 @@ void parseGroup(XMLElement* group, Content * content) {
     content->insert_PUSH_MATRIX();
 
     XMLElement* transform = group->FirstChildElement("transform");
-    
     if (transform) {
-        XMLElement* translate = transform->FirstChildElement("translate");
-        if (translate) {
-            content->insert_TRANSLATE(Point(translate->FloatAttribute("x"),
-                                            translate->FloatAttribute("y"),
-                                            translate->FloatAttribute("z")));
-        }
-        XMLElement* rotate = transform->FirstChildElement("rotate");
-        if (rotate) {
-            content->insert_ROTATE(
-                rotate->FloatAttribute("angle"),
-                Point(rotate->FloatAttribute("x"), rotate->FloatAttribute("y"),
-                      rotate->FloatAttribute("z")));
-        }
-        XMLElement* scale = transform->FirstChildElement("scale");
-        if (scale) {
-            content->insert_SCALE(Point(scale->FloatAttribute("x"),
-                                        scale->FloatAttribute("y"),
-                                        scale->FloatAttribute("z")));
+        XMLElement* transformChildren = transform->FirstChildElement();
+        while (transformChildren) {
+            if (transformChildren->Value() == "translate") {
+                    content->insert_TRANSLATE(Point(transformChildren->FloatAttribute("x"),
+                                                    transformChildren->FloatAttribute("y"),
+                                                    transformChildren->FloatAttribute("z")));
+                    transformChildren = transformChildren->NextSiblingElement();
+                }
+
+            if (transformChildren->Value() == "rotate") {
+                content->insert_ROTATE(
+                    transformChildren->FloatAttribute("angle"),
+                    Point(transformChildren->FloatAttribute("x"), transformChildren->FloatAttribute("y"),
+                        transformChildren->FloatAttribute("z")));
+                transformChildren = transformChildren->NextSiblingElement();
+            }
+
+            if (transformChildren->Value() == "scale") {
+                content->insert_SCALE(Point(transformChildren->FloatAttribute("x"),
+                                            transformChildren->FloatAttribute("y"),
+                                            transformChildren->FloatAttribute("z")));
+                transformChildren = transformChildren->NextSiblingElement();
+            }
         }
     }
+
     XMLElement* models = group->FirstChildElement("models");
     if (models) {
         XMLElement* model = models->FirstChildElement("model");
