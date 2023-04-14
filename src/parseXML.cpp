@@ -89,49 +89,52 @@ pair<World*, Content*> parseWorld(const string& filepath) {
 
     XMLElement* group = world->FirstChildElement("group");
 
-    Content * content = new Content();
-    
+    Content* content = new Content();
+
     if (group) {
         parseGroup(group, content);
     }
-    
+
     return make_pair(
-         new World(
-        Window(width, height),
-        Camera(Point(position_x, position_y, position_z),
-               Point(lookAt_x, lookAt_y, lookAt_z), Point(up_x, up_y, up_z),
-               Point(projection_fov, projection_near, projection_far))),
-               content
-    );
+        new World(
+            Window(width, height),
+            Camera(Point(position_x, position_y, position_z),
+                   Point(lookAt_x, lookAt_y, lookAt_z), Point(up_x, up_y, up_z),
+                   Point(projection_fov, projection_near, projection_far))),
+        content);
 }
 
-void parseGroup(XMLElement* group, Content * content) {
+void parseGroup(XMLElement* group, Content* content) {
     content->insert_PUSH_MATRIX();
 
     XMLElement* transform = group->FirstChildElement("transform");
     if (transform) {
         XMLElement* transformChildren = transform->FirstChildElement();
-        while (transformChildren) {
-            if (transformChildren->Value() == "translate") {
-                    content->insert_TRANSLATE(Point(transformChildren->FloatAttribute("x"),
-                                                    transformChildren->FloatAttribute("y"),
-                                                    transformChildren->FloatAttribute("z")));
+        if (transformChildren) {
+            while (transformChildren) {
+                if (transformChildren->Value() == string("translate")) {
+                    content->insert_TRANSLATE(
+                        Point(transformChildren->FloatAttribute("x"),
+                              transformChildren->FloatAttribute("y"),
+                              transformChildren->FloatAttribute("z")));
+                    transformChildren = transformChildren->NextSiblingElement();
+                } else if (transformChildren->Value() == string("rotate")) {
+                    content->insert_ROTATE(
+                        transformChildren->FloatAttribute("angle"),
+                        Point(transformChildren->FloatAttribute("x"),
+                              transformChildren->FloatAttribute("y"),
+                              transformChildren->FloatAttribute("z")));
+                    transformChildren = transformChildren->NextSiblingElement();
+                } else if (transformChildren->Value() == string("scale")) {
+                    content->insert_SCALE(
+                        Point(transformChildren->FloatAttribute("x"),
+                              transformChildren->FloatAttribute("y"),
+                              transformChildren->FloatAttribute("z")));
+                    transformChildren = transformChildren->NextSiblingElement();
+                } else {
+                    cout << "Invalid transformation given" << endl;
                     transformChildren = transformChildren->NextSiblingElement();
                 }
-
-            if (transformChildren->Value() == "rotate") {
-                content->insert_ROTATE(
-                    transformChildren->FloatAttribute("angle"),
-                    Point(transformChildren->FloatAttribute("x"), transformChildren->FloatAttribute("y"),
-                        transformChildren->FloatAttribute("z")));
-                transformChildren = transformChildren->NextSiblingElement();
-            }
-
-            if (transformChildren->Value() == "scale") {
-                content->insert_SCALE(Point(transformChildren->FloatAttribute("x"),
-                                            transformChildren->FloatAttribute("y"),
-                                            transformChildren->FloatAttribute("z")));
-                transformChildren = transformChildren->NextSiblingElement();
             }
         }
     }
@@ -150,13 +153,12 @@ void parseGroup(XMLElement* group, Content * content) {
     cout << "aqui!" << endl;
     if (groupChild) {
         parseGroup(groupChild, content);
-    } 
-    
-    if (group->NextSiblingElement("group")) {
-        content->insert_POP_MATRIX();    
-        parseGroup(group->NextSiblingElement("group"), content);
     }
-    else {
-        content->insert_POP_MATRIX();    
+
+    if (group->NextSiblingElement("group")) {
+        content->insert_POP_MATRIX();
+        parseGroup(group->NextSiblingElement("group"), content);
+    } else {
+        content->insert_POP_MATRIX();
     }
 }
