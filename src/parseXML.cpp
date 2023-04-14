@@ -154,7 +154,6 @@ void parseGroup(XMLElement* group, Content* content) {
         }
     }
     XMLElement* groupChild = group->FirstChildElement("group");
-    cout << "aqui!" << endl;
     if (groupChild) {
         parseGroup(groupChild, content);
     }
