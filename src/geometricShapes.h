@@ -67,6 +67,40 @@ private:
  *
  */
 
+class Elypse : public GeometricShape {
+    
+    /*
+        POR IMPLEMENTAR
+    */
+    public:
+        Elypse();
+        
+        vector<Point> getPoints() override;
+
+    protected:
+        void Print(ostream &) const override;
+};
+
+class Torus : public GeometricShape {
+    private:
+        float innerRadius;
+        float outerRadius;
+        int slices;
+        int loops;
+
+    public:    
+        /*
+            POR IMPLEMENTAR
+        */
+        Torus();
+        Torus(float innerRadius, float outerRadius, int slices, int loops);
+        Torus(float innerRadius, float outerRadius, int slices, int loops, string pathFile);
+        vector<Point> getPoints() override;
+
+    protected:
+        void Print(ostream &) const override;
+};
+
 /*
  *
  * CONE CLASS
@@ -114,7 +148,8 @@ class Plane : public GeometricShape {
         vector<Point> getPoints() override;
 
     protected:
-        void Print(ostream &) const override;};
+        void Print(ostream &) const override;
+};
 
 /*
  *
@@ -139,7 +174,8 @@ public:
     vector<Point> getPoints() override;
 
 protected:
-    void Print(ostream &) const override;};
+    void Print(ostream &) const override;
+};
 
 /*
  *
@@ -165,7 +201,9 @@ class Sphere : public GeometricShape {
         vector<Point> getPoints() override;
 
     protected:
-        void Print(ostream &) const override;};
+        void Print(ostream &) const override;
+};
+
 /*
  *
  * END SPHERE CLASS
