@@ -29,18 +29,18 @@ Content::Content() {};
 
 void Content::insert_PUSH_MATRIX() {
     this->actions.push_back(AC_PUSH_MATRIX);
-    cout << "added a push matrix!" << this->actions.size() << endl; 
+    cout << "Added a push matrix!" << this->actions.size() << endl; 
 }
 void Content::insert_POP_MATRIX() {
     this->actions.push_back(AC_POP_MATRIX);
-    cout << "added a pop matrix!" << this->actions.size() << endl;
+    cout << "Added a pop matrix!" << this->actions.size() << endl;
 }
 void Content::insert_TRANSLATE(Point p) {
     this->actions.push_back(AC_TRANSLATE);
     this->arguments.push_back(p.x);
     this->arguments.push_back(p.y);
     this->arguments.push_back(p.z);
-    cout << "added a translate!" << this->actions.size() << endl;
+    cout << "Added a translate!" << this->actions.size() << endl;
 }
 void Content::insert_ROTATE(float angle, Point p) {
     this->actions.push_back(AC_ROTATE);
@@ -48,20 +48,20 @@ void Content::insert_ROTATE(float angle, Point p) {
     this->arguments.push_back(p.x);
     this->arguments.push_back(p.y);
     this->arguments.push_back(p.z);
-    cout << "added a rotate!" << this->actions.size() << endl;
+    cout << "Added a rotate!" << this->actions.size() << endl;
 }
 void Content::insert_SCALE(Point p) {
     this->actions.push_back(AC_SCALE);
     this->arguments.push_back(p.x);
     this->arguments.push_back(p.y);
     this->arguments.push_back(p.z);
-    cout << "added a scale!" << this->actions.size() << endl;
+    cout << "Added a scale!" << this->actions.size() << endl;
 
 }
 void Content::insert_MODEL(const string& filename) {
     this->actions.push_back(AC_MODEL);
     this->models.push_back(filename);
-    cout << "added a model!" << this->actions.size() << endl;
+    cout << "Added a model!" << this->actions.size() << endl;
 }
 
 void Content::insert_COLOR(Point p) {
@@ -69,7 +69,7 @@ void Content::insert_COLOR(Point p) {
     this->arguments.push_back(p.x);
     this->arguments.push_back(p.y);
     this->arguments.push_back(p.z);
-    cout << "added a color!" << this->actions.size() << endl;
+    cout << "Added a color!" << this->actions.size() << endl;
 }
 
 void Content::applyContent() {
