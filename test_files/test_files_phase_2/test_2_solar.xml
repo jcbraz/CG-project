@@ -9,7 +9,7 @@
     <group>
         <group> <!-- SUN GROUP -->
             <transform>
-                <scale x="5" y="5" z="5"/>
+                <scale x="5" y="5" z="5" />
             </transform>
             <models>
                 <model file="sphere_1_20_20.3d">
@@ -19,30 +19,30 @@
         </group>
         <group> <!-- MERCURY -->
             <transform>
-                <translate x="8" y="0" z="0"/>
-                <scale x="0.5" y="0.5" z="0.5"/>
+                <translate x="8" y="0" z="0" />
+                <scale x="0.5" y="0.5" z="0.5" />
             </transform>
             <models>
                 <model file="sphere_1_20_20.3d">
-                    <color r="0.55" g="0.55" b="0.58"/>
+                    <color r="0.55" g="0.55" b="0.58" />
                 </model>
             </models>
         </group>
         <group> <!-- VENUS GROUP -->
             <transform>
-                <translate x="11" y="0" z="0"/>
-                <scale x="0.75" y="0.75" z="0.75"/>
+                <rotate x="0" y="0" z="1" angle="8" />
+                <translate x="11" y="0" z="0" />
+                <scale x="0.75" y="0.75" z="0.75" />
             </transform>
             <models>
                 <model file="sphere_1_20_20.3d">
-                    <color r="0.9" g="0.7" b="0.4"/>
+                    <color r="0.9" g="0.7" b="0.4" />
                 </model>
             </models>
         </group>
         <group> <!-- EARTH AND MOON GROUP -->
             <transform>
-                <translate x="15" y="0" z="0"/>
-                <scale x="1" y="0.2" z="1"/>
+                <translate x="15" y="0" z="0" />
             </transform>
             <group> <!-- EARTH GROUP -->
                 <models>
@@ -53,14 +53,98 @@
             </group>
             <group> <!-- MOON GROUP -->
                 <transform>
-                    <translate x="1.5" y="0" z="0"/>
-                    <scale x="0.25" y="0.25" z="0.25"/>
+                    <rotate x="0" y="0" z="1" angle="45" />
+                    <translate x="1.35" y="0" z="0" />
+                    <scale x="0.25" y="0.25" z="0.25" />
                 </transform>
                 <models>
                     <model file="sphere_1_20_20.3d" />
                 </models>
             </group>
-            <!-- <group> KUIPER BELT GROUP
+        </group>
+        <group> <!-- MARS GRUOP -->
+            <transform>
+                <rotate x="0" y="0" z="1" angle="350" />
+                <translate x="19" y="0" z="0" />
+                <scale x="0.5" y="0.5" z="0.5" />
+            </transform>
+            <models>
+                <model file="sphere_1_20_20.3d">
+                    <color r="0.815" g="0.282" b="0.105" />
+                </model>
+            </models>
+        </group>
+        <group> <!-- JUPITER GROUP -->
+            <transform>
+                <translate x="22" y="0" z="0" />
+                <scale x="1.5" y="1.5" z="1.5" />
+            </transform>
+            <models>
+                <model file="sphere_1_20_20.3d">
+                    <color r="0.588" g="0.341" b="0.164" />
+                </model>
+            </models>
+            <group> <!-- JUPITER'S MOONS GROUP -->
+                <transform>
+                    <rotate x="0" y="0" z="1" angle="350" />
+                    <translate x="1.5" y="0" z="0" />
+                    <scale x="0.25" y="0.25" z="0.25" />
+                </transform>
+                <models>
+                    <model file="sphere_1_20_20.3d" />
+                </models>
+            </group>
+            <group>
+                <transform>
+                    <rotate x="0" y="0" z="1" angle="40" />
+                    <translate x="1.5" y="0" z="0" />
+                    <scale x="0.25" y="0.25" z="0.25" />
+                </transform>
+                <models>
+                    <model file="sphere_1_20_20.3d" />
+                </models>
+            </group>
+        </group>
+        <group> <!-- SATURN GROUP -->
+            <transform>
+                <rotate x="0" y="0" z="1" angle="345" />
+                <translate x="27" y="0" z="0" />
+                <scale x="1.25" y="1.25" z="1.25" />
+            </transform>
+            <models>
+                <model file="sphere_1_20_20.3d">
+                    <color r="0.882" g="0.643" b="0.345" />
+                </model>
+            </models>
+        </group>
+        <group> <!-- URANUS GROUP -->
+            <transform>
+                <rotate x="0" y="0" z="1" angle="10" />
+                <translate x="32" y="0" z="0" />
+                <scale x="1" y="1" z="1" />
+            </transform>
+            <models>
+                <model file="sphere_1_20_20.3d">
+                    <color r="0.372" g="0.619" b="0.627" />
+                </model>
+            </models>
+        </group> 
+        <group> <!-- NEPTUNE GROUP -->
+            <transform>
+                <rotate x="0" y="0" z="1" angle="5" />
+                <translate x="37" y="0" z="0" />
+                <scale x="0.75" y="0.75" z="0.75" />
+            </transform>
+            <models>
+                <model file="sphere_1_20_20.3d">
+                    <color r="0.184" g="0.184" b="0.839" />
+                </model>
+            </models>
+        </group>
+    </group>
+</world>
+
+<!-- <group> KUIPER BELT GROUP
                 <gen3DRandomCirularModels n="100" min_r="10" max_r="20"/>
                 <models>
                     <model file="box_2_3_3.3d">
@@ -68,6 +152,3 @@
                     </model>
                 </models>
             </group> -->
-        </group>
-    </group>
-</world>
