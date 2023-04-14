@@ -1,6 +1,8 @@
 #include "parseXML.h"
 
-World* parseWorld(const string& filepath) {
+using namespace std;
+
+pair<World*, Content*> parseWorld(const string& filepath) {
     XMLDocument doc;
     try {
         XMLError read_error = doc.LoadFile(filepath.c_str());
@@ -86,21 +88,28 @@ World* parseWorld(const string& filepath) {
     float projection_far = projection->FloatAttribute("far");
 
     XMLElement* group = world->FirstChildElement("group");
+
+    Content * content = new Content();
+    
     if (group) {
-        parseGroup(group);
+        parseGroup(group, content);
     }
-    return new World(
+    
+    return make_pair(
+         new World(
         Window(width, height),
         Camera(Point(position_x, position_y, position_z),
                Point(lookAt_x, lookAt_y, lookAt_z), Point(up_x, up_y, up_z),
-               Point(projection_fov, projection_near, projection_far)));
+               Point(projection_fov, projection_near, projection_far))),
+               content
+    );
 }
 
-void parseGroup(XMLElement* group) {
-    Content* content = new Content();
+void parseGroup(XMLElement* group, Content * content) {
     content->insert_PUSH_MATRIX();
 
     XMLElement* transform = group->FirstChildElement("transform");
+    
     if (transform) {
         XMLElement* translate = transform->FirstChildElement("translate");
         if (translate) {
@@ -133,12 +142,16 @@ void parseGroup(XMLElement* group) {
         }
     }
     XMLElement* groupChild = group->FirstChildElement("group");
+    cout << "aqui!" << endl;
     if (groupChild) {
-        parseGroup(groupChild);
-    } else if (group->NextSiblingElement("group")) {
-        content->insert_POP_MATRIX();
-        parseGroup(group->NextSiblingElement("group"));
-    } else {
-        content->insert_POP_MATRIX();
+        parseGroup(groupChild, content);
+    } 
+    
+    if (group->NextSiblingElement("group")) {
+        content->insert_POP_MATRIX();    
+        parseGroup(group->NextSiblingElement("group"), content);
+    }
+    else {
+        content->insert_POP_MATRIX();    
     }
 }

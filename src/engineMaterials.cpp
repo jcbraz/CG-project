@@ -25,55 +25,89 @@ Camera::Camera(Point position, Point lookAt, Point up, Point projection) :
 
 World::World(Window w, Camera c) : window(w), camera(c) {}
 
-// Groups
-void enterGroup() {
-    glPushMatrix();
+Content::Content() {};
+
+void Content::insert_PUSH_MATRIX() {
+    this->actions.push_back(AC_PUSH_MATRIX);
+    cout << "added a push matrix!" << this->actions.size() << endl; 
 }
-void leaveGroup() {
-    glPopMatrix();
+void Content::insert_POP_MATRIX() {
+    this->actions.push_back(AC_POP_MATRIX);
+    cout << "added a pop matrix!" << this->actions.size() << endl;
+}
+void Content::insert_TRANSLATE(Point p) {
+    this->actions.push_back(AC_TRANSLATE);
+    this->arguments.push_back(p.x);
+    this->arguments.push_back(p.y);
+    this->arguments.push_back(p.z);
+    cout << "added a translate!" << this->actions.size() << endl;
+}
+void Content::insert_ROTATE(float angle, Point p) {
+    this->actions.push_back(AC_ROTATE);
+    this->arguments.push_back(angle);
+    this->arguments.push_back(p.x);
+    this->arguments.push_back(p.y);
+    this->arguments.push_back(p.z);
+    cout << "added a rotate!" << this->actions.size() << endl;
+}
+void Content::insert_SCALE(Point p) {
+    this->actions.push_back(AC_SCALE);
+    this->arguments.push_back(p.x);
+    this->arguments.push_back(p.y);
+    this->arguments.push_back(p.z);
+    cout << "added a scale!" << this->actions.size() << endl;
+
+}
+void Content::insert_MODEL(const string& filename) {
+    this->actions.push_back(AC_MODEL);
+    this->models.push_back(filename);
+    cout << "added a model!" << this->actions.size() << endl;
 }
 
-// Transforms
-void * applyTranslation(Point p) {
-    glTranslatef(p.x, p.y, p.z);
-}
+void Content::applyContent() {
+    int i_arg = 0;
+    int i_model = 0;
 
-void applyScale(Point p) {
-    glScalef(p.x, p.y, p.z);
-}
-
-void applyRotation(float angle, Point p) {
-    glRotatef(angle, p.x, p.y, p.z);
-}
-
-// Models
-void * drawModel(vector<Point> pts) {
-    cout << "boas" << endl;
-}
-
-/*
-void EngineMaterials::displayFPS () {
-    static int framecount = 0;
-    static auto start = std::chrono::high_resolution_clock::now();
-
-    framecount ++;
-
-    auto end = std::chrono::high_resolution_clock::now();
-    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
-
-    //dar update dos frames a cada segundo (definido como 1000 milissegundos)
-
-    if (elapsed >1000){
-        float fps=framecount / (elapsed/1000.0f);
-        framecount=0;
-        start=end;
-        std::cout << "FPS: " << fps << std::endl;
+    if (this->actions.empty()) {
+        cout << "No content!" << endl;
+        return;
     }
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    glutSwapBuffers();
+        
+    for (int action : this->actions) {
+        if (action == AC_PUSH_MATRIX) {
+            glPushMatrix();
+            cout << "did a push matrix!" << endl;
+        } else if (action == AC_POP_MATRIX) {
+                glPopMatrix();
+                cout << "did a pop matrix!" << endl;
+        } else if (action == AC_TRANSLATE) {
+            float x = this->arguments[i_arg];
+            float y = this->arguments[i_arg+1];
+            float z = this->arguments[i_arg+2];        
+            glTranslatef(x, y, z);
+            cout << "Translation of " << x << " " << y << " " << z << endl;
+            i_arg += 3;
+        } else if (action == AC_ROTATE) {       
+            float angle = this->arguments[i_arg];
+            float x = this->arguments[i_arg+1];
+            float y = this->arguments[i_arg+2];
+            float z = this->arguments[i_arg+3];   
+            glRotatef(angle, x, y, z);
+            cout << "Rotation of " << angle << " " << x << " " << y << " " << z << endl;
+            i_arg += 4;
+        } else if (action == AC_SCALE) {    
+            float x = this->arguments[i_arg];
+            float y = this->arguments[i_arg+1];
+            float z = this->arguments[i_arg+2];   
+            glScalef(x, y, z);
+            cout << "Scale of " << x << " " << y << " " << z << endl;
+            i_arg += 3;
+        } else if (action == AC_MODEL) {
+            GeometricShape::drawObject(GeometricShape::readFrom3DFile(this->models[i_model]));
+            cout << "Modeled "<< this->models[i_model] << endl;
+            i_model++;
+        } else {
+                throw "Invalid Action Value!!";
+        }
+    }
 }
-*/

@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <math.h>
 
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
@@ -18,12 +19,36 @@
 
 #include "geometricShapes.h"
 #include "engineMaterials.h"
+#include "parseXML.h"
 
 using namespace std;
 
 //GLuint vertices, verticeCount;
 
+int startX, startY, tracking = 0;
+float _alpha = 0, _beta = 35, r = 10;
+
 World * world;
+Camera * camera;
+Content * content;
+
+int timebase = 0;
+float frames = 0;
+
+void displayFrameRate() {
+    char title[50];
+    frames++;
+    double time = glutGet(GLUT_ELAPSED_TIME);
+    
+    if (time - timebase> 1000) {
+        double fps = frames * 1000.0 / (time - timebase);
+        timebase = time;
+        frames = 0;
+        sprintf(title, "Engine | %lf FPS", fps);
+        glutSetWindowTitle(title);
+    }
+}
+
 
 //vector<Point> vertexB;
 
@@ -46,7 +71,7 @@ void changeSize(int w, int h) {
     glViewport(0, 0, w, h);
 
     // Set perspective
-    Point proj = world->getCamera().getProjection();
+    Point proj = camera->getProjection();
 
     gluPerspective(proj.x ,ratio, proj.y ,proj.z);
 
@@ -62,16 +87,14 @@ void renderScene(void) {
     // set the camera
     glLoadIdentity();
 
-    Point position = world->getCamera().getPosition();
-    Point lookAt = world->getCamera().getLookAt();
-    Point up = world->getCamera().getUp();
+    Point position = camera->getPosition();
+    Point lookAt = camera->getLookAt();
+    Point up = camera->getUp();
     
 
     gluLookAt(position.x, position.y, position.z,
               lookAt.x, lookAt.y, lookAt.z,
               up.x, up.y, up.z);
-
-    //gluLookAt(0.5f, 0.5f, 0.5f, 0, 0, 0, 0, 1, 0);
 
     glBegin(GL_LINES);
     glColor3f(1.0f, 0.0f, 0.0f);
@@ -87,16 +110,8 @@ void renderScene(void) {
     glVertex3f(0.0f, 0.0f, 100.0f);
     glEnd();
 
-    using transformatonFunc = void(*)(...);
-    for (auto transf : trans->transformations) {
-        transformatonFunc function = reinterpret_cast<transformatonFunc>(transf);
-        
-        if (function == reinterpret_cast<transformatonFunc>(&applyTranslation)) {
-
-        }
-    
-    }
-
+    content->applyContent();
+    displayFrameRate();
 
     // End of frame
     glutSwapBuffers();
@@ -115,27 +130,91 @@ void processKeys(unsigned char key, int x, int y) {
     glutPostRedisplay();
 }
 
+void processMouseButtons(int button, int state, int xx, int yy) {
+    if (state == GLUT_DOWN) {
+        startX = xx;
+        startY = yy;
+        if (button == GLUT_LEFT_BUTTON)
+            tracking = 1;
+        else if (button == GLUT_RIGHT_BUTTON)
+            tracking = 2;
+        else {
+            tracking = 0;
+            cout << "click!" << endl;
 
+            glutPostRedisplay();
+        }
+    }
+    else if (state == GLUT_UP) {
+        if (tracking == 1) {
+            _alpha += (xx - startX);
+            _beta += (yy - startY);
+        } else if (tracking == 2) {
+            r -= yy - startY;
+            if ( r < 3)
+                r = 3.0;
+        }
+        tracking = 0;
+    }
+}
+
+
+
+void processMouseMotion(int xx, int yy)
+{
+
+	int deltaX, deltaY;
+	int _alphaAux, _betaAux;
+	int rAux;
+
+	if (!tracking)
+		return;
+
+	deltaX = xx - startX;
+	deltaY = yy - startY;
+
+	if (tracking == 1) {
+
+
+		_alphaAux = _alpha + deltaX;
+		_betaAux = _beta + deltaY;
+
+		if (_betaAux > 85.0)
+			_betaAux = 85.0;
+		else if (_betaAux < -85.0)
+			_betaAux = -85.0;
+
+		rAux = r;
+	}
+	else if (tracking == 2) {
+
+		_alphaAux = _alpha;
+		_betaAux = _beta;
+		rAux = r - deltaY;
+		if (rAux < 3)
+			rAux = 3;
+	}
+	float camX = rAux * sin(_alphaAux * 3.14 / 180.0) * cos(_betaAux * 3.14 / 180.0);
+	float camZ = rAux * cos(_alphaAux * 3.14 / 180.0) * cos(_betaAux * 3.14 / 180.0);
+	float camY = rAux * 							     sin(_betaAux * 3.14 / 180.0);
+    camera->setPosition(Point(camX, camY, camZ));
+    
+
+	glutPostRedisplay();
+}
 
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
 int main(int argc, char ** argv) {
 
-    cout << "aqui" << endl;
-    // init glut and window
-    world = new World(
-        Window(800, 800),
-        Camera(
-            Point(5, 6, 15),
-            Point(0, 0, 0),
-            Point(0, 1, 0),
-            Point(60, 1, 1000)
-     ));
-    cout << "aqui2" << endl;
-    
-    trans->transformations.push_back(applyTranslation(Point(0, 1, 0)));
-    trans->transformations.push_back(drawModel(GeometricShape::readFrom3DFile("cone_1_2_4_3.3d")));
-    trans->transformations.push_back(applyTranslation(Point(0, 3, 0)));
+    pair<World*, Content*> wc = parseWorld("../../test_files/test_files_phase_2/test_2_3.xml");
+    world = wc.first;
 
+    Camera c = world->getCamera();
+    camera = new Camera(c.getPosition(), c.getLookAt(), c.getUp(), c.getProjection());
+
+    content = wc.second;
+    // init glut and window
+    
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
     glutInitWindowPosition(100, 100);
@@ -157,39 +236,20 @@ int main(int argc, char ** argv) {
     glutKeyboardFunc(processKeys);
     //glutSpecialFunc(processSpecialKeys);
 
+    // Callback registration for mouse processing
+    glutMouseFunc(processMouseButtons);
+    glutMotionFunc(processMouseMotion);
+
     //  OpenGL settings
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     
+    // frames
+    timebase = glutGet(GLUT_ELAPSED_TIME);
+
     // Glut's main cycle
     glutMainLoop();
-
-
-    /*
-    world = new World("../../test_files/test_files_phase_2/test_2_2.xml");
-    vector<string> fic = world->getFiles();
-    proj = world->getCamera().getProjection();
-
-    for (const auto &elem : world->getTransformationChain()) {
-        for (const auto &elem3 : elem.transformations) {
-            elem3.apply();
-            cout << "sucess" << endl;
-        }
-    }
-
-    c = world->getCamera();
-    p = c.getPosition();
-    la = c.getLookAt();
-    up = c.getUp();
-
-    for (auto elem : world->getFiles()) {
-        vector<Point> tmp = GeometricShape::readFrom3DFile(elem);
-        for (auto p: tmp) {
-            points.push_back(p);
-        }
-    }
-    */
 
     return 0;
 }

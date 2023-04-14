@@ -16,7 +16,7 @@ FetchContent_MakeAvailable(
 	tinyxml2
 )
 #add_executable(${PROJECT_NAME} engine.cpp geometricShapes.cpp)
-add_executable(${PROJECT_NAME} engine.cpp geometricShapes.cpp geometricShapes.h engineMaterials.cpp)
+add_executable(${PROJECT_NAME} engine.cpp geometricShapes.cpp geometricShapes.h engineMaterials.cpp parseXML.cpp)
 target_link_libraries(${PROJECT_NAME} tinyxml2::tinyxml2)
 
 find_package(OpenGL REQUIRED)

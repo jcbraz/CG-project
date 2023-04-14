@@ -7,25 +7,29 @@
 using namespace std;
 
 enum Action {
-    PUSH_MATRIX,
-    POP_MATRIX,
-    TRANSLATE,
-    ROTATE,
-    SCALE
+    AC_PUSH_MATRIX,
+    AC_POP_MATRIX,
+    AC_TRANSLATE,
+    AC_ROTATE,
+    AC_SCALE,
+    AC_MODEL
 };
 
 class Content {
     private:
         vector<Action> actions;
         vector<float> arguments;
+        vector<string> models;
 
     public:
+        Content();
         void insert_PUSH_MATRIX();
         void insert_POP_MATRIX();
         void insert_TRANSLATE(Point p);
         void insert_ROTATE(float angle, Point p);
         void insert_SCALE(Point p);
         void insert_MODEL(const string& filename);
+        void applyContent();
 };
 
 class Window {
@@ -68,12 +72,5 @@ class World {
         Window getWindow() { return window; };
         Camera getCamera() {return camera; };
 };
-
-void enterGroup();
-void leaveGroup();
-void * applyTranslation(Point p);
-void applyScale(Point p);
-void applyRotation(float angle, Point p);
-void * drawModel(std::vector<Point> pts);
 
 #endif // ENGINE_H
