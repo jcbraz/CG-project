@@ -64,6 +64,14 @@ void Content::insert_MODEL(const string& filename) {
     cout << "added a model!" << this->actions.size() << endl;
 }
 
+void Content::insert_COLOR(Point p) {
+    this->actions.push_back(AC_COLOR);
+    this->arguments.push_back(p.x);
+    this->arguments.push_back(p.y);
+    this->arguments.push_back(p.z);
+    cout << "added a color!" << this->actions.size() << endl;
+}
+
 void Content::applyContent() {
     int i_arg = 0;
     int i_model = 0;
@@ -106,7 +114,16 @@ void Content::applyContent() {
             GeometricShape::drawObject(GeometricShape::readFrom3DFile(this->models[i_model]));
             cout << "Modeled "<< this->models[i_model] << endl;
             i_model++;
-        } else {
+        } else if (action == AC_COLOR) {
+            float r = this->arguments[i_arg];
+            float g = this->arguments[i_arg+1];
+            float b = this->arguments[i_arg+2];   
+            glColor3f(r, g, b);
+            cout << "Color of " << r << " " << g << " " << b << endl;
+            i_arg += 3;
+        } 
+        
+        else {
                 throw "Invalid Action Value!!";
         }
     }

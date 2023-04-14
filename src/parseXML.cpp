@@ -1,7 +1,5 @@
 #include "parseXML.h"
 
-using namespace std;
-
 pair<World*, Content*> parseWorld(const string& filepath) {
     XMLDocument doc;
     try {
@@ -144,6 +142,12 @@ void parseGroup(XMLElement* group, Content* content) {
         XMLElement* model = models->FirstChildElement("model");
         if (model) {
             while (model) {
+                XMLElement* color = model->FirstChildElement("color");
+                if (color) {
+                    content->insert_COLOR(Point(color->FloatAttribute("r"),
+                                        color->FloatAttribute("g"),
+                                        color->FloatAttribute("b")));
+                }
                 content->insert_MODEL(model->Attribute("file"));
                 model = model->NextSiblingElement("model");
             }

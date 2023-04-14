@@ -12,7 +12,8 @@ enum Action {
     AC_TRANSLATE,
     AC_ROTATE,
     AC_SCALE,
-    AC_MODEL
+    AC_MODEL,
+    AC_COLOR
 };
 
 class Content {
@@ -29,6 +30,7 @@ class Content {
         void insert_ROTATE(float angle, Point p);
         void insert_SCALE(Point p);
         void insert_MODEL(const string& filename);
+        void insert_COLOR(Point p);
         void applyContent();
 };
 
