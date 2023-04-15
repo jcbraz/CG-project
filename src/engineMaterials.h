@@ -2,6 +2,7 @@
 #define ENGINE_H
 
 #include <vector>
+#include <map>
 #include "geometricShapes.h"
 
 using namespace std;
@@ -13,14 +14,19 @@ enum Action {
     AC_ROTATE,
     AC_SCALE,
     AC_MODEL,
-    AC_COLOR
-};
+    AC_COLOR,
+    AC_3D_CIRC_RAND_OBJ_PLACEMENT,
+    AC_DISABLE_CULL,
+    AC_ENABLE_CULL
+    };
 
 class Content {
     private:
         vector<Action> actions;
         vector<float> arguments;
-        vector<string> models;
+        vector<string> i_models;
+        map<string, vector<Point>> models;
+        //vector<vector<Point>> models;
 
     public:
         Content();
@@ -29,8 +35,11 @@ class Content {
         void insert_TRANSLATE(Point p);
         void insert_ROTATE(float angle, Point p);
         void insert_SCALE(Point p);
-        void insert_MODEL(const string& filename);
+        void insert_MODEL(const string& filepath);
         void insert_COLOR(Point p);
+        void insert_3D_CIRC_RAND_OBJ_PLACEMENT(float radius, bool isRandRotation, int n, Point scale, const string& filepath);
+        void insert_DISABLE_CULL();
+        void insert_ENABLE_CULL();
         void applyContent();
 };
 

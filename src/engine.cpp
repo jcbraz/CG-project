@@ -1,36 +1,38 @@
 //
 // Created by user13 on 04-03-2023.
 //
-#include <math.h>
-
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <math.h>
 
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
 #include <GLUT/glut.h>
+#include <GLUT/glew.h>
 #else
 #include <GL/glew.h>
 #include <GL/glut.h>
 #endif
 #define GLUT_
 
-#include "engineMaterials.h"
 #include "geometricShapes.h"
+#include "engineMaterials.h"
 #include "parseXML.h"
 
 using namespace std;
 
-// GLuint vertices, verticeCount;
+//GLuint vertices, verticeCount;
+GLuint vertices, verticeCount;
+vector<float> vertexB;
 
 int startX, startY, tracking = 0;
 float _alpha = 0, _beta = 35, r = 10;
 
-World* world;
-Camera* camera;
-Content* content;
+World * world;
+Camera * camera;
+Content * content;
 
 int timebase = 0;
 float frames = 0;
@@ -39,8 +41,8 @@ void displayFrameRate() {
     char title[50];
     frames++;
     double time = glutGet(GLUT_ELAPSED_TIME);
-
-    if (time - timebase > 1000) {
+    
+    if (time - timebase> 1000) {
         double fps = frames * 1000.0 / (time - timebase);
         timebase = time;
         frames = 0;
@@ -49,12 +51,15 @@ void displayFrameRate() {
     }
 }
 
-// vector<Point> vertexB;
+
+//vector<Point> vertexB;
 
 void changeSize(int w, int h) {
+
     // Prevent a divide by zero, when window is too short
     // (you cant make a window with zero width).
-    if (h == 0) h = 1;
+    if(h == 0)
+        h = 1;
 
     // compute window's aspect ratio
     float ratio = w * 1.0 / h;
@@ -70,13 +75,14 @@ void changeSize(int w, int h) {
     // Set perspective
     Point proj = camera->getProjection();
 
-    gluPerspective(proj.x, ratio, proj.y, proj.z);
+    gluPerspective(proj.x ,ratio, proj.y ,proj.z);
 
     // return to the model view matrix mode
     glMatrixMode(GL_MODELVIEW);
 }
 
 void renderScene(void) {
+
     // clear buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -86,8 +92,10 @@ void renderScene(void) {
     Point position = camera->getPosition();
     Point lookAt = camera->getLookAt();
     Point up = camera->getUp();
+    
 
-    gluLookAt(position.x, position.y, position.z, lookAt.x, lookAt.y, lookAt.z,
+    gluLookAt(position.x, position.y, position.z,
+              lookAt.x, lookAt.y, lookAt.z,
               up.x, up.y, up.z);
 
     glBegin(GL_LINES);
@@ -102,10 +110,10 @@ void renderScene(void) {
     glColor3f(0.0f, 0.0f, 1.0f);
     glVertex3f(0.0f, 0.0f, -1000.0f);
     glVertex3f(0.0f, 0.0f, 1000.0f);
-    glColor3f(1.0f, 1.0f, 1.0f);
     glEnd();
 
     content->applyContent();
+
     displayFrameRate();
 
     // End of frame
@@ -139,73 +147,81 @@ void processMouseButtons(int button, int state, int xx, int yy) {
 
             glutPostRedisplay();
         }
-    } else if (state == GLUT_UP) {
+    }
+    else if (state == GLUT_UP) {
         if (tracking == 1) {
             _alpha += (xx - startX);
             _beta += (yy - startY);
         } else if (tracking == 2) {
             r -= yy - startY;
-            if (r < 3) r = 3.0;
+            if ( r < 3)
+                r = 3.0;
         }
         tracking = 0;
     }
 }
 
-void processMouseMotion(int xx, int yy) {
-    int deltaX, deltaY;
-    int _alphaAux, _betaAux;
-    int rAux;
+void processMouseMotion(int xx, int yy)
+{
 
-    if (!tracking) return;
+	int deltaX, deltaY;
+	int _alphaAux, _betaAux;
+	int rAux;
 
-    deltaX = xx - startX;
-    deltaY = yy - startY;
+	if (!tracking)
+		return;
 
-    if (tracking == 1) {
-        _alphaAux = _alpha + deltaX;
-        _betaAux = _beta + deltaY;
+	deltaX = xx - startX;
+	deltaY = yy - startY;
 
-        if (_betaAux > 85.0)
-            _betaAux = 85.0;
-        else if (_betaAux < -85.0)
-            _betaAux = -85.0;
+	if (tracking == 1) {
 
-        rAux = r;
-    } else if (tracking == 2) {
-        _alphaAux = _alpha;
-        _betaAux = _beta;
-        rAux = r - deltaY;
-        if (rAux < 3) rAux = 3;
-    }
-    float camX =
-        rAux * sin(_alphaAux * 3.14 / 180.0) * cos(_betaAux * 3.14 / 180.0);
-    float camZ =
-        rAux * cos(_alphaAux * 3.14 / 180.0) * cos(_betaAux * 3.14 / 180.0);
-    float camY = rAux * sin(_betaAux * 3.14 / 180.0);
+
+		_alphaAux = _alpha + deltaX;
+		_betaAux = _beta + deltaY;
+
+		if (_betaAux > 85.0)
+			_betaAux = 85.0;
+		else if (_betaAux < -85.0)
+			_betaAux = -85.0;
+
+		rAux = r;
+	}
+	else if (tracking == 2) {
+
+		_alphaAux = _alpha;
+		_betaAux = _beta;
+		rAux = r - deltaY;
+		if (rAux < 3)
+			rAux = 3;
+	}
+	float camX = rAux * sin(_alphaAux * 3.14 / 180.0) * cos(_betaAux * 3.14 / 180.0);
+	float camZ = rAux * cos(_alphaAux * 3.14 / 180.0) * cos(_betaAux * 3.14 / 180.0);
+	float camY = rAux * 							     sin(_betaAux * 3.14 / 180.0);
     camera->setPosition(Point(camX, camY, camZ));
+    
 
-    glutPostRedisplay();
+	glutPostRedisplay();
 }
 
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
-int main(int argc, char** argv) {
-    pair<World*, Content*> wc =
-        parseWorld("../../test_files/test_files_phase_2/test_2_solar.xml");
+int main(int argc, char ** argv) {
+    srand(time(NULL));
+
+    pair<World*, Content*> wc = parseWorld("../../test_files/test_files_phase_2/test_2_solar.xml");
     world = wc.first;
 
     Camera c = world->getCamera();
-    camera = new Camera(c.getPosition(), c.getLookAt(), c.getUp(),
-                        c.getProjection());
+    camera = new Camera(c.getPosition(), c.getLookAt(), c.getUp(), c.getProjection());
 
     content = wc.second;
     // init glut and window
-
+    
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+    glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
     glutInitWindowPosition(100, 100);
 
-    glutInitWindowSize(world->getWindow().getWidth(),
-                       world->getWindow().getHeight());
+    glutInitWindowSize(world->getWindow().getWidth(), world->getWindow().getHeight());
     glutCreateWindow("Engine");
 
     // Required callback registry
@@ -213,13 +229,14 @@ int main(int argc, char** argv) {
     glutReshapeFunc(changeSize);
 
     // Glew
-    // glewInit();
-    // glEnableClientState(GL_VERTEX_ARRAY);
-    // glGenBuffers(1, &vertices);
+    glewInit();
+    glEnableClientState(GL_VERTEX_ARRAY);
+    //glGenBuffers(1, &vertices);
+
 
     // Callback registration for keyboard processing
     glutKeyboardFunc(processKeys);
-    // glutSpecialFunc(processSpecialKeys);
+    //glutSpecialFunc(processSpecialKeys);
 
     // Callback registration for mouse processing
     glutMouseFunc(processMouseButtons);
@@ -229,7 +246,7 @@ int main(int argc, char** argv) {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-
+    
     // frames
     timebase = glutGet(GLUT_ELAPSED_TIME);
 
@@ -238,3 +255,4 @@ int main(int argc, char** argv) {
 
     return 0;
 }
+

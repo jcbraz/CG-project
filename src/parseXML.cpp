@@ -102,6 +102,108 @@ pair<World*, Content*> parseWorld(const string& filepath) {
         content);
 }
 
+
+
+
+
+
+void _parse_color(XMLElement * color, Content * content) {
+    if (color) {
+        content->insert_COLOR(Point(color->FloatAttribute("r"),
+                            color->FloatAttribute("g"),
+                            color->FloatAttribute("b")));
+    } else {
+        content->insert_COLOR(Point(1.0f, 1.0f, 1.0f));
+    }
+}
+
+void _parse_3dCircRandObjPlac(XMLElement * _3dCircRandObjPlac, Content * content) {
+    Point c = Point(1.0f, 1.0f, 1.0f);
+
+    XMLElement* models = _3dCircRandObjPlac->FirstChildElement("models");
+    if (models) {
+
+        XMLElement* model = models->FirstChildElement("model");
+        if (model) {
+            while (model) {
+                XMLElement* color = model->FirstChildElement("color");
+                
+                _parse_color(color, content);
+                
+                const XMLAttribute * at_scaleX = _3dCircRandObjPlac->FindAttribute("scaleX");
+                float scale_X;
+                if (at_scaleX)
+                    scale_X = _3dCircRandObjPlac->FloatAttribute("scaleX");
+                else
+                    scale_X = 1;
+
+                const XMLAttribute * at_scaleY = _3dCircRandObjPlac->FindAttribute("scaleY"); 
+               float scale_Y;
+                if (at_scaleY)
+                    scale_Y = _3dCircRandObjPlac->FloatAttribute("scaleY");
+                else
+                    scale_Y = 1;
+
+                const XMLAttribute * at_scaleZ = _3dCircRandObjPlac->FindAttribute("scaleZ");   
+                float scale_Z;
+                if (at_scaleZ)
+                    scale_Z = _3dCircRandObjPlac->FloatAttribute("scaleZ");
+                else
+                    scale_Z = 1;
+
+                const XMLAttribute * at_isRandRotation = _3dCircRandObjPlac->FindAttribute("isRandRotation");
+                bool isRandRotation = false;
+                if (at_isRandRotation) {
+                    isRandRotation = _3dCircRandObjPlac->BoolAttribute("isRandRotation");
+                }
+
+                content->insert_3D_CIRC_RAND_OBJ_PLACEMENT(
+                    _3dCircRandObjPlac->FloatAttribute("radius"),
+                    isRandRotation,
+                    _3dCircRandObjPlac->IntAttribute("n"),
+                    Point(scale_X, scale_Y, scale_Z),
+                    model->Attribute("file")
+                );
+                model = model->NextSiblingElement("model");
+            }
+        }
+    } else {
+        throw "Models missing in 3dCircRandObjPlac!";
+    }
+
+}
+
+void _parse_model(XMLElement * model, Content * content) {
+    XMLElement* color = model->FirstChildElement("color");
+    _parse_color(color, content);
+
+    const XMLAttribute * at_disableCull = model->FindAttribute("disableCull");
+    bool disableCull = false;
+    if (at_disableCull) {
+        disableCull = model->BoolAttribute("disableCull");
+    }
+
+
+    if (disableCull)
+        content->insert_DISABLE_CULL();
+
+    content->insert_MODEL(model->Attribute("file"));
+
+    if (disableCull)
+        content->insert_ENABLE_CULL();
+}
+
+void _parse_models(XMLElement * models, Content * content) {
+    XMLElement* model = models->FirstChildElement("model");
+    while (model) {
+        _parse_model(model, content);
+        model = model->NextSiblingElement("model");
+    }
+}
+
+
+
+
 void parseGroup(XMLElement* group, Content* content) {
     content->insert_PUSH_MATRIX();
 
@@ -137,21 +239,15 @@ void parseGroup(XMLElement* group, Content* content) {
         }
     }
 
+    XMLElement* _3dCircRandObjPlac = group->FirstChildElement("d3CircRandObjPlac");
+    while (_3dCircRandObjPlac) {
+        _parse_3dCircRandObjPlac(_3dCircRandObjPlac, content);
+        _3dCircRandObjPlac = _3dCircRandObjPlac->NextSiblingElement("d3CircRandObjPlac");
+    }
+    
     XMLElement* models = group->FirstChildElement("models");
     if (models) {
-        XMLElement* model = models->FirstChildElement("model");
-        if (model) {
-            while (model) {
-                XMLElement* color = model->FirstChildElement("color");
-                if (color) {
-                    content->insert_COLOR(Point(color->FloatAttribute("r"),
-                                        color->FloatAttribute("g"),
-                                        color->FloatAttribute("b")));
-                }
-                content->insert_MODEL(model->Attribute("file"));
-                model = model->NextSiblingElement("model");
-            }
-        }
+        _parse_models(models, content);
     }
     XMLElement* groupChild = group->FirstChildElement("group");
     if (groupChild) {
@@ -165,3 +261,4 @@ void parseGroup(XMLElement* group, Content* content) {
         content->insert_POP_MATRIX();
     }
 }
+

@@ -67,13 +67,14 @@ private:
  *
  */
 
-class Elypse : public GeometricShape {
-    
-    /*
-        POR IMPLEMENTAR
-    */
+class Ring : public GeometricShape {
+    private:
+        float innerRadius;
+        float outerRadius;
+        int slices;
+        int segments;
     public:
-        Elypse();
+        Ring(float innerRadius, float outerRadius, int slices, int segments, string fName);
         
         vector<Point> getPoints() override;
 

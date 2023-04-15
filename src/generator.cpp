@@ -30,6 +30,8 @@ int main(int argc, char ** argv) {
             gShape = new Cone(stof(argv[2]), stof(argv[3]), stoi(argv[4]), stoi(argv[5]), argv[6]);
         else if (s_gShape == "sphere")
             gShape = new Sphere(stof(argv[2]), stoi(argv[3]), stoi(argv[4]), argv[5]);
+        else if (s_gShape =="ring")
+            gShape = new Ring(stof(argv[2]), stof(argv[3]), stoi(argv[4]), stoi(argv[5]), argv[6]);
         else
             throw invalid_argument("Invalid Shape!");
     } catch (exception& ex) {

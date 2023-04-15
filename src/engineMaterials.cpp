@@ -2,7 +2,8 @@
 #include <chrono>
 #include <iostream>
 #include <string>
-#include <vector>
+#include <math.h>
+#include <random>
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
 #include <GLUT/glut.h>
@@ -12,6 +13,7 @@
 #define GLUT_
 #include "geometricShapes.h"
 #include "engineMaterials.h"
+
 
 using namespace std;
 
@@ -29,18 +31,15 @@ Content::Content() {};
 
 void Content::insert_PUSH_MATRIX() {
     this->actions.push_back(AC_PUSH_MATRIX);
-    cout << "Added a push matrix!" << this->actions.size() << endl; 
 }
 void Content::insert_POP_MATRIX() {
     this->actions.push_back(AC_POP_MATRIX);
-    cout << "Added a pop matrix!" << this->actions.size() << endl;
 }
 void Content::insert_TRANSLATE(Point p) {
     this->actions.push_back(AC_TRANSLATE);
     this->arguments.push_back(p.x);
     this->arguments.push_back(p.y);
     this->arguments.push_back(p.z);
-    cout << "Added a translate!" << this->actions.size() << endl;
 }
 void Content::insert_ROTATE(float angle, Point p) {
     this->actions.push_back(AC_ROTATE);
@@ -48,20 +47,19 @@ void Content::insert_ROTATE(float angle, Point p) {
     this->arguments.push_back(p.x);
     this->arguments.push_back(p.y);
     this->arguments.push_back(p.z);
-    cout << "Added a rotate!" << this->actions.size() << endl;
 }
 void Content::insert_SCALE(Point p) {
     this->actions.push_back(AC_SCALE);
     this->arguments.push_back(p.x);
     this->arguments.push_back(p.y);
     this->arguments.push_back(p.z);
-    cout << "Added a scale!" << this->actions.size() << endl;
 
 }
-void Content::insert_MODEL(const string& filename) {
+void Content::insert_MODEL(const string& filepath) {
     this->actions.push_back(AC_MODEL);
-    this->models.push_back(filename);
-    cout << "Added a model!" << this->actions.size() << endl;
+    this->i_models.push_back(filepath);
+    if (this->models.find(filepath) == this->models.end())
+        this->models[filepath] = GeometricShape::readFrom3DFile(filepath);
 }
 
 void Content::insert_COLOR(Point p) {
@@ -69,7 +67,40 @@ void Content::insert_COLOR(Point p) {
     this->arguments.push_back(p.x);
     this->arguments.push_back(p.y);
     this->arguments.push_back(p.z);
-    cout << "Added a color!" << this->actions.size() << endl;
+}
+
+void Content::insert_3D_CIRC_RAND_OBJ_PLACEMENT(float radius, bool isRandRotation, int n, Point scale, const string& filepath) {
+    for (int i = 0; i < n; i++) {
+        float px = 0, pz = 0;
+        while (pow(px, 2) + pow(pz, 2) < pow(radius, 2)) {
+            float angle = 2.0 * M_PI * ((float) rand() / RAND_MAX);
+            
+            px = radius * cos(angle);
+            pz = radius * sin(angle);
+        }
+        this->insert_PUSH_MATRIX();
+        this->insert_TRANSLATE(Point(px, 0, pz));
+        if (isRandRotation) {
+            float r_angle = 360.0 * ((double) rand() / RAND_MAX);
+            this->insert_ROTATE(r_angle, Point(0, 1, 1)); 
+        }
+
+        if (scale.x != 1 || scale.y != 1 || scale.z != 1) {
+            this->insert_SCALE(scale);
+        }
+
+        this->insert_MODEL(filepath);
+        this->insert_POP_MATRIX();
+    }
+
+}
+
+void Content::insert_DISABLE_CULL() {
+    this->actions.push_back(AC_DISABLE_CULL);
+}
+
+void Content::insert_ENABLE_CULL() {
+    this->actions.push_back(AC_ENABLE_CULL);
 }
 
 void Content::applyContent() {
@@ -84,16 +115,13 @@ void Content::applyContent() {
     for (int action : this->actions) {
         if (action == AC_PUSH_MATRIX) {
             glPushMatrix();
-            cout << "did a push matrix!" << endl;
         } else if (action == AC_POP_MATRIX) {
                 glPopMatrix();
-                cout << "did a pop matrix!" << endl;
         } else if (action == AC_TRANSLATE) {
             float x = this->arguments[i_arg];
             float y = this->arguments[i_arg+1];
             float z = this->arguments[i_arg+2];        
             glTranslatef(x, y, z);
-            cout << "Translation of " << x << " " << y << " " << z << endl;
             i_arg += 3;
         } else if (action == AC_ROTATE) {       
             float angle = this->arguments[i_arg];
@@ -101,30 +129,29 @@ void Content::applyContent() {
             float y = this->arguments[i_arg+2];
             float z = this->arguments[i_arg+3];   
             glRotatef(angle, x, y, z);
-            cout << "Rotation of " << angle << " " << x << " " << y << " " << z << endl;
             i_arg += 4;
         } else if (action == AC_SCALE) {    
             float x = this->arguments[i_arg];
             float y = this->arguments[i_arg+1];
             float z = this->arguments[i_arg+2];   
             glScalef(x, y, z);
-            cout << "Scale of " << x << " " << y << " " << z << endl;
             i_arg += 3;
         } else if (action == AC_MODEL) {
-            GeometricShape::drawObject(GeometricShape::readFrom3DFile(this->models[i_model]));
-            cout << "Modeled "<< this->models[i_model] << endl;
+            GeometricShape::drawObject(this->models[this->i_models[i_model]]);
             i_model++;
         } else if (action == AC_COLOR) {
             float r = this->arguments[i_arg];
             float g = this->arguments[i_arg+1];
             float b = this->arguments[i_arg+2];   
             glColor3f(r, g, b);
-            cout << "Color of " << r << " " << g << " " << b << endl;
             i_arg += 3;
-        } 
-        
+        } else if (action == AC_DISABLE_CULL) {
+            glDisable(GL_CULL_FACE);
+        } else if (action == AC_ENABLE_CULL) {
+            glEnable(GL_CULL_FACE);
+        }
         else {
-                throw "Invalid Action Value!!";
+            throw "Invalid Action Value!!";
         }
     }
 }
