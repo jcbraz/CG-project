@@ -217,7 +217,7 @@ int main(int argc, char** argv) {
     glutReshapeFunc(changeSize);
 
     // Glew --> activate if not in mac
-    // glewInit();
+    glewInit();
     glEnableClientState(GL_VERTEX_ARRAY);
     // glGenBuffers(1, &vertices);
 
