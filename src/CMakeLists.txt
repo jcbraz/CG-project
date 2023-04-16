@@ -16,9 +16,10 @@ FetchContent_MakeAvailable(
 	tinyxml2
 )
 # add_executable(${PROJECT_NAME} engine.cpp geometricShapes.cpp)
-add_executable(${PROJECT_NAME} engine.cpp geometricShapes.cpp geometricShapes.h engineMaterials.cpp parseXML.cpp)
+# change generator.cpp to engine.cpp when the files are generated
+add_executable(${PROJECT_NAME} generator.cpp geometricShapes.cpp geometricShapes.h engineMaterials.cpp parseXML.cpp)
 target_link_libraries(${PROJECT_NAME} tinyxml2::tinyxml2)
-target_link_libraries(${PROJECT_NAME} GLEW)
+# target_link_libraries(${PROJECT_NAME} GLEW)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
