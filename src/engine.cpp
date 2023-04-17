@@ -204,7 +204,7 @@ void processMouseMotion(int xx, int yy) {
 int main(int argc, char** argv) {
     srand(time(nullptr));
 
-    world = new World("../test_files/test_files_phase_2/test_2_solar.xml");
+    world = new World("../../test_files/test_files_phase_2/test_2_solar.xml");
     window = new Window(world->getWindow());
     camera = new Camera(world->getCamera());
     group = new Group(world->getGroup());

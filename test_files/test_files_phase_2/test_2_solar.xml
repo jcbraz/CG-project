@@ -74,31 +74,40 @@
                 </model>
             </models>
         </group>
-        <group> <!-- ASTEROID BELT GROUP
+        <group> <!-- ASTEROID BELT GROUP -->
             <transform>
                 <rotate angle="-5" x="1" y="0" z="1"/>
             </transform>
-            <d3CircRandObjPlac radius="22" n="50" isRandRotation="True" scaleX="0.3" scaleY="0.3" scaleZ="0.3">
+            <d3CircRandObjPlac radius="22" n="50" isRandRotation="True">
+                <transform>
+                    <scale x="0.3" y="0.3" z="0.3"/>
+                </transform>
                 <models>
                     <model file="box_2_3.3d">
                         <color r="0.5" g="0.5" b="0.5"/>
                     </model>
-                </models>        
+                </models>
             </d3CircRandObjPlac>
-            <d3CircRandObjPlac radius="20" n="50" isRandRotation="True" scaleX="0.2" scaleY="0.3" scaleZ="0.4">
+            <d3CircRandObjPlac radius="20" n="50" isRandRotation="True">
+                <transform>
+                    <scale x="0.2" y="0.3" z="0.4"/>
+                </transform>
                 <models>
                     <model file="box_2_3.3d">
                         <color r="0.4" g="0.3" b="0.5"/>
                     </model>
                 </models>        
             </d3CircRandObjPlac>
-            <d3CircRandObjPlac radius="21" n="20" isRandRotation="True" scaleX="0.8" scaleY="0.8" scaleZ="0.3">
+            <d3CircRandObjPlac radius="21" n="20" isRandRotation="True">
+                <transform>
+                    <scale x="0.8" y="0.8" z="0.3"/>
+                </transform>
                 <models>
                     <model file="box_2_3.3d">
                         <color r="0.1" g="0.7" b="0.8"/>
                     </model>
                 </models>        
-            </d3CircRandObjPlac> -->
+            </d3CircRandObjPlac> 
         </group>
         <group> <!-- JUPITER GROUP -->
             <transform>
@@ -169,52 +178,70 @@
                 </model>
             </models>
         </group>
-        <group> <!-- KUIPER BELT GROUP
+        <group> <!-- KUIPER BELT GROUP -->
             <transform>
                 <rotate angle="25" x="1" y="0" z="1"/>
             </transform>
-            <d3CircRandObjPlac radius="50" n="100" isRandRotation="True" scaleX="0.5" scaleY="0.5" scaleZ="0.5">
+            <d3CircRandObjPlac radius="50" n="100" isRandRotation="True">
+                <transform>
+                    <scale x="0.5" y="0.5" z="0.5"/>
+                </transform>
                 <models>
                     <model file="box_2_3.3d">
                         <color r="0.5" g="0.5" b="0.5"/>
                     </model>
                 </models>        
             </d3CircRandObjPlac>
-            <d3CircRandObjPlac radius="51" n="100" isRandRotation="True" scaleX="0.4" scaleY="0.5" scaleZ="0.6">
+            <d3CircRandObjPlac radius="51" n="100" isRandRotation="True">
+                <transform>
+                    <scale x="0.4" y="0.5" z="0.6"/>
+                </transform>
                 <models>
                     <model file="box_2_3.3d">
                         <color r="0.4" g="0.3" b="0.5"/>
                     </model>
                 </models>        
             </d3CircRandObjPlac>
-            <d3CircRandObjPlac radius="52" n="40" isRandRotation="True" scaleX="1.1" scaleY="1" scaleZ="0.5">
+            <d3CircRandObjPlac radius="52" n="40" isRandRotation="True">
+                <transform>
+                    <scale x="1.1" y="1" z="0.5"/>
+                </transform>
                 <models>
                     <model file="box_2_3.3d">
                         <color r="0.1" g="0.7" b="0.8"/>
                     </model>
                 </models>        
             </d3CircRandObjPlac>
-                        <d3CircRandObjPlac radius="54" n="100" isRandRotation="True" scaleX="0.5" scaleY="0.5" scaleZ="0.5">
+            <d3CircRandObjPlac radius="54" n="100" isRandRotation="True">
+                <transform>
+                    <scale x="0.5" y="0.5" z="0.5"/>
+                </transform>
                 <models>
                     <model file="box_2_3.3d">
                         <color r="0.5" g="0.5" b="0.5"/>
                     </model>
                 </models>        
             </d3CircRandObjPlac>
-            <d3CircRandObjPlac radius="56" n="100" isRandRotation="True" scaleX="0.4" scaleY="0.5" scaleZ="0.6">
+            <d3CircRandObjPlac radius="56" n="100" isRandRotation="True">
+                <transform>
+                    <scale x="0.4" y="0.5" z="0.6"/>
+                </transform>
                 <models>
                     <model file="box_2_3.3d">
                         <color r="0.4" g="0.3" b="0.5"/>
                     </model>
                 </models>        
             </d3CircRandObjPlac>
-            <d3CircRandObjPlac radius="58" n="40" isRandRotation="True" scaleX="1.1" scaleY="1" scaleZ="0.5">
+            <d3CircRandObjPlac radius="58" n="40" isRandRotation="True">
+                <transform>
+                    <scale x="1.1" y="1" z="0.5"/>
+                </transform>
                 <models>
                     <model file="box_2_3.3d">
                         <color r="0.1" g="0.7" b="0.8"/>
                     </model>
                 </models>        
-            </d3CircRandObjPlac> -->
+            </d3CircRandObjPlac>
         </group>
     </group>
 </world>

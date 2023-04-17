@@ -3,16 +3,13 @@
 map<string, vector<_3f>> fileModels;
 
 XMLElement * _getChildElement(XMLElement * elem, const char* name) {
-    XMLElement * child = nullptr;
-
+    XMLElement * child;
     try {
         if (name == nullptr) {
             child = elem->FirstChildElement();
         } else {
             child = elem->FirstChildElement(name);
         }
-        if (!child)
-            return nullptr;
 
     } catch (const char * message) {
         cout << message << endl;
@@ -112,6 +109,31 @@ void Scale::run() {
     cout << "did a scale " << endl;
 }
 
+vector<Transform *> Transform::parseTransform(XMLElement * transform) {
+    
+    vector<Transform *> transf;
+    cout << "BOASS" << endl;
+            
+    XMLElement * transform_child = _getChildElement(transform, nullptr);
+    
+    while (transform_child) {
+        if (string(transform_child->Value()) == "translate") {
+             transf.push_back(new Translate(transform_child));
+        }
+        else if (string(transform_child->Value()) == "rotate") {
+             transf.push_back(new Rotate(transform_child));
+        }   else if (string(transform_child->Value()) == "scale") {
+             transf.push_back(new Scale(transform_child));
+        } else {
+            throw std::runtime_error("Invalid transformation '" + std::string(transform_child->Value()) + "'!");
+        }
+        transform_child = transform_child->NextSiblingElement();
+    }
+    
+    return transf;
+}
+
+
 Colour::Colour(XMLElement * colour) {
     if (!colour) {
         this->p = _3f(1, 1, 1);
@@ -156,69 +178,107 @@ void Model::run() {
     cout << "did a model " << endl;
 }
 
-Models::Models(XMLElement * models) {
-    XMLElement * child = _getChildElement(models, nullptr);
 
-    while(child) {
-        if (string(child->Value()) == "model") {
-            this->models.push_back(Model(child));
-        } else {
-        throw std::runtime_error("Invalid models child '" + std::string(child->Value()) + "'!");
+vector<Models *> Models::parseModels(XMLElement * models) {
+
+    vector<Models *> ms;
+    XMLElement * models_child = _getChildElement(models, nullptr);
+    
+    while (models_child) {
+        if (string(models_child->Value()) == "model") {
+             ms.push_back(new Model(models_child));
         }
-        child = child->NextSiblingElement();
+        else {
+            throw std::runtime_error("Invalid models element '" + std::string(models_child->Value()) + "'!");
+        }
+        models_child = models_child->NextSiblingElement();
     }
-
-    cout << "added a models " << endl;
+    
+    return ms;
 }
 
-void Models::run() {
-    for (auto model : models) {
-        model.run();
-    }
-}
-
-/*
 D3CircRandObjPlac::D3CircRandObjPlac(XMLElement * d3CircRandObjPlac) {
     this->radius = d3CircRandObjPlac->FloatAttribute("radius");
     this->num = d3CircRandObjPlac->IntAttribute("n");
     this->isRandRotation = d3CircRandObjPlac->BoolAttribute("isRandRotation");
-    this->scale = Scale(_3f(
-            d3CircRandObjPlac->FloatAttribute("scaleX"),
-            d3CircRandObjPlac->FloatAttribute("scaleY"),
-            d3CircRandObjPlac->FloatAttribute("scaleZ")
-            ));
-}*/
+    
+    XMLElement * child = _getChildElement(d3CircRandObjPlac, "models");
+
+    if (child) {
+        vector<Models *> ms = Models::parseModels(child);
+        for (auto m : ms)
+            this->models.push_back(m);
+    } else {
+        throw std::runtime_error("Invalid d3CircRandObjPlac, modles element missing!");
+    }
+
+    for (int i = 0; i < this->num; i++) {
+    float px = 0, pz = 0;
+        while (pow(px, 2) + pow(pz, 2) < pow(radius, 2)) {
+            float angle = 2.0 * M_PI * ((float)rand() / RAND_MAX);
+
+            px = radius * cos(angle);
+            pz = radius * sin(angle);
+        }
+        
+        vector<Transform *> tfs;
+
+        tfs.push_back(new Translate(px, 0, pz));
+
+        if (this->isRandRotation) {
+            float r_angle = 360.0 * ((double) rand() / RAND_MAX);
+            tfs.push_back(new Rotate(r_angle, _3f(0, 1, 1)));
+        }
+
+        child = _getChildElement(d3CircRandObjPlac, "transform");
+        if (child) {            
+            vector <Transform *> additional_tfs = Transform::parseTransform(child);
+            
+            for (const auto t : additional_tfs) {
+                tfs.push_back(t);
+            }
+        }
+
+        this->transforms.push_back(tfs);
+    }
+}
+
+void D3CircRandObjPlac::run() {
+    for (const auto tfs : this->transforms) {
+        glPushMatrix();
+
+        for (const auto t : tfs) {
+            t->run();
+        }
+        for (const auto m : this->models) {
+            m->run();
+        }
+        glPopMatrix();
+    }
+}
+
 
 Group::Group(XMLElement * group) {
 
     XMLElement * child = _getChildElement(group, nullptr);
 
     while (child) {
-        if (string(child->Value()) == "transform") {
-
-            XMLElement * transform_child = _getChildElement(child, nullptr);
-
-            while (transform_child) {
-
-                if (string(transform_child->Value()) == "translate") {
-                    this->transformations.push_back(new Translate(transform_child));
-                }
-
-                else if (string(transform_child->Value()) == "rotate") {
-                    this->transformations.push_back(new Rotate(transform_child));
-                }   else if (string(transform_child->Value()) == "scale") {
-                    this->transformations.push_back(new Scale(transform_child));
-                } else {
-                    throw std::runtime_error("Invalid transformation '" + std::string(transform_child->Value()) + "'!");
-                }
-                transform_child = transform_child->NextSiblingElement();
-            }
+        string value = child->Value();
+        if (value == "transform") {
+            vector <Transform *> ts = Transform::parseTransform(child);
+            for (auto t : ts)
+                this->transformations.push_back(t);
         }
-        else if (string(child->Value()) == "models") {
-            this->models.push_back(Models(child));
+        else if (value == "models") {
+            vector <Models *> ms = Models::parseModels(child);
+            for (auto m : ms)
+                this->models.push_back(m);
         }
-        else if (string(child->Value()) == "group") {
+        else if (value == "group") {
             this->groups.push_back(Group(child));
+        } 
+        else if (value == "d3CircRandObjPlac") {
+            this->d3CircRandObjPlac.push_back(D3CircRandObjPlac(child));
         }
         else {
             throw std::runtime_error("Invalid group child value '" + std::string(child->Value()) + "'!");
@@ -231,16 +291,20 @@ Group::Group(XMLElement * group) {
 
 void Group::run() {
     glPushMatrix();
-    for (auto transform : this->transformations) {
+    for (const auto transform : this->transformations) {
         transform->run();
     }
 
-    for (auto models : this->models) {
-        models.run();
+    for (const auto models : this->models) {
+        models->run();
     }
 
     for (Group group : this->groups) {
         group.run();
+    }
+
+    for (D3CircRandObjPlac d3 : this->d3CircRandObjPlac) {
+        d3.run();
     }
 
     glPopMatrix();

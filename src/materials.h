@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include<math.h>
 
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
@@ -71,6 +72,7 @@ class Transform {
     public:
         virtual ~Transform() = default;
         virtual void run() = 0;
+        static vector<Transform *> parseTransform(XMLElement * transform);
 };
 
 class Rotate : public Transform {
@@ -80,6 +82,7 @@ class Rotate : public Transform {
 
     public:
         explicit Rotate(XMLElement * rotate);
+        Rotate(float angle, _3f p) : angle(angle), p(p) {};
         void run() override;
 };
 
@@ -89,6 +92,7 @@ class Translate : public Transform {
     
     public:
         explicit Translate(XMLElement * translate);
+        Translate(float x, float y, float z) : p(_3f(x, y, z)) {};
         void run() override;
 };
 
@@ -112,18 +116,14 @@ class Colour {
         void run();
 };
 
-class D3CircRandObjPlac {
-    private:
-        float radius;
-        int num;
-        bool isRandRotation;
-        Scale scale;
-
+class Models {
     public:
-        D3CircRandObjPlac(XMLElement * d3CircRandObjPlac);
+        virtual ~Models() = default;
+        virtual void run() = 0;
+        static vector <Models *> parseModels(XMLElement * models);
 };
 
-class Model {
+class Model : public Models {
     private:
         string modelName;
         Colour colour;
@@ -131,22 +131,28 @@ class Model {
     
     public:
         explicit Model(XMLElement * model);
-        void run();
+        void run() override;
 };
 
-class Models {
+
+class D3CircRandObjPlac {
     private:
-        vector<Model> models;
+        float radius;
+        int num;
+        bool isRandRotation;
+        vector<Models *> models;
+        vector<vector<Transform *>> transforms;
 
     public:
-        explicit Models(XMLElement * models);
+        D3CircRandObjPlac(XMLElement * d3CircRandObjPlac);
         void run();
 };
 
 class Group {
     private:
-        vector<Models> models;
+        vector<Models*> models;
         vector<Transform*> transformations;
+        vector<D3CircRandObjPlac> d3CircRandObjPlac;
         vector<Group> groups;
 
     public:
