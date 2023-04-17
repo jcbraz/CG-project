@@ -141,7 +141,7 @@ class D3CircRandObjPlac {
         int num;
         bool isRandRotation;
         vector<Models *> models;
-        vector<vector<Transform *>> transforms;
+        vector<vector<Transform *> > transforms;
 
     public:
         D3CircRandObjPlac(XMLElement * d3CircRandObjPlac);

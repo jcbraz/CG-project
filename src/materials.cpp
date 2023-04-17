@@ -176,7 +176,9 @@ Model::Model(XMLElement * model) : disableCull(false) {
 
         glGenBuffers(1, &vbo);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, f_pts.size() * sizeof(float), f_pts.data(), GL_STATIC_DRAW);
+        // glBufferData(GL_ELEMENT_ARRAY_BUFFER, f_pts.size() * sizeof(float), f_pts.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, f_pts.size() * sizeof(float), f_pts.data(), GL_STATIC_DRAW);
+
         
         fileModels[fpath] = make_pair(vbo, f_pts.size());
     }
@@ -191,7 +193,7 @@ void Model::run() {
     glBindBuffer(GL_ARRAY_BUFFER, fileModels[this->modelName].first);
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, 0, 0);
-    //glDrawElements(GL_TRIANGLES, fileModels[this->modelName].second, GL_UNSIGNED_INT, NULL);
+    // glDrawElements(GL_TRIANGLES, fileModels[this->modelName].second, GL_UNSIGNED_INT, NULL);
     glDrawArrays(GL_TRIANGLES, 0, fileModels[this->modelName].second);
     cout << "did a model " << endl;
 }

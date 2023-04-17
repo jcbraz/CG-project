@@ -5,6 +5,8 @@ PROJECT(group_project)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+set(CMAKE_CXX_STANDARD 11)
+
 # Add the tinyxml2 library
 include(FetchContent)
 FetchContent_Declare(
@@ -20,7 +22,7 @@ FetchContent_MakeAvailable(
 add_executable(${PROJECT_NAME} engine.cpp geometricShapes.cpp materials.cpp)
 target_link_libraries(${PROJECT_NAME} tinyxml2::tinyxml2)
 # disable if on Mac
-target_link_libraries(${PROJECT_NAME} GLEW)
+# target_link_libraries(${PROJECT_NAME} GLEW)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
