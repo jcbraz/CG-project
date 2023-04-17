@@ -1,6 +1,8 @@
 #include "materials.h"
 
-map<string, vector<_3f>> fileModels;
+map<string, std::pair<GLuint, int>> fileModels;
+
+// GLuint vertices, verticeCount;
 
 XMLElement * _getChildElement(XMLElement * elem, const char* name) {
     XMLElement * child;
@@ -112,7 +114,6 @@ void Scale::run() {
 vector<Transform *> Transform::parseTransform(XMLElement * transform) {
     
     vector<Transform *> transf;
-    cout << "BOASS" << endl;
             
     XMLElement * transform_child = _getChildElement(transform, nullptr);
     
@@ -163,18 +164,35 @@ Model::Model(XMLElement * model) : disableCull(false) {
 
     string fpath = model->Attribute("file");
     if (fileModels.find(fpath) == fileModels.end()) {
-        fileModels[fpath] =  GeometricShape::readFrom3DFile(fpath);
-    }
+        vector<_3f> pts = GeometricShape::readFrom3DFile(fpath);
+        vector<float> f_pts;
+        for (_3f p : pts) {
+            f_pts.push_back(p.x);
+            f_pts.push_back(p.y);
+            f_pts.push_back(p.z);
+        }
 
+        GLuint vbo;
+
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, f_pts.size() * sizeof(float), f_pts.data(), GL_STATIC_DRAW);
+        
+        fileModels[fpath] = make_pair(vbo, f_pts.size());
+    }
     this->modelName = fpath;
 
     cout << "added a model " << endl;
 }
 
 void Model::run() {
-    glBegin(GL_TRIANGLES);
     this->colour.run();
-    GeometricShape::drawObject(fileModels[this->modelName]);
+    //GeometricShape::drawObject(fileModels[this->modelName]);
+    glBindBuffer(GL_ARRAY_BUFFER, fileModels[this->modelName].first);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, 0);
+    //glDrawElements(GL_TRIANGLES, fileModels[this->modelName].second, GL_UNSIGNED_INT, NULL);
+    glDrawArrays(GL_TRIANGLES, 0, fileModels[this->modelName].second);
     cout << "did a model " << endl;
 }
 
@@ -257,7 +275,6 @@ void D3CircRandObjPlac::run() {
     }
 }
 
-
 Group::Group(XMLElement * group) {
 
     XMLElement * child = _getChildElement(group, nullptr);
@@ -311,6 +328,7 @@ void Group::run() {
 }
 
 World::World(const string& path) {
+
     XMLDocument doc;
 
     try {
@@ -348,10 +366,30 @@ World::World(const string& path) {
         cout << message << endl;
     }
     this->camera = Camera(camera);
+}
+
+void World::evaluateGroup(const string& path) {
+
+    XMLDocument doc;
+
+    try {
+        XMLError read_error = doc.LoadFile(path.c_str());
+        if (read_error != XML_SUCCESS) throw read_error;
+    } catch (XMLError error) {
+        cout << error << endl;
+    }
+
+    XMLNode* world;
+    try {
+        world = doc.FirstChild();
+        if (world == nullptr) throw "Error finding element 'world'";
+    } catch (const char* message) {
+        cout << message << endl;
+    }
 
     XMLElement * group = world->FirstChildElement("group");
-
     if (group) {
         this->group = Group(group);
     }
+
 }

@@ -169,6 +169,7 @@ class World {
     
     public:
         explicit World(const string& path);
+        void evaluateGroup(const string& path);
         Camera getCamera() {return camera;};
         Window getWindow() {return window;};
         Group getGroup() {return group;};

@@ -24,10 +24,6 @@
 
 using namespace std;
 
-// GLuint vertices, verticeCount;
-GLuint vertices, verticeCount;
-vector<float> vertexB;
-
 int startX, startY, tracking = 0;
 float _alpha = 0, _beta = 35, r = 10;
 
@@ -202,12 +198,15 @@ void processMouseMotion(int xx, int yy) {
 
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
 int main(int argc, char** argv) {
+
+    string path = "../../test_files/test_files_phase_2/test_2_1.xml";
+    //string path = "../../test_files/test_files_phase_2/test_2_solar.xml";
+
     srand(time(nullptr));
 
-    world = new World("../../test_files/test_files_phase_2/test_2_solar.xml");
+    world = new World(path);
     window = new Window(world->getWindow());
     camera = new Camera(world->getCamera());
-    group = new Group(world->getGroup());
 
     // init glut and window
 
@@ -226,7 +225,6 @@ int main(int argc, char** argv) {
     // Glew --> activate if not in mac
     glewInit();
     glEnableClientState(GL_VERTEX_ARRAY);
-    // glGenBuffers(1, &vertices);
 
     // Callback registration for keyboard processing
     glutKeyboardFunc(processKeys);
@@ -243,6 +241,9 @@ int main(int argc, char** argv) {
 
     // frames
     timebase = glutGet(GLUT_ELAPSED_TIME);
+
+    world->evaluateGroup(path);
+    group = new Group(world->getGroup());
 
     // Glut's main cycle
     glutMainLoop();
