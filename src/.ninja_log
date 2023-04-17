@@ -1,0 +1,20 @@
+# ninja log v5
+6	2538	1681692181794103956	CMakeFiles/group_project.dir/engine.cpp.o	fc4d4cd098e11e84
+1159	2290	1681687219677182353	CMakeFiles/group_project.dir/parseXML.cpp.o	f2fdc6c1eea33a94
+2743	2801	1681687220183849046	_deps/tinyxml2-build/libtinyxml2.a	606b1a567e91d88f
+0	192	1681692373540780485	build.ninja	50b944bb11fd2113
+1	912	1681692209800772063	CMakeFiles/group_project.dir/materials.cpp.o	aa81ab1736c011a6
+2042	2743	1681687220130515710	_deps/tinyxml2-build/CMakeFiles/tinyxml2.dir/tinyxml2.cpp.o	2107a670d4bd5562
+0	2042	1681687219427182341	CMakeFiles/group_project.dir/engineMaterials.cpp.o	f444c022427ce08e
+13	2003	1681692181260770595	CMakeFiles/group_project.dir/geometricShapes.cpp.o	7d1193c1a8e5bb27
+2527	2825	1681691947017425224	group_project	8da90bda5640aa2
+0	202	1681692373540780485	build.ninja	50b944bb11fd2113
+1	157	1681692373717447161	group_project	7ae3e30bca08334
+2	2652	1681692945287476554	CMakeFiles/group_project.dir/engine.cpp.o	fc4d4cd098e11e84
+4	2817	1681692945454143229	CMakeFiles/group_project.dir/materials.cpp.o	aa81ab1736c011a6
+1	1750	1681693002560812834	CMakeFiles/group_project.dir/engine.cpp.o	fc4d4cd098e11e84
+2	2210	1681693003020812857	CMakeFiles/group_project.dir/materials.cpp.o	aa81ab1736c011a6
+2210	2407	1681693003214146201	group_project	7ae3e30bca08334
+1	1334	1681694244067543552	CMakeFiles/group_project.dir/engine.cpp.o	fc4d4cd098e11e84
+1	1841	1681694244574210245	CMakeFiles/group_project.dir/materials.cpp.o	aa81ab1736c011a6
+1842	2034	1681694244764210254	group_project	7ae3e30bca08334
