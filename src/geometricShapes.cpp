@@ -31,16 +31,16 @@
  *
  */
 
-Point::Point(float x, float y, float z) {
-    Point::x = x;
-    Point::y = y;
-    Point::z = z;
+_3f::_3f(float x, float y, float z) {
+    _3f::x = x;
+    _3f::y = y;
+    _3f::z = z;
 }
 
-Point::Point() {
-    Point::x = 0;
-    Point::y = 0;
-    Point::z = 0;
+_3f::_3f() {
+    _3f::x = 0;
+    _3f::y = 0;
+    _3f::z = 0;
 }
 
 /*
@@ -68,20 +68,20 @@ Plane::Plane(float length, int divisions, string fileName) {
     Plane::fileName = std::move(fileName);
 }
 
-vector<Point> Plane::getPoints() {
-    vector<Point> points;
+vector<_3f> Plane::getPoints() {
+    vector<_3f> points;
     float n_d = (float) length / (float) divisions;
     float h_l = (float) length / 2;
     for (int i = 0; i < divisions; i++) {
         for (int j = 0; j < divisions; j++) {
             //primeiro triangulo
-            points.push_back(Point(-h_l + n_d * j, 0, -h_l+ n_d * i));
-            points.push_back(Point(-h_l + n_d * j, 0, -h_l + n_d * (i+1)));
-            points.push_back(Point(-h_l + n_d * (j+1), 0, -h_l + n_d * i));
+            points.push_back(_3f(-h_l + n_d * j, 0, -h_l+ n_d * i));
+            points.push_back(_3f(-h_l + n_d * j, 0, -h_l + n_d * (i+1)));
+            points.push_back(_3f(-h_l + n_d * (j+1), 0, -h_l + n_d * i));
             //segundo triangulo
-            points.push_back(Point(-h_l + n_d * j, 0, -h_l + n_d * (i+1)));
-            points.push_back(Point(-h_l + n_d * (j+1), 0, -h_l + n_d * (i+1)));
-            points.push_back(Point(-h_l + n_d * (j+1), 0, -h_l + n_d * i));
+            points.push_back(_3f(-h_l + n_d * j, 0, -h_l + n_d * (i+1)));
+            points.push_back(_3f(-h_l + n_d * (j+1), 0, -h_l + n_d * (i+1)));
+            points.push_back(_3f(-h_l + n_d * (j+1), 0, -h_l + n_d * i));
         }
     }
 
@@ -123,8 +123,8 @@ Box::Box(float length, int divisions, string pathFile) {
 }
 
 
-vector<Point> Box::getPoints() {
-    vector<Point> points;
+vector<_3f> Box::getPoints() {
+    vector<_3f> points;
     float measure = length / 2.0f;
     float division_size = length / (float)divisions;
 
@@ -134,22 +134,22 @@ vector<Point> Box::getPoints() {
         float x = -measure + i * division_size;
         for (int j = 0; j < divisions; j++) {
             float y = -measure + j * division_size;
-            points.push_back(Point(x, y, -measure));
-            points.push_back(Point(x, y+division_size, -measure));
-            points.push_back(Point(x+division_size, y, -measure));
+            points.push_back(_3f(x, y, -measure));
+            points.push_back(_3f(x, y+division_size, -measure));
+            points.push_back(_3f(x+division_size, y, -measure));
 
-            points.push_back(Point(x+division_size, y, -measure));
-            points.push_back(Point(x, y+division_size, -measure));
-            points.push_back(Point(x+division_size, y+division_size, -measure));
+            points.push_back(_3f(x+division_size, y, -measure));
+            points.push_back(_3f(x, y+division_size, -measure));
+            points.push_back(_3f(x+division_size, y+division_size, -measure));
 
 
-            points.push_back(Point(x, y, measure));
-            points.push_back(Point(x+division_size, y, measure));
-            points.push_back(Point(x, y+division_size, measure));
+            points.push_back(_3f(x, y, measure));
+            points.push_back(_3f(x+division_size, y, measure));
+            points.push_back(_3f(x, y+division_size, measure));
 
-            points.push_back(Point(x+division_size, y, measure));
-            points.push_back(Point(x+division_size, y+division_size, measure));
-            points.push_back(Point(x, y+division_size, measure));
+            points.push_back(_3f(x+division_size, y, measure));
+            points.push_back(_3f(x+division_size, y+division_size, measure));
+            points.push_back(_3f(x, y+division_size, measure));
 
         }
     }
@@ -163,24 +163,24 @@ vector<Point> Box::getPoints() {
 
 
             // Top
-            points.push_back(Point(x, measure, z));
-            points.push_back(Point(x, measure, z+division_size));
-            points.push_back(Point(x+division_size, measure, z));
+            points.push_back(_3f(x, measure, z));
+            points.push_back(_3f(x, measure, z+division_size));
+            points.push_back(_3f(x+division_size, measure, z));
 
 
-            points.push_back(Point(x+division_size, measure, z));
-            points.push_back(Point(x, measure, z+division_size));
-            points.push_back(Point(x+division_size, measure, z+division_size));
+            points.push_back(_3f(x+division_size, measure, z));
+            points.push_back(_3f(x, measure, z+division_size));
+            points.push_back(_3f(x+division_size, measure, z+division_size));
 
             // Bottom
-            points.push_back(Point(x, -measure, z));
-            points.push_back(Point(x+division_size, -measure, z));
-            points.push_back(Point(x, -measure, z+division_size));
+            points.push_back(_3f(x, -measure, z));
+            points.push_back(_3f(x+division_size, -measure, z));
+            points.push_back(_3f(x, -measure, z+division_size));
 
 
-            points.push_back(Point(x+division_size, -measure, z));
-            points.push_back(Point(x+division_size, -measure, z+division_size));
-            points.push_back(Point(x, -measure, z+division_size));
+            points.push_back(_3f(x+division_size, -measure, z));
+            points.push_back(_3f(x+division_size, -measure, z+division_size));
+            points.push_back(_3f(x, -measure, z+division_size));
 
         }
     }
@@ -191,24 +191,24 @@ vector<Point> Box::getPoints() {
         float y = -measure + i * division_size;
         for (int j = 0; j < divisions; j++) {
             float z = -measure + j * division_size;
-            points.push_back(Point(-measure, y, z));
-            points.push_back(Point(-measure, y, z+division_size));
-            points.push_back(Point(-measure, y+division_size, z));
+            points.push_back(_3f(-measure, y, z));
+            points.push_back(_3f(-measure, y, z+division_size));
+            points.push_back(_3f(-measure, y+division_size, z));
 
 
-            points.push_back(Point(-measure, y+division_size, z));
-            points.push_back(Point(-measure, y, z+division_size));
-            points.push_back(Point(-measure, y+division_size, z+division_size));
+            points.push_back(_3f(-measure, y+division_size, z));
+            points.push_back(_3f(-measure, y, z+division_size));
+            points.push_back(_3f(-measure, y+division_size, z+division_size));
 
 
-            points.push_back(Point(measure, y, z));
-            points.push_back(Point(measure, y+division_size, z));
-            points.push_back(Point(measure, y, z+division_size));
+            points.push_back(_3f(measure, y, z));
+            points.push_back(_3f(measure, y+division_size, z));
+            points.push_back(_3f(measure, y, z+division_size));
 
 
-            points.push_back(Point(measure, y+division_size, z));
-            points.push_back(Point(measure, y+division_size, z+division_size));
-            points.push_back(Point(measure, y, z+division_size));
+            points.push_back(_3f(measure, y+division_size, z));
+            points.push_back(_3f(measure, y+division_size, z+division_size));
+            points.push_back(_3f(measure, y, z+division_size));
 
         }
     }
@@ -230,6 +230,12 @@ void Box::Print(ostream &) const {
  *
  */
 
+
+/*
+ *
+ * RING CLASS
+ *
+ */
 Ring::Ring(float innerRadius, float outerRadius, int slices, int segments, string fName) :
  innerRadius(innerRadius),
  outerRadius(outerRadius),
@@ -239,8 +245,8 @@ Ring::Ring(float innerRadius, float outerRadius, int slices, int segments, strin
     Ring::fileName = fName;
 }
 
-vector<Point> Ring::getPoints() {
-    vector<Point> points;
+vector<_3f> Ring::getPoints() {
+    vector<_3f> points;
     float _alpha = 2 * M_PI / slices;
     float seg_size = (outerRadius - innerRadius) / segments;
     
@@ -254,13 +260,13 @@ vector<Point> Ring::getPoints() {
             float a1 = _alpha * j;
             float a2 = a1 + _alpha;
 
-                points.push_back(Point(r1 * cos(a1) , 0, r1 * sin(a1)));
-                points.push_back(Point(r1 * cos(a2) , 0, r1 * sin(a2)));
-                points.push_back(Point(r2 * cos(a1) , 0, r2 * sin(a1)));
+                points.push_back(_3f(r1 * cos(a1) , 0, r1 * sin(a1)));
+                points.push_back(_3f(r1 * cos(a2) , 0, r1 * sin(a2)));
+                points.push_back(_3f(r2 * cos(a1) , 0, r2 * sin(a1)));
         
-                points.push_back(Point(r2 * cos(a1) , 0, r2 * sin(a1)));
-                points.push_back(Point(r1 * cos(a2) , 0, r1 * sin(a2)));
-                points.push_back(Point(r2 * cos(a2) , 0, r2 * sin(a2)));
+                points.push_back(_3f(r2 * cos(a1) , 0, r2 * sin(a1)));
+                points.push_back(_3f(r1 * cos(a2) , 0, r1 * sin(a2)));
+                points.push_back(_3f(r2 * cos(a2) , 0, r2 * sin(a2)));
         }
     }
 
@@ -274,6 +280,12 @@ void Ring::Print(ostream &) const {
     cout << "Slices:" << this->slices << endl;
     cout << "Segments:" << this->segments << endl;
 }
+
+/*
+ *
+ * END RING CLASS
+ *
+ */
 
 /*
  *
@@ -302,8 +314,8 @@ Sphere::Sphere(float radius, int slices, int stacks, string fileName) {
     Sphere::fileName = std::move(fileName);
 }
 
-vector<Point> Sphere::getPoints() {
-    vector<Point> points;
+vector<_3f> Sphere::getPoints() {
+    vector<_3f> points;
 
     float _alpha = 2 * M_PI / slices;
     float _beta = M_PI / stacks;
@@ -315,13 +327,13 @@ vector<Point> Sphere::getPoints() {
         for (int i = 0; i < slices; i++) {
             float av = i * _alpha;
             float ahv = av + _alpha;
-            points.push_back(Point(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));
-            points.push_back(Point(r * cos(bv) * sin(ahv), r * sin(bv) ,r * cos(bv) * cos(ahv)));
-            points.push_back(Point(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
+            points.push_back(_3f(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));
+            points.push_back(_3f(r * cos(bv) * sin(ahv), r * sin(bv) ,r * cos(bv) * cos(ahv)));
+            points.push_back(_3f(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
 
-            points.push_back(Point(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));
-            points.push_back(Point(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
-            points.push_back(Point(r * cos(bhv) * sin(av), r * sin(bhv) ,r * cos(bhv) * cos(av)));
+            points.push_back(_3f(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));
+            points.push_back(_3f(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
+            points.push_back(_3f(r * cos(bhv) * sin(av), r * sin(bhv) ,r * cos(bhv) * cos(av)));
         }
     }
     return points;
@@ -369,35 +381,35 @@ Cone::Cone(float radius, float height, int slices, int stacks, string pathFile) 
 }
 
 
-vector<Point> Cone::getPoints() {
-    vector<Point> points;
+vector<_3f> Cone::getPoints() {
+    vector<_3f> points;
 
     float alpha = 2 * M_PI / slices;
     float v_h = height / stacks;
     float v_r = radius / stacks;
     // Base
     for (int i = 0; i < slices; i++) {
-        points.push_back(Point(0, 0, 0));
-        points.push_back(Point(radius * sin(alpha * (i + 1)), 0, radius * cos(alpha * (i + 1))));
-        points.push_back(Point(radius * sin(alpha * i), 0, radius * cos(alpha * i)));
+        points.push_back(_3f(0, 0, 0));
+        points.push_back(_3f(radius * sin(alpha * (i + 1)), 0, radius * cos(alpha * (i + 1))));
+        points.push_back(_3f(radius * sin(alpha * i), 0, radius * cos(alpha * i)));
 
         for (int j = 0; j < stacks-1; j++) {
 
-            points.push_back(Point((radius - v_r * j) * sin(alpha * i), j * v_h,(radius - v_r * j) * cos(alpha * i)));
-            points.push_back(Point((radius - v_r * j) * sin(alpha * (i+1)), j * v_h, (radius - v_r * j) * cos(alpha * (i+1))));
-            points.push_back(Point((radius - v_r * (j+1)) * sin(alpha * (i+1)), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * (i+1))));
+            points.push_back(_3f((radius - v_r * j) * sin(alpha * i), j * v_h,(radius - v_r * j) * cos(alpha * i)));
+            points.push_back(_3f((radius - v_r * j) * sin(alpha * (i+1)), j * v_h, (radius - v_r * j) * cos(alpha * (i+1))));
+            points.push_back(_3f((radius - v_r * (j+1)) * sin(alpha * (i+1)), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * (i+1))));
 
-            points.push_back(Point((radius - v_r * j) * sin (alpha * i), j * v_h, (radius - v_r * j) * cos(alpha * i)));
-            points.push_back(Point((radius - v_r * (j+1)) * sin (alpha * (i+1)), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * (i+1))));
-            points.push_back(Point((radius - v_r * (j+1)) * sin (alpha * i), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * i)));
+            points.push_back(_3f((radius - v_r * j) * sin (alpha * i), j * v_h, (radius - v_r * j) * cos(alpha * i)));
+            points.push_back(_3f((radius - v_r * (j+1)) * sin (alpha * (i+1)), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * (i+1))));
+            points.push_back(_3f((radius - v_r * (j+1)) * sin (alpha * i), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * i)));
 
         }
     }
 
     for (int i = 0; i < slices; i++) {
-        points.push_back(Point((radius - v_r * (stacks-1)) * sin(alpha * i), (stacks-1) * v_h,(radius - v_r * (stacks-1)) * cos(alpha * i)));
-        points.push_back(Point((radius - v_r * (stacks-1)) * sin(alpha * (i+1)), (stacks-1) * v_h, (radius - v_r * (stacks-1)) * cos(alpha * (i+1))));
-        points.push_back(Point((radius - v_r * stacks) * sin(alpha * (i+1)), stacks * v_h, (radius - v_r * stacks) * cos(alpha * (i+1))));
+        points.push_back(_3f((radius - v_r * (stacks-1)) * sin(alpha * i), (stacks-1) * v_h,(radius - v_r * (stacks-1)) * cos(alpha * i)));
+        points.push_back(_3f((radius - v_r * (stacks-1)) * sin(alpha * (i+1)), (stacks-1) * v_h, (radius - v_r * (stacks-1)) * cos(alpha * (i+1))));
+        points.push_back(_3f((radius - v_r * stacks) * sin(alpha * (i+1)), stacks * v_h, (radius - v_r * stacks) * cos(alpha * (i+1))));
     }
 
     return points;
@@ -424,14 +436,14 @@ void Cone::Print(ostream &) const {
  * END POINT STRUCT
  *
  */
-void GeometricShape::drawObject(vector<Point> points) {
+void GeometricShape::drawObject(vector<_3f> points) {
     glBegin(GL_TRIANGLES);
         for (auto p : points)
             glVertex3f(p.x, p.y, p.z);
     glEnd();
 }
 
-void GeometricShape::writeTo3DFile(vector<Point> points, string fName) {
+void GeometricShape::writeTo3DFile(vector<_3f> points, string fName) {
     ofstream file(fName);
     cout << "Writing Points to:" << fName << endl;
     for (auto p : points) {
@@ -442,8 +454,8 @@ void GeometricShape::writeTo3DFile(vector<Point> points, string fName) {
     cout << "Done!" << endl;
 }
 
-vector<Point> GeometricShape::readFrom3DFile(string fName) {
-    vector<Point> points;
+vector<_3f> GeometricShape::readFrom3DFile(string fName) {
+    vector<_3f> points;
     ifstream file(fName);
 
     if (!file) {
@@ -469,7 +481,7 @@ vector<Point> GeometricShape::readFrom3DFile(string fName) {
             j = 0;
         }
         if (nms.size() == 3) {
-            points.push_back(Point(nms[0], nms[1], nms[2]));
+            points.push_back(_3f(nms[0], nms[1], nms[2]));
             nms.clear();
         }
     }

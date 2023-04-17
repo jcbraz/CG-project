@@ -17,7 +17,7 @@ FetchContent_MakeAvailable(
 )
 # add_executable(${PROJECT_NAME} engine.cpp geometricShapes.cpp)
 # change generator.cpp to engine.cpp when the files are generated
-add_executable(${PROJECT_NAME} generator.cpp geometricShapes.cpp geometricShapes.h engineMaterials.cpp parseXML.cpp)
+add_executable(${PROJECT_NAME} engine.cpp geometricShapes.cpp materials.cpp)
 target_link_libraries(${PROJECT_NAME} tinyxml2::tinyxml2)
 # disable if on Mac
 target_link_libraries(${PROJECT_NAME} GLEW)
@@ -49,7 +49,6 @@ if(WIN32)
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
     
 else(WIN32) #Linux and Mac
-
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} Wno-deprecated")
     find_package(GLUT REQUIRED)
     include_directories(${GLUT_INCLUDE_DIR})

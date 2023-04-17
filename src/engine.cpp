@@ -17,9 +17,10 @@
 #endif
 #define GLUT_
 
-#include "engineMaterials.h"
+// #include "engineMaterials.h"
+// #include "parseXML.h"
 #include "geometricShapes.h"
-#include "parseXML.h"
+#include "materials.h"
 
 using namespace std;
 
@@ -30,9 +31,14 @@ vector<float> vertexB;
 int startX, startY, tracking = 0;
 float _alpha = 0, _beta = 35, r = 10;
 
-World* world;
-Camera* camera;
+
+World * world;
+Window * window;
+Camera * camera;
+Group * group;
+/*
 Content* content;
+*/
 
 int timebase = 0;
 float frames = 0;
@@ -70,9 +76,12 @@ void changeSize(int w, int h) {
     glViewport(0, 0, w, h);
 
     // Set perspective
-    Point proj = camera->getProjection();
 
+
+    _3f proj = camera->getProjection();
     gluPerspective(proj.x, ratio, proj.y, proj.z);
+
+    //gluPerspective(60, ratio, 1, 1000);
 
     // return to the model view matrix mode
     glMatrixMode(GL_MODELVIEW);
@@ -85,9 +94,11 @@ void renderScene(void) {
     // set the camera
     glLoadIdentity();
 
-    Point position = camera->getPosition();
-    Point lookAt = camera->getLookAt();
-    Point up = camera->getUp();
+
+
+    _3f position = camera->getPosition();
+    _3f lookAt = camera->getLookAt();
+    _3f up = camera->getUp();
 
     gluLookAt(position.x, position.y, position.z, lookAt.x, lookAt.y, lookAt.z,
               up.x, up.y, up.z);
@@ -106,7 +117,7 @@ void renderScene(void) {
     glVertex3f(0.0f, 0.0f, 1000.0f);
     glEnd();
 
-    content->applyContent();
+    group->run();
 
     displayFrameRate();
 
@@ -184,32 +195,28 @@ void processMouseMotion(int xx, int yy) {
     float camZ =
         rAux * cos(_alphaAux * 3.14 / 180.0) * cos(_betaAux * 3.14 / 180.0);
     float camY = rAux * sin(_betaAux * 3.14 / 180.0);
-    camera->setPosition(Point(camX, camY, camZ));
+    camera->setPosition(_3f(camX, camY, camZ));
 
     glutPostRedisplay();
 }
 
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
 int main(int argc, char** argv) {
-    srand(time(NULL));
+    srand(time(nullptr));
 
-    pair<World*, Content*> wc =
-        parseWorld("../../test_files/test_files_phase_2/test_2_solar.xml");
-    world = wc.first;
+    world = new World("../test_files/test_files_phase_2/test_2_solar.xml");
+    window = new Window(world->getWindow());
+    camera = new Camera(world->getCamera());
+    group = new Group(world->getGroup());
 
-    Camera c = world->getCamera();
-    camera = new Camera(c.getPosition(), c.getLookAt(), c.getUp(),
-                        c.getProjection());
-
-    content = wc.second;
     // init glut and window
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowPosition(100, 100);
 
-    glutInitWindowSize(world->getWindow().getWidth(),
-                       world->getWindow().getHeight());
+    glutInitWindowSize(window->getWidth(), window->getHeight());
+   //glutInitWindowSize(1000, 1000);
     glutCreateWindow("Engine");
 
     // Required callback registry
