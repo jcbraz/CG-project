@@ -199,7 +199,7 @@ void processMouseMotion(int xx, int yy) {
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
 int main(int argc, char** argv) {
 
-    string path = "../../test_files/test_files_phase_2/test_2_solar.xml";
+    string path = "../../test_files/solar_system/solar_system.xml";
     //string path = "../../test_files/test_files_phase_2/test_2_solar.xml";
 
     srand(time(nullptr));
@@ -223,7 +223,7 @@ int main(int argc, char** argv) {
     glutReshapeFunc(changeSize);
 
     // Glew --> activate if not in mac
-    // glewInit();
+    glewInit();
     glEnableClientState(GL_VERTEX_ARRAY);
 
     // Callback registration for keyboard processing

@@ -68,14 +68,10 @@ Rotate::Rotate(XMLElement * rotate) {
         rotate->FloatAttribute("y"),
         rotate->FloatAttribute("z")
     );
-
-    cout << "added a rotate " << endl;
-
 }
 
 void Rotate::run() {
     glRotatef(this->angle, this->p.x, this->p.y, this->p.z);
-    cout << "did a rotate " << endl;
 }
 
 Translate::Translate(XMLElement * translate) {
@@ -84,14 +80,10 @@ Translate::Translate(XMLElement * translate) {
         translate->FloatAttribute("y"),
         translate->FloatAttribute("z")
     );
-
-        cout << "added a translate " << this->p.x << this->p.y << this->p.z << endl;
-
 }
 
 void Translate::run() {
     glTranslatef(this->p.x, this->p.y, this->p.z);
-    cout << "did a translate " << endl;
 }
 
 Scale::Scale(XMLElement * scale) {
@@ -101,14 +93,12 @@ Scale::Scale(XMLElement * scale) {
         scale->FloatAttribute("z")
     );
     
-    cout << "added a scale " << endl;
 }
 
 
 void Scale::run() {
     glScalef(this->p.x, this->p.y, this->p.z);
 
-    cout << "did a scale " << endl;
 }
 
 vector<Transform *> Transform::parseTransform(XMLElement * transform) {
@@ -144,8 +134,6 @@ Colour::Colour(XMLElement * colour) {
             colour->FloatAttribute("g"),
             colour->FloatAttribute("b")
         );
-
-        cout << "added a colour " << endl;
     }
 }
 
@@ -176,15 +164,12 @@ Model::Model(XMLElement * model) : disableCull(false) {
 
         glGenBuffers(1, &vbo);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        // glBufferData(GL_ELEMENT_ARRAY_BUFFER, f_pts.size() * sizeof(float), f_pts.data(), GL_STATIC_DRAW);
         glBufferData(GL_ARRAY_BUFFER, f_pts.size() * sizeof(float), f_pts.data(), GL_STATIC_DRAW);
 
         
         fileModels[fpath] = make_pair(vbo, f_pts.size());
     }
     this->modelName = fpath;
-
-    cout << "added a model " << endl;
 }
 
 void Model::run() {
@@ -193,9 +178,7 @@ void Model::run() {
     glBindBuffer(GL_ARRAY_BUFFER, fileModels[this->modelName].first);
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, 0, 0);
-    // glDrawElements(GL_TRIANGLES, fileModels[this->modelName].second, GL_UNSIGNED_INT, NULL);
     glDrawArrays(GL_TRIANGLES, 0, fileModels[this->modelName].second);
-    cout << "did a model " << endl;
 }
 
 
@@ -216,6 +199,7 @@ vector<Models *> Models::parseModels(XMLElement * models) {
     
     return ms;
 }
+
 
 D3CircRandObjPlac::D3CircRandObjPlac(XMLElement * d3CircRandObjPlac) {
     this->radius = d3CircRandObjPlac->FloatAttribute("radius");
@@ -279,6 +263,32 @@ void D3CircRandObjPlac::run() {
 
 Group::Group(XMLElement * group) {
 
+    const XMLAttribute * hasXML = group->FindAttribute("file");
+    if (hasXML) {
+        XMLDocument doc;
+        try {
+            XMLError read_error = doc.LoadFile(group->Attribute("file"));
+        if (read_error != XML_SUCCESS) throw read_error;
+        } catch (XMLError error) {
+            cout << error << endl;
+        }
+        
+        XMLElement * g;
+        
+        try {
+            g = doc.FirstChildElement("group");
+            if (g == nullptr) 
+                throw std::runtime_error("Error finding first Node group in file '" + string(group->Attribute("file")) + "' !");
+        } catch (const char* message) {
+            cout << message << endl;
+        }
+
+        this->groups.push_back(Group(g));
+    }
+
+    
+
+
     XMLElement * child = _getChildElement(group, nullptr);
 
     while (child) {
@@ -305,7 +315,6 @@ Group::Group(XMLElement * group) {
 
         child = child->NextSiblingElement();
     }
-    cout << "added a group " << endl;
 }
 
 void Group::run() {
