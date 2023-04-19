@@ -13,14 +13,14 @@ using namespace std;
  *
  */
 
-struct Point {
+struct _3f {
     float x;
     float y;
     float z;
 
 public:
-    Point();
-    Point(float x, float y, float z);
+    _3f();
+    _3f(float x, float y, float z);
 };
 
 /*
@@ -41,13 +41,13 @@ protected:
     string fileName;
 
 public:
-    virtual vector<Point> getPoints() = 0;
+    virtual vector<_3f> getPoints() = 0;
 
-    static void drawObject(vector<Point> points);
+    static void drawObject(vector<_3f> points);
 
-    static void writeTo3DFile(vector<Point> points, string fName);
+    static void writeTo3DFile(vector<_3f> points, string fName);
 
-    static vector<Point> readFrom3DFile(string fName);
+    static vector<_3f> readFrom3DFile(string fName);
 
     string getFileName() { return fileName; }
 
@@ -67,6 +67,21 @@ private:
  *
  */
 
+class Circumference : public GeometricShape {
+    private:
+        float radius;
+        int slices;
+
+    public:
+        Circumference(float radius, int slices) : radius(radius), slices(slices) {};
+
+        vector<_3f> getPoints() override;
+
+    protected:
+        void Print(ostream &) const override;
+    
+};
+
 class Ring : public GeometricShape {
     private:
         float innerRadius;
@@ -76,7 +91,7 @@ class Ring : public GeometricShape {
     public:
         Ring(float innerRadius, float outerRadius, int slices, int segments, string fName);
         
-        vector<Point> getPoints() override;
+        vector<_3f> getPoints() override;
 
     protected:
         void Print(ostream &) const override;
@@ -96,7 +111,7 @@ class Torus : public GeometricShape {
         Torus();
         Torus(float innerRadius, float outerRadius, int slices, int loops);
         Torus(float innerRadius, float outerRadius, int slices, int loops, string pathFile);
-        vector<Point> getPoints() override;
+        vector<_3f> getPoints() override;
 
     protected:
         void Print(ostream &) const override;
@@ -119,7 +134,7 @@ class Cone : public GeometricShape {
         Cone();
         Cone(float radius, float height, int slices, int stacks);
         Cone(float radius, float height, int slices, int stacks, string pathFile);
-        vector<Point> getPoints() override;
+        vector<_3f> getPoints() override;
 
     protected:
         void Print(ostream &) const override;
@@ -146,7 +161,7 @@ class Plane : public GeometricShape {
         Plane();
         Plane(float length, int divisions);
         Plane(float length, int divisions, string fileName);
-        vector<Point> getPoints() override;
+        vector<_3f> getPoints() override;
 
     protected:
         void Print(ostream &) const override;
@@ -172,7 +187,7 @@ public:
     Box();
     Box(float length, int divisions);
     Box(float length, int divisions, string pathFile);
-    vector<Point> getPoints() override;
+    vector<_3f> getPoints() override;
 
 protected:
     void Print(ostream &) const override;
@@ -199,7 +214,7 @@ class Sphere : public GeometricShape {
         Sphere();
         Sphere(float radius, int slices, int stacks);
         Sphere(float radius, int slices, int stacks, string pathFile);
-        vector<Point> getPoints() override;
+        vector<_3f> getPoints() override;
 
     protected:
         void Print(ostream &) const override;
