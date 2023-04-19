@@ -2,7 +2,34 @@
 
 map<string, std::pair<GLuint, int>> fileModels;
 
-// GLuint vertices, verticeCount;
+unsigned int picked;
+
+bool mt_drawCodeColour = false;
+
+int w = 0, h = 0;
+
+void mtEnable(MTValue v) {
+    switch(v) {
+        case MT_CODE_COLOUR_DRAW:
+            mt_drawCodeColour = true;
+            break;
+        default:
+            throw "Invalid MTValue!";
+            break;
+    }
+}
+
+void mtDisable(MTValue v) {
+    switch(v) {
+        case MT_CODE_COLOUR_DRAW:
+            mt_drawCodeColour = false;
+            break;
+        default:
+            throw "Invalid MTValue!";
+            break;
+    }
+}
+
 
 XMLElement * _getChildElement(XMLElement * elem, const char* name) {
     XMLElement * child;
@@ -21,9 +48,81 @@ XMLElement * _getChildElement(XMLElement * elem, const char* name) {
 }
 
 
+Event::Event(XMLElement * event, unsigned int code) {
+    this->code = code;
+
+    XMLElement * group = _getChildElement(event, "group");
+    if (group) 
+        this->group = Group(group);
+}
+
+void Event::run() {
+    if (picked == this->code)
+        group.run();
+}
+
+unsigned int * _availableCodes = (unsigned int*) calloc(254, sizeof(unsigned int));
+
+int _getNextAvailableCode() {
+    for (int i = 1; i < 255; i++) {
+        if (_availableCodes[i-1] == 0) {
+            return i;
+        }
+    }
+    throw "No more codes available!!";
+    return -1;
+}
+
+void _setUnavailableCode(unsigned int code) {
+    _availableCodes[code-1] = code;
+}
+
+int picking(int xx, int yy, Camera * camera, Group * group) {    
+	// Turn off lighting and texturing
+	//glDisable(GL_LIGHTING);
+	glDisable(GL_TEXTURE_2D);
+
+	// Clear the frame buffer and place the camera
+	glClear(GL_COLOR_BUFFER_BIT);
+	glLoadIdentity();
+    _3f p = camera->getPosition();
+    _3f l = camera->getLookAt();
+    _3f u = camera->getUp();
+	gluLookAt(p.x, p.y, p.z, 
+		      l.x, l.y, l.z,
+			  u.x, u.y, u.z);
+	
+	// Draw coded version of objects taking advantage of the values stored on the depth buffer
+	glDepthFunc(GL_LEQUAL);
+		// draw
+        mtEnable(MT_CODE_COLOUR_DRAW);  
+        group->run();
+        mtDisable(MT_CODE_COLOUR_DRAW);      
+	glDepthFunc(GL_LESS);
+
+    // Read pixel under mouse position	
+    GLint viewport[4];
+    unsigned char res[4];
+    glGetIntegerv(GL_VIEWPORT,viewport);
+    glReadPixels(xx,viewport[3] - yy,1,1, GL_RGBA,GL_UNSIGNED_BYTE, res);
+
+	// Reactivate lighting and texturing
+	//glEnable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+
+    if (picked)
+        cout << "entrei picked: "<< picked << endl;
+
+    picked = res[0];
+	// Return red color component
+	return res[0]; 
+}
+
 Window::Window(XMLElement * window) {
     this->width = window->IntAttribute("width");
     this->height = window->IntAttribute("height");
+    h = this->height;
+    w = this->width;
 }
 
 Camera::Camera(XMLElement * camera) {
@@ -124,6 +223,45 @@ vector<Transform *> Transform::parseTransform(XMLElement * transform) {
     return transf;
 }
 
+Text::Text(XMLElement * text) {
+    this->content = text->Attribute("content");
+    this->x = text->FloatAttribute("x");
+    this->y = text->FloatAttribute("y");
+
+    XMLElement * colour = _getChildElement(text, "colour");
+    this->colour = Colour(colour);
+}
+
+void Text::run() {
+
+    this->colour.run();
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0, w, h, 0);
+    glMatrixMode(GL_MODELVIEW);
+
+    glDisable(GL_DEPTH_TEST);
+    //glDisable(GL_LIGHTING);
+
+    glPushMatrix();
+    glLoadIdentity();
+    glRasterPos2d(this->x, this->y);
+
+    for (const char * c = this->content.c_str(); *c; c++) {
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
+    }
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+
+    glEnable(GL_DEPTH_TEST);
+    // glEnable(GL_LIGHTING)
+}
+
 
 Colour::Colour(XMLElement * colour) {
     if (!colour) {
@@ -141,7 +279,8 @@ void Colour::run() {
     glColor3f(this->p.x, this->p.y, this->p.z);
 }
 
-Model::Model(XMLElement * model) : disableCull(false) {
+Model::Model(XMLElement * model) : disableCull(false), code(0) {
+
     XMLElement * colour = model->FirstChildElement("color");
     this->colour = Colour(colour);
 
@@ -149,6 +288,26 @@ Model::Model(XMLElement * model) : disableCull(false) {
 
     if (at_disableCull)
         this->disableCull = model->BoolAttribute("disableCull");
+
+    const XMLAttribute * at_code = model->FindAttribute("code");
+
+    if(at_code) {
+        this->code = model->IntAttribute("code");
+    }
+    XMLElement * event = _getChildElement(model, "event");
+
+    if (event) {
+        if (this->code > 0) {
+            this->event = Event(event, this->code);
+        } else {
+            unsigned int code = _getNextAvailableCode();
+            this->code = code;
+            this->event = Event(event, this->code);
+        }
+        _setUnavailableCode(this->code);
+    }
+    
+    
 
     string fpath = model->Attribute("file");
     if (fileModels.find(fpath) == fileModels.end()) {
@@ -172,13 +331,24 @@ Model::Model(XMLElement * model) : disableCull(false) {
     this->modelName = fpath;
 }
 
-void Model::run() {
-    this->colour.run();
+void Model::run() {   
+    if (mt_drawCodeColour) {
+        if (this->code <= 0) {
+            return;
+        } 
+        float colorCode = this->code / 255.0f;
+        glColor3f(colorCode, colorCode, colorCode);
+    }  else {
+        this->colour.run();
+    }
+
     //GeometricShape::drawObject(fileModels[this->modelName]);
     glBindBuffer(GL_ARRAY_BUFFER, fileModels[this->modelName].first);
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, 0, 0);
     glDrawArrays(GL_TRIANGLES, 0, fileModels[this->modelName].second);
+
+    this->event.run();
 }
 
 
@@ -261,6 +431,7 @@ void D3CircRandObjPlac::run() {
     }
 }
 
+
 Group::Group(XMLElement * group) {
 
     const XMLAttribute * hasXML = group->FindAttribute("file");
@@ -286,7 +457,6 @@ Group::Group(XMLElement * group) {
         this->groups.push_back(Group(g));
     }
 
-    
 
 
     XMLElement * child = _getChildElement(group, nullptr);
@@ -309,16 +479,21 @@ Group::Group(XMLElement * group) {
         else if (value == "d3CircRandObjPlac") {
             this->d3CircRandObjPlac.push_back(D3CircRandObjPlac(child));
         }
+        else if (value == "text") {
+            this->texts.push_back(Text(child));
+        }
         else {
             throw std::runtime_error("Invalid group child value '" + std::string(child->Value()) + "'!");
         }
 
         child = child->NextSiblingElement();
     }
-}
 
+}
 void Group::run() {
+
     glPushMatrix();
+    
     for (const auto transform : this->transformations) {
         transform->run();
     }
@@ -334,8 +509,12 @@ void Group::run() {
     for (D3CircRandObjPlac d3 : this->d3CircRandObjPlac) {
         d3.run();
     }
-
+    for (Text t : this->texts) {
+        t.run();
+    }
+    
     glPopMatrix();
+
 }
 
 World::World(const string& path) {

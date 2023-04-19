@@ -27,14 +27,10 @@ using namespace std;
 int startX, startY, tracking = 0;
 float _alpha = 0, _beta = 35, r = 10;
 
-
 World * world;
 Window * window;
 Camera * camera;
 Group * group;
-/*
-Content* content;
-*/
 
 int timebase = 0;
 float frames = 0;
@@ -144,7 +140,7 @@ void processMouseButtons(int button, int state, int xx, int yy) {
             tracking = 2;
         else {
             tracking = 0;
-            cout << "click!" << endl;
+            picking(xx, yy, camera, group);
 
             glutPostRedisplay();
         }

@@ -22,6 +22,14 @@
 using namespace std;
 using namespace tinyxml2;
 
+enum MTValue {
+    MT_CODE_COLOUR_DRAW
+};
+
+void mtEnable(MTValue v);
+void mtDisable(MTValue v);
+
+
 class Window {
     private: 
         int width;
@@ -116,22 +124,24 @@ class Colour {
         void run();
 };
 
+class Text {
+    private:
+        string content;
+        float x;
+        float y;
+        Colour colour;
+
+    public:
+        Text(XMLElement * text);
+        void run();
+};
+
+
 class Models {
     public:
         virtual ~Models() = default;
         virtual void run() = 0;
         static vector <Models *> parseModels(XMLElement * models);
-};
-
-class Model : public Models {
-    private:
-        string modelName;
-        Colour colour;
-        bool disableCull;
-    
-    public:
-        explicit Model(XMLElement * model);
-        void run() override;
 };
 
 
@@ -148,18 +158,66 @@ class D3CircRandObjPlac {
         void run();
 };
 
+
 class Group {
-    private:
+    public:
         vector<Models*> models;
         vector<Transform*> transformations;
         vector<D3CircRandObjPlac> d3CircRandObjPlac;
+        vector<Text> texts;
         vector<Group> groups;
 
     public:
         Group() = default;
-        explicit Group(XMLElement * group);
+        Group(XMLElement * group);
         void run();
 };
+
+class Event {
+    private:
+        unsigned int code;
+        Group group;
+
+    public:
+        Event() = default;
+        Event(XMLElement * event, unsigned int code);
+        //Event(XMLElement * event);
+        int get() {return code;};
+        void run();
+};
+
+
+class Model : public Models {
+    private:
+        unsigned int code;
+        string modelName;
+        Colour colour;
+        bool disableCull;
+        Event event;
+    
+    public:
+        explicit Model(XMLElement * model);
+        void run() override;
+};
+
+
+
+
+/*
+class Events {
+    private:
+        map<int, Event> events;
+    
+    public:
+        Events() = default;
+        void addEvent(XMLElement * event, unsigned int code);
+        int addEvent(XMLElement * event);
+        int getNextAvailableCode();
+        void handleEvent(unsigned int code);
+};
+
+*/
+
 
 class World {
     private:
@@ -174,6 +232,10 @@ class World {
         Window getWindow() {return window;};
         Group getGroup() {return group;};
 };
+
+
+int picking(int x, int y, Camera * c, Group * g);
+void handlePickingEvents();
 
 #endif
 
