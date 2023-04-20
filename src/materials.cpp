@@ -1,6 +1,6 @@
 #include "materials.h"
-
-map<string, std::pair<GLuint, int>> fileModels;
+//                            VBO   PRIMITIVE  N_PTS
+map<string, vector<std::tuple<GLuint, int, int>>> fileModels;
 
 unsigned int picked;
 
@@ -311,22 +311,8 @@ Model::Model(XMLElement * model) : disableCull(false), code(0) {
 
     string fpath = model->Attribute("file");
     if (fileModels.find(fpath) == fileModels.end()) {
-        vector<_3f> pts = GeometricShape::readFrom3DFile(fpath);
-        vector<float> f_pts;
-        for (_3f p : pts) {
-            f_pts.push_back(p.x);
-            f_pts.push_back(p.y);
-            f_pts.push_back(p.z);
-        }
 
-        GLuint vbo;
-
-        glGenBuffers(1, &vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, f_pts.size() * sizeof(float), f_pts.data(), GL_STATIC_DRAW);
-
-        
-        fileModels[fpath] = make_pair(vbo, f_pts.size());
+        fileModels[fpath] = GeometricShape::readFrom3DFileVBOMode(fpath);
     }
     this->modelName = fpath;
 }
@@ -341,13 +327,16 @@ void Model::run() {
     }  else {
         this->colour.run();
     }
-
-    //GeometricShape::drawObject(fileModels[this->modelName]);
-    glBindBuffer(GL_ARRAY_BUFFER, fileModels[this->modelName].first);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, 0);
-    glDrawArrays(GL_TRIANGLES, 0, fileModels[this->modelName].second);
-
+    
+    
+    if (this->disableCull)
+        glDisable(GL_CULL_FACE);
+    
+    GeometricShape::drawObjectVBOMode(fileModels[this->modelName]);
+    
+    if (this->disableCull)
+        glEnable(GL_CULL_FACE);
+      
     this->event.run();
 }
 

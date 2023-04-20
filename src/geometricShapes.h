@@ -5,6 +5,31 @@
 #ifndef GROUP_PROJECT_GEOMETRICSHAPES_H
 #define GROUP_PROJECT_GEOMETRICSHAPES_H
 
+
+#include <iostream>
+#include <string>
+#include <utility>
+#include <vector>
+#include <tuple>
+
+#ifdef __APPLE__
+#define GL_SILENCE_DEPRECATION
+#include <GLUT/glut.h>
+#else
+#include <GL/glew.h>
+#include <GL/glut.h>
+#include <IL/il.h>
+#endif
+#define GLUT_
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+#include <fstream>
+#include <cstring>
+#include <iomanip>
+
+#define FLOAT_PRECISION 5
+
 using namespace std;
 
 /*
@@ -18,9 +43,19 @@ struct _3f {
     float y;
     float z;
 
-public:
-    _3f();
-    _3f(float x, float y, float z);
+    public:
+        _3f();
+        _3f(float x, float y, float z);
+        void normalize();
+        _3f operator+(const _3f& other) const { return _3f(x + other.x, y + other.y, z + other.z); }
+        _3f operator+(const float& other) const { 
+            cout << x << " " << y << " " << z << endl;
+            return _3f(x + other, y + other, z + other); 
+        }
+        _3f operator-(const _3f& other) const { return _3f(x - other.x, y - other.y, z - other.z); }
+        _3f operator*(const _3f& other) const { return _3f(x * other.x, y * other.y, z * other.z); }
+        _3f operator*(const float& other) const { return _3f(x * other, y * other, z * other); }
+
 };
 
 /*
@@ -35,19 +70,31 @@ public:
  *
  */
 
+class GSPoints {
+    private:
+        int primitive;
+        vector<_3f> points;
+    public:
+        GSPoints(int primitive, vector<_3f> points) : primitive(primitive), points(points) {};
+        int getPrimitive() {return this->primitive;};
+        vector<_3f> getPoints() {return this->points;};
+};
+
 class GeometricShape {
 protected:
-    int vertices;
+    vector<GSPoints> points;
     string fileName;
 
 public:
-    virtual vector<_3f> getPoints() = 0;
+    virtual vector<GSPoints> getPoints() {return points;};
 
-    static void drawObject(vector<_3f> points);
+    static void drawObject(vector<GSPoints> points);
+    static void drawObjectVBOMode(vector<std::tuple<GLuint, int, int>>);
 
-    static void writeTo3DFile(vector<_3f> points, string fName);
+    static void writeTo3DFile(vector<GSPoints> points, string fName);
 
-    static vector<_3f> readFrom3DFile(string fName);
+    static vector<GSPoints> readFrom3DFile(string fName);
+    static vector<std::tuple<GLuint, int, int>> readFrom3DFileVBOMode(string fName);
 
     string getFileName() { return fileName; }
 
@@ -75,8 +122,6 @@ class Circumference : public GeometricShape {
     public:
         Circumference(float radius, int slices) : radius(radius), slices(slices) {};
 
-        vector<_3f> getPoints() override;
-
     protected:
         void Print(ostream &) const override;
     
@@ -91,8 +136,6 @@ class Ring : public GeometricShape {
     public:
         Ring(float innerRadius, float outerRadius, int slices, int segments, string fName);
         
-        vector<_3f> getPoints() override;
-
     protected:
         void Print(ostream &) const override;
 };
@@ -111,7 +154,6 @@ class Torus : public GeometricShape {
         Torus();
         Torus(float innerRadius, float outerRadius, int slices, int loops);
         Torus(float innerRadius, float outerRadius, int slices, int loops, string pathFile);
-        vector<_3f> getPoints() override;
 
     protected:
         void Print(ostream &) const override;
@@ -134,7 +176,6 @@ class Cone : public GeometricShape {
         Cone();
         Cone(float radius, float height, int slices, int stacks);
         Cone(float radius, float height, int slices, int stacks, string pathFile);
-        vector<_3f> getPoints() override;
 
     protected:
         void Print(ostream &) const override;
@@ -161,7 +202,6 @@ class Plane : public GeometricShape {
         Plane();
         Plane(float length, int divisions);
         Plane(float length, int divisions, string fileName);
-        vector<_3f> getPoints() override;
 
     protected:
         void Print(ostream &) const override;
@@ -187,7 +227,6 @@ public:
     Box();
     Box(float length, int divisions);
     Box(float length, int divisions, string pathFile);
-    vector<_3f> getPoints() override;
 
 protected:
     void Print(ostream &) const override;
@@ -214,7 +253,7 @@ class Sphere : public GeometricShape {
         Sphere();
         Sphere(float radius, int slices, int stacks);
         Sphere(float radius, int slices, int stacks, string pathFile);
-        vector<_3f> getPoints() override;
+        Sphere(string specularMap, string fileName);
 
     protected:
         void Print(ostream &) const override;

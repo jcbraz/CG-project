@@ -2,28 +2,9 @@
 // Created by user13 on 03-03-2023.
 //
 
-#include <iostream>
-#include <string>
-#include <utility>
-#include <vector>
-
 #include "geometricShapes.h"
 
-#ifdef __APPLE__
-#define GL_SILENCE_DEPRECATION
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-#define GLUT_
-
-#define _USE_MATH_DEFINES
-#include <math.h>
-#include <fstream>
-#include <cstring>
-#include <iomanip>
-
-#define FLOAT_PRECISION 5
+#include <sstream>
 
 /*
  *
@@ -42,6 +23,16 @@ _3f::_3f() {
     _3f::y = 0;
     _3f::z = 0;
 }
+
+void _3f::normalize() {
+    float max = abs(x);
+    if (abs(y) > max) max = abs(y);
+    if (abs(z) > max) max = abs(z);
+
+    x = x / max;
+    y = y / max;
+    z = z / max;
+}  
 
 /*
  *
@@ -63,12 +54,10 @@ Plane::Plane(float length, int divisions) {
 }
 
 Plane::Plane(float length, int divisions, string fileName) {
-    Plane::length = length;
-    Plane::divisions = divisions;
-    Plane::fileName = std::move(fileName);
-}
+    this->length = length;
+    this->divisions = divisions;
+    this->fileName = std::move(fileName);
 
-vector<_3f> Plane::getPoints() {
     vector<_3f> points;
     float n_d = (float) length / (float) divisions;
     float h_l = (float) length / 2;
@@ -85,7 +74,7 @@ vector<_3f> Plane::getPoints() {
         }
     }
 
-    return points;
+    this->points.push_back(GSPoints(GL_TRIANGLES, points));
 }
 
 void Plane::Print(ostream &) const {
@@ -117,13 +106,10 @@ Box::Box(float length, int divisions) {
 }
 
 Box::Box(float length, int divisions, string pathFile) {
-    Box::length = length;
-    Box::divisions = divisions;
-    Box::fileName = std::move(pathFile);
-}
+    this->length = length;
+    this->divisions = divisions;
+    this->fileName = std::move(pathFile);
 
-
-vector<_3f> Box::getPoints() {
     vector<_3f> points;
     float measure = length / 2.0f;
     float division_size = length / (float)divisions;
@@ -214,7 +200,7 @@ vector<_3f> Box::getPoints() {
     }
 
 
-    return points;
+    this->points.push_back(GSPoints(GL_TRIANGLES, points));
 }
 
 
@@ -242,10 +228,8 @@ Ring::Ring(float innerRadius, float outerRadius, int slices, int segments, strin
  slices(slices),
  segments(segments)
 {
-    Ring::fileName = fName;
-}
+    this->fileName = fName;
 
-vector<_3f> Ring::getPoints() {
     vector<_3f> points;
     float _alpha = 2 * M_PI / slices;
     float seg_size = (outerRadius - innerRadius) / segments;
@@ -270,7 +254,7 @@ vector<_3f> Ring::getPoints() {
         }
     }
 
-    return points;
+    this->points.push_back(GSPoints(GL_TRIANGLES, points));
 }
 
 void Ring::Print(ostream &) const {
@@ -307,14 +291,31 @@ Sphere::Sphere(float radius, int slices, int stacks) {
     fileName = "sphere.3d";
 }
 
-Sphere::Sphere(float radius, int slices, int stacks, string fileName) {
-    Sphere::radius = radius;
-    Sphere::slices = slices;
-    Sphere::stacks = stacks;
-    Sphere::fileName = std::move(fileName);
+Sphere::Sphere(string specularMap, string fileName) {
+    /*
+    ILuint t;
+    ilInit();
+    ilGenImages(1, &t);
+    ilBindImage(t);
+
+    ilLoadImage((ILstring) specularMap.c_str());
+    ilConvertImage(IL_LUMINANCE, IL_UNSIGNED_BYTE);
+
+    this->slices = ilGetInteger(IL_IMAGE_WIDTH);
+    this->stacks = ilGetInteger(IL_IMAGE_HEIGHT);
+    
+    ILubyte * imageData;
+    imageData = ilGetData();
+
+    */
 }
 
-vector<_3f> Sphere::getPoints() {
+Sphere::Sphere(float radius, int slices, int stacks, string fileName) {
+    this->radius = radius;
+    this->slices = slices;
+    this->stacks = stacks;
+    this->fileName = std::move(fileName);
+
     vector<_3f> points;
 
     float _alpha = 2 * M_PI / slices;
@@ -336,7 +337,8 @@ vector<_3f> Sphere::getPoints() {
             points.push_back(_3f(r * cos(bhv) * sin(av), r * sin(bhv) ,r * cos(bhv) * cos(av)));
         }
     }
-    return points;
+
+    this->points.push_back(GSPoints(GL_TRIANGLES, points));
 }
 
 void Sphere::Print(ostream &) const {
@@ -378,10 +380,7 @@ Cone::Cone(float radius, float height, int slices, int stacks, string pathFile) 
     Cone::slices = slices;
     Cone::stacks = stacks;
     Cone::fileName = std::move(pathFile);
-}
 
-
-vector<_3f> Cone::getPoints() {
     vector<_3f> points;
 
     float alpha = 2 * M_PI / slices;
@@ -412,7 +411,7 @@ vector<_3f> Cone::getPoints() {
         points.push_back(_3f((radius - v_r * stacks) * sin(alpha * (i+1)), stacks * v_h, (radius - v_r * stacks) * cos(alpha * (i+1))));
     }
 
-    return points;
+    this->points.push_back(GSPoints(GL_TRIANGLES, points));
 }
 
 void Cone::Print(ostream &) const {
@@ -436,26 +435,61 @@ void Cone::Print(ostream &) const {
  * END POINT STRUCT
  *
  */
-void GeometricShape::drawObject(vector<_3f> points) {
-    glBegin(GL_TRIANGLES);
-        for (auto p : points)
-            glVertex3f(p.x, p.y, p.z);
-    glEnd();
+void GeometricShape::drawObject(vector<GSPoints> points) {
+    for (GSPoints gsp : points) {
+        glBegin(gsp.getPrimitive());
+            vector<_3f> pts = gsp.getPoints();
+            for (auto p : pts)
+                glVertex3f(p.x, p.y, p.z);
+        glEnd();
+    }
 }
 
-void GeometricShape::writeTo3DFile(vector<_3f> points, string fName) {
+void GeometricShape::drawObjectVBOMode(vector<std::tuple<GLuint, int, int>> v) {
+    for (auto t : v) {
+        glBindBuffer(GL_ARRAY_BUFFER, std::get<0>(t));
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(3, GL_FLOAT, 0 ,0);
+        glDrawArrays(std::get<1>(t), 0, std::get<2>(t));
+    }
+}
+
+void GeometricShape::writeTo3DFile(vector<GSPoints> points, string fName) {
     ofstream file(fName);
     cout << "Writing Points to:" << fName << endl;
-    for (auto p : points) {
-        file << setprecision(FLOAT_PRECISION) << p.x << " " << p.y << " " << p.z << " ";
+    for (GSPoints gsp : points) {
+        vector<_3f> ps = gsp.getPoints();
+        file << gsp.getPrimitive() << " " << ps.size() << endl;
+        for (_3f p : ps) {
+            file << setprecision(FLOAT_PRECISION) << p.x << " " << p.y << " " << p.z << endl;
+        }
     }
-    file << endl;
     file.close();
     cout << "Done!" << endl;
 }
 
-vector<_3f> GeometricShape::readFrom3DFile(string fName) {
-    vector<_3f> points;
+vector<int> _readInts(string line) {
+    vector<int> nms;
+    std::istringstream ss(line);
+    int num;
+    while (ss >> num) {
+        nms.push_back(num);
+    }
+    return nms;
+}
+
+vector<float> _readFloats(string line) {
+    vector<float> nms;
+    std::istringstream ss(line);
+    float num;
+    while (ss >> num) {
+        nms.push_back(num);
+    }
+    return nms;
+}
+
+vector<GSPoints> GeometricShape::readFrom3DFile(string fName) {
+    vector<GSPoints> points;
     ifstream file(fName);
 
     if (!file) {
@@ -463,29 +497,60 @@ vector<_3f> GeometricShape::readFrom3DFile(string fName) {
         return points;
     }
 
-    string line;
     cout << "Reading From:" << fName << endl;
-    getline(file, line);
 
-    vector<float> nms;
-    char buf[32];
-    int j = 0;
-    for (int i = 0; i < line.length(); i++) {
+    string line;
+    bool readingPoints = false;
+    int k;
+    vector<_3f> pts; 
+    int primitive;
+    while (getline(file, line)) {
 
-        if (isdigit(line[i]) || line[i] == '.' || line[i] == '-' || line[i] == 'e') {
-            buf[j++] = line[i];
-        }
+        if (!readingPoints) {
+            vector<int> prim_size = _readInts(line);
+            for (auto p : prim_size)
+                cout << "v:" << p << endl;
+            readingPoints = true;
+            primitive = prim_size[0];
+            k = prim_size[1];
+        } 
         else {
-            nms.push_back(stof(buf));
-            memset(buf, 0, 32);
-            j = 0;
-        }
-        if (nms.size() == 3) {
-            points.push_back(_3f(nms[0], nms[1], nms[2]));
-            nms.clear();
+            vector<float> nms = _readFloats(line);
+            pts.push_back(_3f(nms[0], nms[1], nms[2]));
+            k--;
+        
+            if (k == 0) {
+                points.push_back(GSPoints(primitive, pts));
+                pts.clear();
+                readingPoints = false;
+            }
         }
     }
+    file.close();
     cout << "Done!" << endl;
     return points;
 }
 
+vector<std::tuple<GLuint, int, int>> GeometricShape::readFrom3DFileVBOMode(string fName) {
+    vector<std::tuple<GLuint, int, int>> res;
+    vector<GSPoints> gsps = GeometricShape::readFrom3DFile(fName);
+
+    for (GSPoints gsp : gsps) {
+        
+        vector<float> f_pts;
+        for (_3f p : gsp.getPoints()) {
+            f_pts.push_back(p.x);
+            f_pts.push_back(p.y);
+            f_pts.push_back(p.z);
+        }
+
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, f_pts.size() * sizeof(float), f_pts.data(), GL_STATIC_DRAW);
+
+        res.push_back(make_tuple(vbo, gsp.getPrimitive(), f_pts.size()));
+    }
+
+    return res;
+}
