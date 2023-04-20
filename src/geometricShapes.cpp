@@ -34,6 +34,38 @@ void _3f::normalize() {
     z = z / max;
 }  
 
+
+ILubyte * readImage(string fpath, int * width, int * height) {
+    ILuint t;
+
+    ilGenImages(1, &t);
+    ilBindImage(t);
+    ilLoadImage((ILstring) fpath.c_str());
+    ilConvertImage(IL_LUMINANCE, IL_UNSIGNED_BYTE);
+
+    ILenum error = ilGetError();
+    if (error != IL_NO_ERROR) {
+        cout << "Error loading image!" << ilGetString(error) << endl;
+    }
+
+    *width = ilGetInteger(IL_IMAGE_WIDTH);
+    *height = ilGetInteger(IL_IMAGE_HEIGHT);
+
+    //int size = *width * *height * ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL);
+    //ILubyte * imageData = new ILubyte[size];
+    //ILboolean result = ilCopyPixels(0, 0, 0, *width, *height, 1, IL_LUMINANCE, IL_UNSIGNED_BYTE, imageData);
+    ILubyte * imageData = ilGetData();
+
+    if (!imageData)
+        cout << "error getting image data!" << endl;
+
+   // if (!result)
+     //   cout << "error getting data!" << endl << ilGetString(ilGetError()) << endl;
+
+    cout << "Loaded Image! W:" << *width << "H:" << *height << endl;
+    return imageData;
+}
+
 /*
  *
  * PLANE 
@@ -82,10 +114,6 @@ void Plane::Print(ostream &) const {
     cout << "Length:" << Plane::length << endl;
     cout << "Divisions:" << Plane::divisions << endl;
 }
-
-
-
-
 
 
 /*
@@ -291,23 +319,48 @@ Sphere::Sphere(float radius, int slices, int stacks) {
     fileName = "sphere.3d";
 }
 
-Sphere::Sphere(string specularMap, string fileName) {
-    /*
-    ILuint t;
-    ilInit();
-    ilGenImages(1, &t);
-    ilBindImage(t);
-
-    ilLoadImage((ILstring) specularMap.c_str());
-    ilConvertImage(IL_LUMINANCE, IL_UNSIGNED_BYTE);
-
-    this->slices = ilGetInteger(IL_IMAGE_WIDTH);
-    this->stacks = ilGetInteger(IL_IMAGE_HEIGHT);
+Sphere::Sphere(string specularMap, string fileName, float radius) : radius(radius) {
     
-    ILubyte * imageData;
-    imageData = ilGetData();
+    ILubyte * imageData = readImage(specularMap, &this->slices, &this->stacks);
 
-    */
+    float _alpha = 2 * M_PI / slices;
+    float _beta = M_PI / stacks;
+    for (int i = 0; i < slices; i++) {
+        vector<_3f> strip;
+        float av1 = i * _alpha;
+        float av2 = av1 + _alpha;
+
+        for (int j = 0; j < stacks; j++) {
+            float bv1 = M_PI / 2 + j * _beta;
+            float bv2 = bv1 + _beta;
+            
+            //float h = imageData[i * this->slices + j] / 255 * 120;
+            //if (h != 0)
+              //  cout << "h:" << h << " ";
+
+            //float h = rand() % 10;
+ 
+            //float hr = this->radius - h;
+            float hr = 0;
+            strip.push_back(
+                _3f(
+                    hr * cos(bv1) * sin(av1),
+                    hr * sin(bv1),
+                    hr * cos(bv1) * cos(av1)
+                )
+            );
+
+
+            strip.push_back(
+                _3f(
+                    hr * cos(bv2) * sin(av2),
+                    hr * sin(bv2),
+                    hr * cos(bv2) * cos(av2)
+                )
+            );
+        }
+        this->points.push_back(GSPoints(GL_LINE_STRIP, strip));       
+    }
 }
 
 Sphere::Sphere(float radius, int slices, int stacks, string fileName) {
@@ -531,10 +584,8 @@ vector<GSPoints> GeometricShape::readFrom3DFile(string fName) {
     return points;
 }
 
-vector<std::tuple<GLuint, int, int>> GeometricShape::readFrom3DFileVBOMode(string fName) {
+vector<std::tuple<GLuint, int, int>> GeometricShape::convertToVBO(vector<GSPoints> gsps) {
     vector<std::tuple<GLuint, int, int>> res;
-    vector<GSPoints> gsps = GeometricShape::readFrom3DFile(fName);
-
     for (GSPoints gsp : gsps) {
         
         vector<float> f_pts;
@@ -551,6 +602,16 @@ vector<std::tuple<GLuint, int, int>> GeometricShape::readFrom3DFileVBOMode(strin
 
         res.push_back(make_tuple(vbo, gsp.getPrimitive(), f_pts.size()));
     }
+
+    return res;
+
+}
+
+vector<std::tuple<GLuint, int, int>> GeometricShape::readFrom3DFileVBOMode(string fName) {
+    vector<std::tuple<GLuint, int, int>> res;
+    vector<GSPoints> gsps = GeometricShape::readFrom3DFile(fName);
+
+    res = GeometricShape::convertToVBO(gsps);
 
     return res;
 }

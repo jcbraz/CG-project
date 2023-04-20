@@ -12,13 +12,16 @@
 #include <vector>
 #include <tuple>
 
+#include <IL/il.h>
+
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
 #include <GLUT/glut.h>
 #else
+
 #include <GL/glew.h>
 #include <GL/glut.h>
-#include <IL/il.h>
+
 #endif
 #define GLUT_
 
@@ -92,7 +95,7 @@ public:
     static void drawObjectVBOMode(vector<std::tuple<GLuint, int, int>>);
 
     static void writeTo3DFile(vector<GSPoints> points, string fName);
-
+    static vector<std::tuple<GLuint, int, int>>convertToVBO(vector<GSPoints> gsps);
     static vector<GSPoints> readFrom3DFile(string fName);
     static vector<std::tuple<GLuint, int, int>> readFrom3DFileVBOMode(string fName);
 
@@ -253,7 +256,7 @@ class Sphere : public GeometricShape {
         Sphere();
         Sphere(float radius, int slices, int stacks);
         Sphere(float radius, int slices, int stacks, string pathFile);
-        Sphere(string specularMap, string fileName);
+        Sphere(string specularMap, string fileName, float radius);
 
     protected:
         void Print(ostream &) const override;

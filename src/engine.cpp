@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include <IL/il.h>
+
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
 #include <GLUT/glut.h>
@@ -31,6 +33,8 @@ World * world;
 Window * window;
 Camera * camera;
 Group * group;
+
+vector<std::tuple<GLuint, int, int>> test;
 
 int timebase = 0;
 float frames = 0;
@@ -110,6 +114,8 @@ void renderScene(void) {
     glEnd();
 
     group->run();
+    //glColor3f(1.0f, 1.0f, 1.0f);
+    //GeometricShape::drawObjectVBOMode(test);
 
     displayFrameRate();
 
@@ -195,6 +201,7 @@ void processMouseMotion(int xx, int yy) {
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
 int main(int argc, char** argv) {
 
+
     string path = "../../test_files/solar_system/solar_system.xml";
     //string path = "../../test_files/test_files_phase_2/test_2_solar.xml";
 
@@ -235,11 +242,21 @@ int main(int argc, char** argv) {
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
+    ilInit();
     // frames
     timebase = glutGet(GLUT_ELAPSED_TIME);
 
     world->evaluateGroup(path);
     group = new Group(world->getGroup());
+
+
+    /*
+    TESTE
+    */
+    //Sphere s = Sphere("../../test_files/solar_system/test1.jpg", "earth.3d", 256);
+    //test = GeometricShape::convertToVBO(s.getPoints());
+    /*
+    */
 
     // Glut's main cycle
     glutMainLoop();
