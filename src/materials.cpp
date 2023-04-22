@@ -9,7 +9,7 @@ bool mt_drawCodeColour = false;
 int w = 0, h = 0;
 
 void mtEnable(MTValue v) {
-    switch(v) {
+    switch (v) {
         case MT_CODE_COLOUR_DRAW:
             mt_drawCodeColour = true;
             break;
@@ -20,7 +20,7 @@ void mtEnable(MTValue v) {
 }
 
 void mtDisable(MTValue v) {
-    switch(v) {
+    switch (v) {
         case MT_CODE_COLOUR_DRAW:
             mt_drawCodeColour = false;
             break;
@@ -30,9 +30,8 @@ void mtDisable(MTValue v) {
     }
 }
 
-
-XMLElement * _getChildElement(XMLElement * elem, const char* name) {
-    XMLElement * child;
+XMLElement* _getChildElement(XMLElement* elem, const char* name) {
+    XMLElement* child;
     try {
         if (name == nullptr) {
             child = elem->FirstChildElement();
@@ -40,32 +39,30 @@ XMLElement * _getChildElement(XMLElement * elem, const char* name) {
             child = elem->FirstChildElement(name);
         }
 
-    } catch (const char * message) {
+    } catch (const char* message) {
         cout << message << endl;
     }
-    
+
     return child;
 }
 
-
-Event::Event(XMLElement * event, unsigned int code) {
+Event::Event(XMLElement* event, unsigned int code) {
     this->code = code;
 
-    XMLElement * group = _getChildElement(event, "group");
-    if (group) 
-        this->group = Group(group);
+    XMLElement* group = _getChildElement(event, "group");
+    if (group) this->group = Group(group);
 }
 
 void Event::run() {
-    if (picked == this->code)
-        group.run();
+    if (picked == this->code) group.run();
 }
 
-unsigned int * _availableCodes = (unsigned int*) calloc(254, sizeof(unsigned int));
+unsigned int* _availableCodes =
+    (unsigned int*)calloc(254, sizeof(unsigned int));
 
 int _getNextAvailableCode() {
     for (int i = 1; i < 255; i++) {
-        if (_availableCodes[i-1] == 0) {
+        if (_availableCodes[i - 1] == 0) {
             return i;
         }
     }
@@ -74,166 +71,134 @@ int _getNextAvailableCode() {
 }
 
 void _setUnavailableCode(unsigned int code) {
-    _availableCodes[code-1] = code;
+    _availableCodes[code - 1] = code;
 }
 
-int picking(int xx, int yy, Camera * camera, Group * group) {    
-	// Turn off lighting and texturing
-	//glDisable(GL_LIGHTING);
-	glDisable(GL_TEXTURE_2D);
+int picking(int xx, int yy, Camera* camera, Group* group) {
+    // Turn off lighting and texturing
+    // glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
 
-	// Clear the frame buffer and place the camera
-	glClear(GL_COLOR_BUFFER_BIT);
-	glLoadIdentity();
+    // Clear the frame buffer and place the camera
+    glClear(GL_COLOR_BUFFER_BIT);
+    glLoadIdentity();
     _3f p = camera->getPosition();
     _3f l = camera->getLookAt();
     _3f u = camera->getUp();
-	gluLookAt(p.x, p.y, p.z, 
-		      l.x, l.y, l.z,
-			  u.x, u.y, u.z);
-	
-	// Draw coded version of objects taking advantage of the values stored on the depth buffer
-	glDepthFunc(GL_LEQUAL);
-		// draw
-        mtEnable(MT_CODE_COLOUR_DRAW);  
-        group->run();
-        mtDisable(MT_CODE_COLOUR_DRAW);      
-	glDepthFunc(GL_LESS);
+    gluLookAt(p.x, p.y, p.z, l.x, l.y, l.z, u.x, u.y, u.z);
 
-    // Read pixel under mouse position	
+    // Draw coded version of objects taking advantage of the values stored on
+    // the depth buffer
+    glDepthFunc(GL_LEQUAL);
+    // draw
+    mtEnable(MT_CODE_COLOUR_DRAW);
+    group->run();
+    mtDisable(MT_CODE_COLOUR_DRAW);
+    glDepthFunc(GL_LESS);
+
+    // Read pixel under mouse position
     GLint viewport[4];
     unsigned char res[4];
-    glGetIntegerv(GL_VIEWPORT,viewport);
-    glReadPixels(xx,viewport[3] - yy,1,1, GL_RGBA,GL_UNSIGNED_BYTE, res);
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    glReadPixels(xx, viewport[3] - yy, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, res);
 
-	// Reactivate lighting and texturing
-	//glEnable(GL_LIGHTING);
-	glEnable(GL_TEXTURE_2D);
+    // Reactivate lighting and texturing
+    // glEnable(GL_LIGHTING);
+    glEnable(GL_TEXTURE_2D);
 
-    if (picked)
-        cout << "entrei picked: "<< picked << endl;
+    if (picked) cout << "entrei picked: " << picked << endl;
 
     picked = res[0];
-	// Return red color component
-	return res[0]; 
+    // Return red color component
+    return res[0];
 }
 
-Window::Window(XMLElement * window) {
+Window::Window(XMLElement* window) {
     this->width = window->IntAttribute("width");
     this->height = window->IntAttribute("height");
     h = this->height;
     w = this->width;
 }
 
-Camera::Camera(XMLElement * camera) {
-    
-    XMLElement * pos = _getChildElement(camera, "position");
+Camera::Camera(XMLElement* camera) {
+    XMLElement* pos = _getChildElement(camera, "position");
 
-    this->position = _3f(
-        pos->FloatAttribute("x"),
-        pos->FloatAttribute("y"),
-        pos->FloatAttribute("z")
-    );
+    this->position = _3f(pos->FloatAttribute("x"), pos->FloatAttribute("y"),
+                         pos->FloatAttribute("z"));
 
-    XMLElement * lat = _getChildElement(camera, "lookAt");
+    XMLElement* lat = _getChildElement(camera, "lookAt");
 
-    this->lookAt = _3f(
-        lat->FloatAttribute("x"),
-        lat->FloatAttribute("y"),
-        lat->FloatAttribute("z")
-    );
+    this->lookAt = _3f(lat->FloatAttribute("x"), lat->FloatAttribute("y"),
+                       lat->FloatAttribute("z"));
 
-    XMLElement * _up = _getChildElement(camera, "up");
+    XMLElement* _up = _getChildElement(camera, "up");
 
-    this->up = _3f(
-        _up->FloatAttribute("x"),
-        _up->FloatAttribute("y"),
-        _up->FloatAttribute("z")  
-    );
+    this->up = _3f(_up->FloatAttribute("x"), _up->FloatAttribute("y"),
+                   _up->FloatAttribute("z"));
 
-    XMLElement * proj = _getChildElement(camera, "projection");
+    XMLElement* proj = _getChildElement(camera, "projection");
 
-    this->projection = _3f(
-        proj->FloatAttribute("fov"),
-        proj->FloatAttribute("near"),
-        proj->FloatAttribute("far")
-    );
+    this->projection =
+        _3f(proj->FloatAttribute("fov"), proj->FloatAttribute("near"),
+            proj->FloatAttribute("far"));
 }
 
-Rotate::Rotate(XMLElement * rotate) {
+Rotate::Rotate(XMLElement* rotate) {
     this->angle = rotate->FloatAttribute("angle");
-    this->p = _3f(
-        rotate->FloatAttribute("x"),
-        rotate->FloatAttribute("y"),
-        rotate->FloatAttribute("z")
-    );
+    this->p = _3f(rotate->FloatAttribute("x"), rotate->FloatAttribute("y"),
+                  rotate->FloatAttribute("z"));
 }
 
-void Rotate::run() {
-    glRotatef(this->angle, this->p.x, this->p.y, this->p.z);
+void Rotate::run() { glRotatef(this->angle, this->p.x, this->p.y, this->p.z); }
+
+Translate::Translate(XMLElement* translate) {
+    this->p =
+        _3f(translate->FloatAttribute("x"), translate->FloatAttribute("y"),
+            translate->FloatAttribute("z"));
 }
 
-Translate::Translate(XMLElement * translate) {
-    this->p = _3f(
-        translate->FloatAttribute("x"),
-        translate->FloatAttribute("y"),
-        translate->FloatAttribute("z")
-    );
+void Translate::run() { glTranslatef(this->p.x, this->p.y, this->p.z); }
+
+Scale::Scale(XMLElement* scale) {
+    this->p = _3f(scale->FloatAttribute("x"), scale->FloatAttribute("y"),
+                  scale->FloatAttribute("z"));
 }
 
-void Translate::run() {
-    glTranslatef(this->p.x, this->p.y, this->p.z);
-}
+void Scale::run() { glScalef(this->p.x, this->p.y, this->p.z); }
 
-Scale::Scale(XMLElement * scale) {
-    this->p = _3f(
-        scale->FloatAttribute("x"),
-        scale->FloatAttribute("y"),
-        scale->FloatAttribute("z")
-    );
-    
-}
+vector<Transform*> Transform::parseTransform(XMLElement* transform) {
+    vector<Transform*> transf;
 
+    XMLElement* transform_child = _getChildElement(transform, nullptr);
 
-void Scale::run() {
-    glScalef(this->p.x, this->p.y, this->p.z);
-
-}
-
-vector<Transform *> Transform::parseTransform(XMLElement * transform) {
-    
-    vector<Transform *> transf;
-            
-    XMLElement * transform_child = _getChildElement(transform, nullptr);
-    
     while (transform_child) {
         if (string(transform_child->Value()) == "translate") {
-             transf.push_back(new Translate(transform_child));
-        }
-        else if (string(transform_child->Value()) == "rotate") {
-             transf.push_back(new Rotate(transform_child));
-        }   else if (string(transform_child->Value()) == "scale") {
-             transf.push_back(new Scale(transform_child));
+            transf.push_back(new Translate(transform_child));
+        } else if (string(transform_child->Value()) == "rotate") {
+            transf.push_back(new Rotate(transform_child));
+        } else if (string(transform_child->Value()) == "scale") {
+            transf.push_back(new Scale(transform_child));
         } else {
-            throw std::runtime_error("Invalid transformation '" + std::string(transform_child->Value()) + "'!");
+            throw std::runtime_error("Invalid transformation '" +
+                                     std::string(transform_child->Value()) +
+                                     "'!");
         }
         transform_child = transform_child->NextSiblingElement();
     }
-    
+
     return transf;
 }
 
-Text::Text(XMLElement * text) {
+Text::Text(XMLElement* text) {
     this->content = text->Attribute("content");
     this->x = text->FloatAttribute("x");
     this->y = text->FloatAttribute("y");
 
-    XMLElement * colour = _getChildElement(text, "colour");
+    XMLElement* colour = _getChildElement(text, "colour");
     this->colour = Colour(colour);
 }
 
 void Text::run() {
-
     this->colour.run();
 
     glMatrixMode(GL_PROJECTION);
@@ -243,13 +208,13 @@ void Text::run() {
     glMatrixMode(GL_MODELVIEW);
 
     glDisable(GL_DEPTH_TEST);
-    //glDisable(GL_LIGHTING);
+    // glDisable(GL_LIGHTING);
 
     glPushMatrix();
     glLoadIdentity();
     glRasterPos2d(this->x, this->y);
 
-    for (const char * c = this->content.c_str(); *c; c++) {
+    for (const char* c = this->content.c_str(); *c; c++) {
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
     }
 
@@ -262,39 +227,31 @@ void Text::run() {
     // glEnable(GL_LIGHTING)
 }
 
-
-Colour::Colour(XMLElement * colour) {
+Colour::Colour(XMLElement* colour) {
     if (!colour) {
         this->p = _3f(1, 1, 1);
     } else {
-        this->p = _3f(
-            colour->FloatAttribute("r"),
-            colour->FloatAttribute("g"),
-            colour->FloatAttribute("b")
-        );
+        this->p = _3f(colour->FloatAttribute("r"), colour->FloatAttribute("g"),
+                      colour->FloatAttribute("b"));
     }
 }
 
-void Colour::run() {
-    glColor3f(this->p.x, this->p.y, this->p.z);
-}
+void Colour::run() { glColor3f(this->p.x, this->p.y, this->p.z); }
 
-Model::Model(XMLElement * model) : disableCull(false), code(0) {
-
-    XMLElement * colour = model->FirstChildElement("color");
+Model::Model(XMLElement* model) : disableCull(false), code(0) {
+    XMLElement* colour = model->FirstChildElement("color");
     this->colour = Colour(colour);
 
-    const XMLAttribute * at_disableCull = model->FindAttribute("disableCull");
+    const XMLAttribute* at_disableCull = model->FindAttribute("disableCull");
 
-    if (at_disableCull)
-        this->disableCull = model->BoolAttribute("disableCull");
+    if (at_disableCull) this->disableCull = model->BoolAttribute("disableCull");
 
-    const XMLAttribute * at_code = model->FindAttribute("code");
+    const XMLAttribute* at_code = model->FindAttribute("code");
 
-    if(at_code) {
+    if (at_code) {
         this->code = model->IntAttribute("code");
     }
-    XMLElement * event = _getChildElement(model, "event");
+    XMLElement* event = _getChildElement(model, "event");
 
     if (event) {
         if (this->code > 0) {
@@ -306,97 +263,89 @@ Model::Model(XMLElement * model) : disableCull(false), code(0) {
         }
         _setUnavailableCode(this->code);
     }
-    
-    
 
     string fpath = model->Attribute("file");
     if (fileModels.find(fpath) == fileModels.end()) {
-
         fileModels[fpath] = GeometricShape::readFrom3DFileVBOMode(fpath);
     }
     this->modelName = fpath;
 }
 
-void Model::run() {   
+void Model::run() {
     if (mt_drawCodeColour) {
         if (this->code <= 0) {
             return;
-        } 
+        }
         float colorCode = this->code / 255.0f;
         glColor3f(colorCode, colorCode, colorCode);
-    }  else {
+    } else {
         this->colour.run();
     }
-    
-    
-    if (this->disableCull)
-        glDisable(GL_CULL_FACE);
-    
+
+    if (this->disableCull) glDisable(GL_CULL_FACE);
+
     GeometricShape::drawObjectVBOMode(fileModels[this->modelName]);
-    
-    if (this->disableCull)
-        glEnable(GL_CULL_FACE);
-      
+
+    if (this->disableCull) glEnable(GL_CULL_FACE);
+
     this->event.run();
 }
 
+vector<Models*> Models::parseModels(XMLElement* models) {
+    vector<Models*> ms;
+    XMLElement* models_child = _getChildElement(models, nullptr);
 
-vector<Models *> Models::parseModels(XMLElement * models) {
-
-    vector<Models *> ms;
-    XMLElement * models_child = _getChildElement(models, nullptr);
-    
     while (models_child) {
         if (string(models_child->Value()) == "model") {
-             ms.push_back(new Model(models_child));
-        }
-        else {
-            throw std::runtime_error("Invalid models element '" + std::string(models_child->Value()) + "'!");
+            ms.push_back(new Model(models_child));
+        } else {
+            throw std::runtime_error("Invalid models element '" +
+                                     std::string(models_child->Value()) + "'!");
         }
         models_child = models_child->NextSiblingElement();
     }
-    
+
     return ms;
 }
 
-
-D3CircRandObjPlac::D3CircRandObjPlac(XMLElement * d3CircRandObjPlac) {
+D3CircRandObjPlac::D3CircRandObjPlac(XMLElement* d3CircRandObjPlac) {
     this->radius = d3CircRandObjPlac->FloatAttribute("radius");
     this->num = d3CircRandObjPlac->IntAttribute("n");
     this->isRandRotation = d3CircRandObjPlac->BoolAttribute("isRandRotation");
-    
-    XMLElement * child = _getChildElement(d3CircRandObjPlac, "models");
+
+    XMLElement* child = _getChildElement(d3CircRandObjPlac, "models");
 
     if (child) {
-        vector<Models *> ms = Models::parseModels(child);
-        for (auto m : ms)
-            this->models.push_back(m);
+        vector<Models*> ms = Models::parseModels(child);
+        for (auto m : ms) this->models.push_back(m);
     } else {
-        throw std::runtime_error("Invalid d3CircRandObjPlac, modles element missing!");
+        throw std::runtime_error(
+            "Invalid d3CircRandObjPlac, modles element missing!");
     }
 
     for (int i = 0; i < this->num; i++) {
-    float px = 0, pz = 0;
+        float px = 0, pz = 0;
         while (pow(px, 2) + pow(pz, 2) < pow(radius, 2)) {
             float angle = 2.0 * M_PI * ((float)rand() / RAND_MAX);
 
             px = radius * cos(angle);
             pz = radius * sin(angle);
         }
-        
-        vector<Transform *> tfs;
+
+        vector<Transform*> tfs;
 
         tfs.push_back(new Translate(px, 0, pz));
 
         if (this->isRandRotation) {
-            float r_angle = 360.0 * ((double) rand() / RAND_MAX);
+            float r_angle = 360.0 * ((double)rand() / RAND_MAX);
             tfs.push_back(new Rotate(r_angle, _3f(0, 1, 1)));
         }
 
         child = _getChildElement(d3CircRandObjPlac, "transform");
-        if (child) {            
-            vector <Transform *> additional_tfs = Transform::parseTransform(child);
-            
+        if (child) {
+            vector<Transform*> additional_tfs =
+                Transform::parseTransform(child);
+
             for (const auto t : additional_tfs) {
                 tfs.push_back(t);
             }
@@ -420,25 +369,25 @@ void D3CircRandObjPlac::run() {
     }
 }
 
-
-Group::Group(XMLElement * group) {
-
-    const XMLAttribute * hasXML = group->FindAttribute("file");
+Group::Group(XMLElement* group) {
+    const XMLAttribute* hasXML = group->FindAttribute("file");
     if (hasXML) {
         XMLDocument doc;
         try {
             XMLError read_error = doc.LoadFile(group->Attribute("file"));
-        if (read_error != XML_SUCCESS) throw read_error;
+            if (read_error != XML_SUCCESS) throw read_error;
         } catch (XMLError error) {
             cout << error << endl;
         }
-        
-        XMLElement * g;
-        
+
+        XMLElement* g;
+
         try {
             g = doc.FirstChildElement("group");
-            if (g == nullptr) 
-                throw std::runtime_error("Error finding first Node group in file '" + string(group->Attribute("file")) + "' !");
+            if (g == nullptr)
+                throw std::runtime_error(
+                    "Error finding first Node group in file '" +
+                    string(group->Attribute("file")) + "' !");
         } catch (const char* message) {
             cout << message << endl;
         }
@@ -446,43 +395,33 @@ Group::Group(XMLElement * group) {
         this->groups.push_back(Group(g));
     }
 
-
-
-    XMLElement * child = _getChildElement(group, nullptr);
+    XMLElement* child = _getChildElement(group, nullptr);
 
     while (child) {
         string value = child->Value();
         if (value == "transform") {
-            vector <Transform *> ts = Transform::parseTransform(child);
-            for (auto t : ts)
-                this->transformations.push_back(t);
-        }
-        else if (value == "models") {
-            vector <Models *> ms = Models::parseModels(child);
-            for (auto m : ms)
-                this->models.push_back(m);
-        }
-        else if (value == "group") {
+            vector<Transform*> ts = Transform::parseTransform(child);
+            for (auto t : ts) this->transformations.push_back(t);
+        } else if (value == "models") {
+            vector<Models*> ms = Models::parseModels(child);
+            for (auto m : ms) this->models.push_back(m);
+        } else if (value == "group") {
             this->groups.push_back(Group(child));
-        } 
-        else if (value == "d3CircRandObjPlac") {
+        } else if (value == "d3CircRandObjPlac") {
             this->d3CircRandObjPlac.push_back(D3CircRandObjPlac(child));
-        }
-        else if (value == "text") {
+        } else if (value == "text") {
             this->texts.push_back(Text(child));
-        }
-        else {
-            throw std::runtime_error("Invalid group child value '" + std::string(child->Value()) + "'!");
+        } else {
+            throw std::runtime_error("Invalid group child value '" +
+                                     std::string(child->Value()) + "'!");
         }
 
         child = child->NextSiblingElement();
     }
-
 }
 void Group::run() {
-
     glPushMatrix();
-    
+
     for (const auto transform : this->transformations) {
         transform->run();
     }
@@ -501,13 +440,11 @@ void Group::run() {
     for (Text t : this->texts) {
         t.run();
     }
-    
-    glPopMatrix();
 
+    glPopMatrix();
 }
 
 World::World(const string& path) {
-
     XMLDocument doc;
 
     try {
@@ -525,7 +462,7 @@ World::World(const string& path) {
         cout << message << endl;
     }
 
-    XMLElement * window;
+    XMLElement* window;
     try {
         window = world->FirstChildElement("window");
         if (window == nullptr) {
@@ -548,7 +485,6 @@ World::World(const string& path) {
 }
 
 void World::evaluateGroup(const string& path) {
-
     XMLDocument doc;
 
     try {
@@ -566,9 +502,8 @@ void World::evaluateGroup(const string& path) {
         cout << message << endl;
     }
 
-    XMLElement * group = world->FirstChildElement("group");
+    XMLElement* group = world->FirstChildElement("group");
     if (group) {
         this->group = Group(group);
     }
-
 }

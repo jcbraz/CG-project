@@ -84,10 +84,6 @@ void Plane::Print(ostream &) const {
 }
 
 
-
-
-
-
 /*
  *
  * BOX CLASS
@@ -216,6 +212,55 @@ void Box::Print(ostream &) const {
  *
  */
 
+
+/**
+ * 
+ * ORBIT CLASS
+ * 
+*/
+Orbit::Orbit(float radius, int slices, int segments, string fName) : 
+    radius(radius),
+    slices(slices),
+    segments(segments) {
+
+    this->fileName = fName;
+
+    vector<_3f> points;
+    float _alpha = 2 * M_PI / slices;
+    float seg_size = 2 * M_PI / segments;
+
+    for (int i = 0; i < segments; i++) {
+        float a1 = seg_size * i;
+        float a2 = a1 + seg_size;
+
+        for (int j = 0; j < slices; j++) {
+            float a = _alpha * j;
+            float b = a + _alpha;
+
+            points.push_back(_3f(radius * cos(a1) * cos(a), radius * sin(a1), radius * cos(a1) * sin(a)));
+            points.push_back(_3f(radius * cos(a2) * cos(a), radius * sin(a2), radius * cos(a2) * sin(a)));
+            points.push_back(_3f(radius * cos(a1) * cos(b), radius * sin(a1), radius * cos(a1) * sin(b)));
+
+            points.push_back(_3f(radius * cos(a2) * cos(a), radius * sin(a2), radius * cos(a2) * sin(a)));
+            points.push_back(_3f(radius * cos(a2) * cos(b), radius * sin(a2), radius * cos(a2) * sin(b)));
+            points.push_back(_3f(radius * cos(a1) * cos(b), radius * sin(a1), radius * cos(a1) * sin(b)));
+        }
+    }
+    this->points.push_back(GSPoints(GL_TRIANGLES, points));
+}
+
+void Orbit::Print(ostream &) const {
+    cout << "Geometric Shape: Orbit" << endl;
+    cout << "Radius:" << Orbit::radius << endl;
+    cout << "Slices:" << Orbit::slices << endl;
+    cout << "Segments:" << Orbit::segments << endl;
+}
+
+/*
+ *
+ * END ORBIT CLASS
+ *
+ */
 
 /*
  *

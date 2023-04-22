@@ -27,10 +27,10 @@ using namespace std;
 int startX, startY, tracking = 0;
 float _alpha = 0, _beta = 35, r = 10;
 
-World * world;
-Window * window;
-Camera * camera;
-Group * group;
+World* world;
+Window* window;
+Camera* camera;
+Group* group;
 
 int timebase = 0;
 float frames = 0;
@@ -48,8 +48,6 @@ void displayFrameRate() {
         glutSetWindowTitle(title);
     }
 }
-
-// vector<Point> vertexB;
 
 void changeSize(int w, int h) {
     // Prevent a divide by zero, when window is too short
@@ -69,11 +67,10 @@ void changeSize(int w, int h) {
 
     // Set perspective
 
-
     _3f proj = camera->getProjection();
     gluPerspective(proj.x, ratio, proj.y, proj.z);
 
-    //gluPerspective(60, ratio, 1, 1000);
+    // gluPerspective(60, ratio, 1, 1000);
 
     // return to the model view matrix mode
     glMatrixMode(GL_MODELVIEW);
@@ -85,8 +82,6 @@ void renderScene(void) {
 
     // set the camera
     glLoadIdentity();
-
-
 
     _3f position = camera->getPosition();
     _3f lookAt = camera->getLookAt();
@@ -194,9 +189,8 @@ void processMouseMotion(int xx, int yy) {
 
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
 int main(int argc, char** argv) {
-
     string path = "../../test_files/solar_system/solar_system.xml";
-    //string path = "../../test_files/test_files_phase_2/test_2_solar.xml";
+    // string path = "../../test_files/test_files_phase_2/test_2_solar.xml";
 
     srand(time(nullptr));
 
@@ -211,7 +205,7 @@ int main(int argc, char** argv) {
     glutInitWindowPosition(100, 100);
 
     glutInitWindowSize(window->getWidth(), window->getHeight());
-   //glutInitWindowSize(1000, 1000);
+    // glutInitWindowSize(1000, 1000);
     glutCreateWindow("Engine");
 
     // Required callback registry
@@ -219,7 +213,7 @@ int main(int argc, char** argv) {
     glutReshapeFunc(changeSize);
 
     // Glew --> activate if not in mac
-    glewInit();
+    // glewInit();
     glEnableClientState(GL_VERTEX_ARRAY);
 
     // Callback registration for keyboard processing

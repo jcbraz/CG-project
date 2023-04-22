@@ -5,12 +5,11 @@
 #ifndef GROUP_PROJECT_GEOMETRICSHAPES_H
 #define GROUP_PROJECT_GEOMETRICSHAPES_H
 
-
 #include <iostream>
 #include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
-#include <tuple>
 
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
@@ -24,8 +23,9 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <fstream>
+
 #include <cstring>
+#include <fstream>
 #include <iomanip>
 
 #define FLOAT_PRECISION 5
@@ -43,19 +43,26 @@ struct _3f {
     float y;
     float z;
 
-    public:
-        _3f();
-        _3f(float x, float y, float z);
-        void normalize();
-        _3f operator+(const _3f& other) const { return _3f(x + other.x, y + other.y, z + other.z); }
-        _3f operator+(const float& other) const { 
-            cout << x << " " << y << " " << z << endl;
-            return _3f(x + other, y + other, z + other); 
-        }
-        _3f operator-(const _3f& other) const { return _3f(x - other.x, y - other.y, z - other.z); }
-        _3f operator*(const _3f& other) const { return _3f(x * other.x, y * other.y, z * other.z); }
-        _3f operator*(const float& other) const { return _3f(x * other, y * other, z * other); }
-
+   public:
+    _3f();
+    _3f(float x, float y, float z);
+    void normalize();
+    _3f operator+(const _3f &other) const {
+        return _3f(x + other.x, y + other.y, z + other.z);
+    }
+    _3f operator+(const float &other) const {
+        cout << x << " " << y << " " << z << endl;
+        return _3f(x + other, y + other, z + other);
+    }
+    _3f operator-(const _3f &other) const {
+        return _3f(x - other.x, y - other.y, z - other.z);
+    }
+    _3f operator*(const _3f &other) const {
+        return _3f(x * other.x, y * other.y, z * other.z);
+    }
+    _3f operator*(const float &other) const {
+        return _3f(x * other, y * other, z * other);
+    }
 };
 
 /*
@@ -71,22 +78,24 @@ struct _3f {
  */
 
 class GSPoints {
-    private:
-        int primitive;
-        vector<_3f> points;
-    public:
-        GSPoints(int primitive, vector<_3f> points) : primitive(primitive), points(points) {};
-        int getPrimitive() {return this->primitive;};
-        vector<_3f> getPoints() {return this->points;};
+   private:
+    int primitive;
+    vector<_3f> points;
+
+   public:
+    GSPoints(int primitive, vector<_3f> points)
+        : primitive(primitive), points(points){};
+    int getPrimitive() { return this->primitive; };
+    vector<_3f> getPoints() { return this->points; };
 };
 
 class GeometricShape {
-protected:
+   protected:
     vector<GSPoints> points;
     string fileName;
 
-public:
-    virtual vector<GSPoints> getPoints() {return points;};
+   public:
+    virtual vector<GSPoints> getPoints() { return points; };
 
     static void drawObject(vector<GSPoints> points);
     static void drawObjectVBOMode(vector<std::tuple<GLuint, int, int>>);
@@ -94,17 +103,17 @@ public:
     static void writeTo3DFile(vector<GSPoints> points, string fName);
 
     static vector<GSPoints> readFrom3DFile(string fName);
-    static vector<std::tuple<GLuint, int, int>> readFrom3DFileVBOMode(string fName);
+    static vector<std::tuple<GLuint, int, int>> readFrom3DFileVBOMode(
+        string fName);
 
     string getFileName() { return fileName; }
-
 
     friend ostream &operator<<(ostream &out, const GeometricShape &go) {
         go.Print(out);
         return out;
     }
 
-private:
+   private:
     virtual void Print(ostream &) const = 0;
 };
 
@@ -115,48 +124,63 @@ private:
  */
 
 class Circumference : public GeometricShape {
-    private:
-        float radius;
-        int slices;
+   private:
+    float radius;
+    int slices;
 
-    public:
-        Circumference(float radius, int slices) : radius(radius), slices(slices) {};
+   public:
+    Circumference(float radius, int slices) : radius(radius), slices(slices){};
 
-    protected:
-        void Print(ostream &) const override;
-    
+   protected:
+    void Print(ostream &) const override;
+};
+
+class Orbit : public GeometricShape {
+   private:
+    float radius;
+    int slices;
+    int segments;
+
+   public:
+    Orbit(float radius, int slices, int segments, string fName);
+
+   protected:
+    void Print(ostream &) const override;
 };
 
 class Ring : public GeometricShape {
-    private:
-        float innerRadius;
-        float outerRadius;
-        int slices;
-        int segments;
-    public:
-        Ring(float innerRadius, float outerRadius, int slices, int segments, string fName);
-        
-    protected:
-        void Print(ostream &) const override;
+   private:
+    float innerRadius;
+    float outerRadius;
+    int slices;
+    int segments;
+
+   public:
+    Ring(float innerRadius, float outerRadius, int slices, int segments,
+         string fName);
+
+   protected:
+    void Print(ostream &) const override;
 };
 
 class Torus : public GeometricShape {
-    private:
-        float innerRadius;
-        float outerRadius;
-        int slices;
-        int loops;
+   private:
+    float innerRadius;
+    float outerRadius;
+    int slices;
+    int loops;
 
-    public:    
-        /*
-            POR IMPLEMENTAR
-        */
-        Torus();
-        Torus(float innerRadius, float outerRadius, int slices, int loops);
-        Torus(float innerRadius, float outerRadius, int slices, int loops, string pathFile);
+   public:
+    /*
+        POR IMPLEMENTAR
+    */
+    Torus();
+    Torus(float innerRadius, float outerRadius, int slices, int loops);
+    Torus(float innerRadius, float outerRadius, int slices, int loops,
+          string pathFile);
 
-    protected:
-        void Print(ostream &) const override;
+   protected:
+    void Print(ostream &) const override;
 };
 
 /*
@@ -166,19 +190,19 @@ class Torus : public GeometricShape {
  */
 
 class Cone : public GeometricShape {
-    private:
-        float radius;
-        float height;
-        int slices;
-        int stacks;
+   private:
+    float radius;
+    float height;
+    int slices;
+    int stacks;
 
-    public:
-        Cone();
-        Cone(float radius, float height, int slices, int stacks);
-        Cone(float radius, float height, int slices, int stacks, string pathFile);
+   public:
+    Cone();
+    Cone(float radius, float height, int slices, int stacks);
+    Cone(float radius, float height, int slices, int stacks, string pathFile);
 
-    protected:
-        void Print(ostream &) const override;
+   protected:
+    void Print(ostream &) const override;
 };
 
 /*
@@ -187,24 +211,23 @@ class Cone : public GeometricShape {
  *
  */
 
-
 /*
  *
  * PLANE CLASS
  *
  */
 class Plane : public GeometricShape {
-    private:
-        float length;
-        int divisions;
+   private:
+    float length;
+    int divisions;
 
-    public:
-        Plane();
-        Plane(float length, int divisions);
-        Plane(float length, int divisions, string fileName);
+   public:
+    Plane();
+    Plane(float length, int divisions);
+    Plane(float length, int divisions, string fileName);
 
-    protected:
-        void Print(ostream &) const override;
+   protected:
+    void Print(ostream &) const override;
 };
 
 /*
@@ -219,16 +242,16 @@ class Plane : public GeometricShape {
  *
  */
 class Box : public GeometricShape {
-private:
+   private:
     float length;
     int divisions;
 
-public:
+   public:
     Box();
     Box(float length, int divisions);
     Box(float length, int divisions, string pathFile);
 
-protected:
+   protected:
     void Print(ostream &) const override;
 };
 
@@ -244,19 +267,19 @@ protected:
  *
  */
 class Sphere : public GeometricShape {
-    private:
-        float radius;
-        int slices;
-        int stacks;
+   private:
+    float radius;
+    int slices;
+    int stacks;
 
-    public:
-        Sphere();
-        Sphere(float radius, int slices, int stacks);
-        Sphere(float radius, int slices, int stacks, string pathFile);
-        Sphere(string specularMap, string fileName);
+   public:
+    Sphere();
+    Sphere(float radius, int slices, int stacks);
+    Sphere(float radius, int slices, int stacks, string pathFile);
+    Sphere(string specularMap, string fileName);
 
-    protected:
-        void Print(ostream &) const override;
+   protected:
+    void Print(ostream &) const override;
 };
 
 /*
@@ -265,4 +288,4 @@ class Sphere : public GeometricShape {
  *
  */
 
-#endif //GROUP_PROJECT_GEOMETRICSHAPES_H
+#endif  // GROUP_PROJECT_GEOMETRICSHAPES_H
