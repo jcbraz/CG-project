@@ -138,11 +138,9 @@ class Circumference : public GeometricShape {
 class Orbit : public GeometricShape {
    private:
     float radius;
-    int slices;
-    int segments;
 
    public:
-    Orbit(float radius, int slices, int segments, string fName);
+    Orbit(float radius, string fName);
 
    protected:
     void Print(ostream &) const override;

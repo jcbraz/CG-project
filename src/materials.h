@@ -1,11 +1,12 @@
 #ifndef MATERIALS_H
 #define MATERIALS_H
 
-#include <vector>
-#include <string>
+#include <math.h>
+
 #include <iostream>
 #include <map>
-#include<math.h>
+#include <string>
+#include <vector>
 
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
@@ -22,192 +23,178 @@
 using namespace std;
 using namespace tinyxml2;
 
-enum MTValue {
-    MT_CODE_COLOUR_DRAW
-};
+enum MTValue { MT_CODE_COLOUR_DRAW };
 
 void mtEnable(MTValue v);
 void mtDisable(MTValue v);
 
-
 class Window {
-    private: 
-        int width;
-        int height;
-    
-    public:
-        Window() : width(800), height(800) {};
-        Window (int width, int height) : width(width), height(height) {};
-        explicit Window (XMLElement * window);
-        float getWidth() const { return width; };
-        float getHeight() const { return height; };
+   private:
+    int width;
+    int height;
+
+   public:
+    Window() : width(800), height(800){};
+    Window(int width, int height) : width(width), height(height){};
+    explicit Window(XMLElement *window);
+    float getWidth() const { return width; };
+    float getHeight() const { return height; };
 };
 
 class Camera {
-    private:
-        _3f position;
-        _3f lookAt;
-        _3f up;
-        _3f projection;
+   private:
+    _3f position;
+    _3f lookAt;
+    _3f up;
+    _3f projection;
 
-    public:
-        Camera() : 
-        position(_3f(60, 60, 10)),
-        lookAt(_3f(0,0,0)),
-        up(_3f(0,1,0)),
-        projection(_3f(60, 1, 1000)) {};
+   public:
+    Camera()
+        : position(_3f(60, 60, 10)),
+          lookAt(_3f(0, 0, 0)),
+          up(_3f(0, 1, 0)),
+          projection(_3f(60, 1, 1000)){};
 
-        Camera(_3f position, _3f lookAt, _3f up, _3f projection) :
-        position(position),
-        lookAt(lookAt),
-        up(up),
-        projection(projection) {};
+    Camera(_3f position, _3f lookAt, _3f up, _3f projection)
+        : position(position), lookAt(lookAt), up(up), projection(projection){};
 
-        explicit Camera(XMLElement * camera);
+    explicit Camera(XMLElement *camera);
 
-        void setPosition(_3f position) { Camera::position = position; };
-        _3f getPosition() { return position; };
-        void setLookAt(_3f lookAt) { Camera::lookAt = lookAt; };
-        _3f getLookAt() { return lookAt; };
-        void setUp(_3f up) { Camera::up = up; };
-        _3f getUp() { return up; };
-        void setProjection(_3f projection) { Camera::projection = projection; };
-        _3f getProjection() { return projection; };
-
+    void setPosition(_3f position) { Camera::position = position; };
+    _3f getPosition() { return position; };
+    void setLookAt(_3f lookAt) { Camera::lookAt = lookAt; };
+    _3f getLookAt() { return lookAt; };
+    void setUp(_3f up) { Camera::up = up; };
+    _3f getUp() { return up; };
+    void setProjection(_3f projection) { Camera::projection = projection; };
+    _3f getProjection() { return projection; };
 };
 
 class Transform {
-    public:
-        virtual ~Transform() = default;
-        virtual void run() = 0;
-        static vector<Transform *> parseTransform(XMLElement * transform);
+   public:
+    virtual ~Transform() = default;
+    virtual void run() = 0;
+    static vector<Transform *> parseTransform(XMLElement *transform);
 };
 
 class Rotate : public Transform {
-    private:
+   private:
     float angle;
     _3f p;
 
-    public:
-        explicit Rotate(XMLElement * rotate);
-        Rotate(float angle, _3f p) : angle(angle), p(p) {};
-        void run() override;
+   public:
+    explicit Rotate(XMLElement *rotate);
+    Rotate(float angle, _3f p) : angle(angle), p(p){};
+    void run() override;
 };
 
 class Translate : public Transform {
-    private:
-        _3f p;
-    
-    public:
-        explicit Translate(XMLElement * translate);
-        Translate(float x, float y, float z) : p(_3f(x, y, z)) {};
-        void run() override;
+   private:
+    _3f p;
+
+   public:
+    explicit Translate(XMLElement *translate);
+    Translate(float x, float y, float z) : p(_3f(x, y, z)){};
+    void run() override;
 };
 
 class Scale : public Transform {
-    private:
-        _3f p;
-    
-    public:
-        explicit Scale(XMLElement * scale);
-        explicit Scale(_3f p) : p(p) {};
-        void run() override;
+   private:
+    _3f p;
+
+   public:
+    explicit Scale(XMLElement *scale);
+    explicit Scale(_3f p) : p(p){};
+    void run() override;
 };
 
 class Colour {
-    private:
-        _3f p;
-    
-    public:
-        Colour() { p = _3f(1.0f, 1.0f, 1.0f); };
-        explicit Colour(XMLElement * colour);
-        void run();
+   private:
+    _3f p;
+
+   public:
+    Colour() { p = _3f(1.0f, 1.0f, 1.0f); };
+    explicit Colour(XMLElement *colour);
+    void run();
 };
 
 class Text {
-    private:
-        string content;
-        float x;
-        float y;
-        Colour colour;
+   private:
+    string content;
+    float x;
+    float y;
+    Colour colour;
 
-    public:
-        Text(XMLElement * text);
-        void run();
+   public:
+    Text(XMLElement *text);
+    void run();
 };
-
 
 class Models {
-    public:
-        virtual ~Models() = default;
-        virtual void run() = 0;
-        static vector <Models *> parseModels(XMLElement * models);
+   public:
+    virtual ~Models() = default;
+    virtual void run() = 0;
+    static vector<Models *> parseModels(XMLElement *models);
 };
-
 
 class D3CircRandObjPlac {
-    private:
-        float radius;
-        int num;
-        bool isRandRotation;
-        vector<Models *> models;
-        vector<vector<Transform *> > transforms;
+   private:
+    float radius;
+    int num;
+    bool isRandRotation;
+    vector<Models *> models;
+    vector<vector<Transform *> > transforms;
 
-    public:
-        D3CircRandObjPlac(XMLElement * d3CircRandObjPlac);
-        void run();
+   public:
+    D3CircRandObjPlac(XMLElement *d3CircRandObjPlac);
+    void run();
 };
 
-
 class Group {
-    public:
-        vector<Models*> models;
-        vector<Transform*> transformations;
-        vector<D3CircRandObjPlac> d3CircRandObjPlac;
-        vector<Text> texts;
-        vector<Group> groups;
+   public:
+    vector<Models *> models;
+    vector<Transform *> transformations;
+    vector<D3CircRandObjPlac> d3CircRandObjPlac;
+    vector<Text> texts;
+    vector<Group> groups;
 
-    public:
-        Group() = default;
-        Group(XMLElement * group);
-        void run();
+   public:
+    Group() = default;
+    Group(XMLElement *group);
+    void run();
 };
 
 class Event {
-    private:
-        unsigned int code;
-        Group group;
+   private:
+    unsigned int code;
+    Group group;
 
-    public:
-        Event() = default;
-        Event(XMLElement * event, unsigned int code);
-        //Event(XMLElement * event);
-        int get() {return code;};
-        void run();
+   public:
+    Event() = default;
+    Event(XMLElement *event, unsigned int code);
+    // Event(XMLElement * event);
+    int get() { return code; };
+    void run();
 };
-
 
 class Model : public Models {
-    private:
-        unsigned int code;
-        string modelName;
-        Colour colour;
-        bool disableCull;
-        Event event;
-    
-    public:
-        explicit Model(XMLElement * model);
-        void run() override;
+   private:
+    unsigned int code;
+    string modelName;
+    Colour colour;
+    bool disableCull;
+    Event event;
+
+   public:
+    explicit Model(XMLElement *model);
+    void run() override;
 };
-
-
-
 
 /*
 class Events {
     private:
         map<int, Event> events;
-    
+
     public:
         Events() = default;
         void addEvent(XMLElement * event, unsigned int code);
@@ -218,24 +205,21 @@ class Events {
 
 */
 
-
 class World {
-    private:
-        Window window;
-        Camera camera;
-        Group group;
-    
-    public:
-        explicit World(const string& path);
-        void evaluateGroup(const string& path);
-        Camera getCamera() {return camera;};
-        Window getWindow() {return window;};
-        Group getGroup() {return group;};
+   private:
+    Window window;
+    Camera camera;
+    Group group;
+
+   public:
+    explicit World(const string &path);
+    void evaluateGroup(const string &path);
+    Camera getCamera() { return camera; };
+    Window getWindow() { return window; };
+    Group getGroup() { return group; };
 };
 
-
-int picking(int x, int y, Camera * c, Group * g);
+int picking(int x, int y, Camera *c, Group *g);
 void handlePickingEvents();
 
 #endif
-
