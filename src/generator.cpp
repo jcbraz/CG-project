@@ -8,9 +8,8 @@
 using namespace std;
 
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
-int main(int argc, char ** argv) {
-
-    GeometricShape * gShape;
+int main(int argc, char** argv) {
+    GeometricShape* gShape;
 
     try {
         string s_gShape = argv[1];
@@ -19,11 +18,14 @@ int main(int argc, char ** argv) {
         else if (s_gShape == "box")
             gShape = new Box(stof(argv[2]), stoi(argv[3]), argv[4]);
         else if (s_gShape == "cone")
-            gShape = new Cone(stof(argv[2]), stof(argv[3]), stoi(argv[4]), stoi(argv[5]), argv[6]);
+            gShape = new Cone(stof(argv[2]), stof(argv[3]), stoi(argv[4]),
+                              stoi(argv[5]), argv[6]);
         else if (s_gShape == "sphere")
-            gShape = new Sphere(stof(argv[2]), stoi(argv[3]), stoi(argv[4]), argv[5]);
-        else if (s_gShape =="ring")
-            gShape = new Ring(stof(argv[2]), stof(argv[3]), stoi(argv[4]), stoi(argv[5]), argv[6]);
+            gShape = new Sphere(stof(argv[2]), stoi(argv[3]), stoi(argv[4]),
+                                argv[5]);
+        else if (s_gShape == "ring")
+            gShape = new Ring(stof(argv[2]), stof(argv[3]), stoi(argv[4]),
+                              stoi(argv[5]), argv[6]);
         else if (s_gShape == "orbit")
             gShape = new Orbit(stof(argv[2]), argv[3]);
         else
@@ -36,6 +38,6 @@ int main(int argc, char ** argv) {
     cout << *gShape << endl;
     gShape->writeTo3DFile(gShape->getPoints(), gShape->getFileName());
 
-	//executeCommands(...);
+    // executeCommands(...);
     return 0;
 }

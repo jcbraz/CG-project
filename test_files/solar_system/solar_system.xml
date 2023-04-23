@@ -21,6 +21,14 @@
                     </event>
                 </model>
             </models>
+            <group>
+                <transform>
+                    <rotate x="1" y="0" z="0" angle="90" />
+                </transform>
+                <models>
+                    <model file="orbit_5.3d" />
+                </models>
+            </group>
         </group>
         <group> <!-- MERCURY -->
             <transform>
@@ -132,8 +140,7 @@
                 <model file="sphere_1_20_20.3d">
                     <color r="0.882" g="0.643" b="0.345" />
                 </model>
-                <!-- <model file="ring_1_2_50_3.3d" disableCull="True"> -->
-                <model file="orbit_5.3d">
+                <model file="ring_1_2_50_3.3d" disableCull="True">
                     <event>
                         <group>
                             <text content="Saturn Ring" x="30" y="30" />

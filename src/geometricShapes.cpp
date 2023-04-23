@@ -213,7 +213,8 @@ Orbit::Orbit(float radius, string fName) : radius(radius) {
     vector<_3f> points;
 
     for (GLfloat angle = 0.0f; angle <= 2 * M_PI; angle += 0.01f) {
-        points.push_back(_3f(radius * cos(angle), radius * sin(angle), 0.0f));
+        points.push_back(
+            _3f(this->radius * cos(angle), this->radius * sin(angle), 0.0f));
     }
 
     this->points.push_back(GSPoints(GL_LINE_LOOP, points));
