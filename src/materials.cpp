@@ -179,10 +179,42 @@ Translate::Translate(XMLElement * translate) {
         translate->FloatAttribute("y"),
         translate->FloatAttribute("z")
     );
+
+    XMLElement * translate_child = _getChildElement(translate, "point");
+    while (translate_child) {
+        this->catmullPoints.push_back(_3f(
+        translate_child->FloatAttribute("x"),
+        translate_child->FloatAttribute("y"),
+        translate_child->FloatAttribute("z")
+    ));
+        translate_child = translate_child->NextSiblingElement("point");
+    }
+}
+
+void renderCatmullRomCurve(vector<_3f> catmrPts) {
+    _3f pos = _3f();
+    _3f deriv = _3f();
+
+    glBegin(GL_LINE_LOOP);
+    float gt = 0;
+    while (gt < 1) {
+        getGlobalCatmullRomPoint(gt, &pos, &deriv, catmrPts);
+        glVertex3f(pos.x, pos.y, pos.z);
+        gt += 1.0 / 100.0;
+    }
+    glEnd();
 }
 
 void Translate::run() {
     glTranslatef(this->p.x, this->p.y, this->p.z);
+    if (this->catmullPoints.size() > 0) {
+        if (this->catmullPoints.size() < 4) {
+            throw "excpected atleast 4 points but less were given!";
+        }
+        else {
+            renderCatmullRomCurve(this->catmullPoints);
+        }
+    }
 }
 
 Scale::Scale(XMLElement * scale) {

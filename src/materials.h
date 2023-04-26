@@ -18,6 +18,7 @@
 #include <tinyxml2.h>
 
 #include "geometricShapes.h"
+#include "splines.h"
 
 using namespace std;
 using namespace tinyxml2;
@@ -94,15 +95,18 @@ class Rotate : public Transform {
         void run() override;
 };
 
+
 class Translate : public Transform {
     private:
         _3f p;
+        vector<_3f> catmullPoints; 
     
     public:
         explicit Translate(XMLElement * translate);
         Translate(float x, float y, float z) : p(_3f(x, y, z)) {};
         void run() override;
 };
+
 
 class Scale : public Transform {
     private:

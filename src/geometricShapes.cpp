@@ -66,6 +66,19 @@ ILubyte * readImage(string fpath, int * width, int * height) {
     return imageData;
 }
 
+unsigned char * genRandomData(int h, int w) {
+    unsigned char * data = (unsigned char *) malloc(sizeof(unsigned char) * h*w);
+    for (int i = 0; i < h*w; i++) {
+        data[i] = (unsigned char) rand();
+    }
+    return data;
+}
+
+int height(int i, int j, ILubyte * imageData, int width, float multiplier) {
+    float h = imageData[i *  width + j];
+    return h / 255.0f * multiplier;
+}
+
 /*
  *
  * PLANE 
@@ -281,7 +294,7 @@ Ring::Ring(float innerRadius, float outerRadius, int slices, int segments, strin
                 points.push_back(_3f(r2 * cos(a2) , 0, r2 * sin(a2)));
         }
     }
-
+    
     this->points.push_back(GSPoints(GL_TRIANGLES, points));
 }
 
@@ -305,62 +318,140 @@ void Ring::Print(ostream &) const {
  *
  */
 
-Sphere::Sphere() {
-    radius = 1;
-    slices = 10;
-    stacks = 3;
-    fileName = "sphere.3d";
-}
-
-Sphere::Sphere(float radius, int slices, int stacks) {
-    Sphere::radius = radius;
-    Sphere::slices = slices;
-    Sphere::stacks = stacks;
-    fileName = "sphere.3d";
-}
-
-Sphere::Sphere(string specularMap, string fileName, float radius) : radius(radius) {
-    
-    ILubyte * imageData = readImage(specularMap, &this->slices, &this->stacks);
-
+Sphere::Sphere(float radius, int slices, int stacks, float multiplier, string fileName) : radius(radius), slices(slices), stacks(stacks) {
+    this->fileName = fileName;
     float _alpha = 2 * M_PI / slices;
     float _beta = M_PI / stacks;
-    for (int i = 0; i < slices; i++) {
+    unsigned char * imageData = genRandomData(this->slices, this->stacks);
+    for (int i = 0; i < slices-1; i++) {
         vector<_3f> strip;
         float av1 = i * _alpha;
         float av2 = av1 + _alpha;
 
-        for (int j = 0; j < stacks; j++) {
-            float bv1 = M_PI / 2 + j * _beta;
-            float bv2 = bv1 + _beta;
+        for (int j = 0; j <= stacks; j++) {
+            float bv1 = -M_PI/2 + j * _beta;
             
-            //float h = imageData[i * this->slices + j] / 255 * 120;
-            //if (h != 0)
-              //  cout << "h:" << h << " ";
 
-            //float h = rand() % 10;
- 
-            //float hr = this->radius - h;
-            float hr = 0;
+            float hr1 = this->radius - height(i, j, imageData, this->slices, multiplier);
+            float hr2 = this->radius - height(i+1, j, imageData, this->slices, multiplier);
             strip.push_back(
                 _3f(
-                    hr * cos(bv1) * sin(av1),
-                    hr * sin(bv1),
-                    hr * cos(bv1) * cos(av1)
+                    hr1 * cos(bv1) * sin(av1),
+                    hr1 * sin(bv1),
+                    hr1 * cos(bv1) * cos(av1)
+                )
+            );
+
+            strip.push_back(
+                _3f(
+                    hr2 * cos(bv1) * sin(av2),
+                    hr2 * sin(bv1),
+                    hr2 * cos(bv1) * cos(av2)
                 )
             );
 
 
-            strip.push_back(
-                _3f(
-                    hr * cos(bv2) * sin(av2),
-                    hr * sin(bv2),
-                    hr * cos(bv2) * cos(av2)
-                )
-            );
         }
-        this->points.push_back(GSPoints(GL_LINE_STRIP, strip));       
+        this->points.push_back(GSPoints(GL_TRIANGLE_STRIP, strip));        
+    }  
+
+    vector<_3f> strip;
+    float av1 = (this->slices-1) * _alpha;
+    float av2 = 0;
+
+    for (int j = 0; j <= stacks; j++) {
+        float bv1 = -M_PI/2 + j * _beta;
+        
+
+        float hr1 = this->radius - height(this->slices-1, j, imageData, this->slices, multiplier);
+        float hr2 = this->radius - height(0, j, imageData, this->slices, multiplier);
+        strip.push_back(
+            _3f(
+                hr1 * cos(bv1) * sin(av1),
+                hr1 * sin(bv1),
+                hr1 * cos(bv1) * cos(av1)
+            )
+        );
+
+        strip.push_back(
+            _3f(
+                hr2 * cos(bv1) * sin(av2),
+                hr2 * sin(bv1),
+                hr2 * cos(bv1) * cos(av2)
+            )
+        );
+
+
     }
+    this->points.push_back(GSPoints(GL_TRIANGLE_STRIP, strip));        
+}
+
+Sphere::Sphere(string specularMap, string fileName, float radius, float multiplier) : radius(radius) {
+    this->fileName = fileName;
+    ILubyte * imageData = readImage(specularMap, &this->slices, &this->stacks);
+    float _alpha = 2 * M_PI / slices;
+    float _beta = M_PI / stacks;
+    for (int i = 0; i < slices-1; i++) {
+        vector<_3f> strip;
+        float av1 = i * _alpha;
+        float av2 = av1 + _alpha;
+
+        for (int j = 0; j <= stacks; j++) {
+            float bv1 = -M_PI/2 + j * _beta;
+            
+
+            float hr1 = this->radius - height(i, j, imageData, this->slices, multiplier);
+            float hr2 = this->radius - height(i+1, j, imageData, this->slices, multiplier);
+            strip.push_back(
+                _3f(
+                    hr1 * cos(bv1) * sin(av1),
+                    hr1 * sin(bv1),
+                    hr1 * cos(bv1) * cos(av1)
+                )
+            );
+
+            strip.push_back(
+                _3f(
+                    hr2 * cos(bv1) * sin(av2),
+                    hr2 * sin(bv1),
+                    hr2 * cos(bv1) * cos(av2)
+                )
+            );
+
+
+        }
+        this->points.push_back(GSPoints(GL_TRIANGLE_STRIP, strip));        
+    }  
+
+    vector<_3f> strip;
+    float av1 = (this->slices-1) * _alpha;
+    float av2 = 0;
+
+    for (int j = 0; j <= stacks; j++) {
+        float bv1 = -M_PI/2 + j * _beta;
+        
+
+        float hr1 = this->radius - height(this->slices-1, j, imageData, this->slices, multiplier);
+        float hr2 = this->radius - height(0, j, imageData, this->slices, multiplier);
+        strip.push_back(
+            _3f(
+                hr1 * cos(bv1) * sin(av1),
+                hr1 * sin(bv1),
+                hr1 * cos(bv1) * cos(av1)
+            )
+        );
+
+        strip.push_back(
+            _3f(
+                hr2 * cos(bv1) * sin(av2),
+                hr2 * sin(bv1),
+                hr2 * cos(bv1) * cos(av2)
+            )
+        );
+
+
+    }
+    this->points.push_back(GSPoints(GL_TRIANGLE_STRIP, strip));        
 }
 
 Sphere::Sphere(float radius, int slices, int stacks, string fileName) {

@@ -253,10 +253,10 @@ class Sphere : public GeometricShape {
         int stacks;
 
     public:
-        Sphere();
         Sphere(float radius, int slices, int stacks);
         Sphere(float radius, int slices, int stacks, string pathFile);
-        Sphere(string specularMap, string fileName, float radius);
+        Sphere(string specularMap, string fileName, float radius, float multiplier);
+        Sphere(float radius, int slices, int stacks, float multiplier, string fileName);
 
     protected:
         void Print(ostream &) const override;

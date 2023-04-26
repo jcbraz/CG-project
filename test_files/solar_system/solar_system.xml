@@ -4,7 +4,7 @@
         <position x="60" y="60" z="10" />
         <lookAt x="0" y="0" z="0" />
         <up x="0" y="1" z="0" />
-        <projection fov="60" near="1" far="100000" />
+        <projection fov="60" near="1" far="10000" />
     </camera>
     <group>
         <group> <!-- SUN GROUP -->
@@ -57,7 +57,12 @@
         </group>
         <group> <!-- EARTH AND MOON GROUP -->
             <transform>
-                <translate x="15" y="0" z="0" />
+                <translate x="15" y="0" z="0">
+                    <point x="5" y="0" z="0"/>
+                    <point x="0" y="0" z="5"/>
+                    <point x="-5" y="0" z="0"/>
+                    <point x="0" y="0" z="-5"/>
+                </translate>
             </transform>
             <group> <!-- EARTH GROUP -->
                 <models>
