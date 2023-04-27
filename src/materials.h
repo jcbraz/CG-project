@@ -44,7 +44,7 @@ class Window {
 };
 
 class Camera {
-    private:
+    protected:
         _3f position;
         _3f lookAt;
         _3f up;
@@ -75,6 +75,39 @@ class Camera {
         _3f getProjection() { return projection; };
 
 };
+
+class FirstPersonCamera : public Camera {
+    private:
+        float pitch;
+        float yaw;
+        float movementSpeed;
+
+    public:
+        FirstPersonCamera() : 
+            Camera(),
+            pitch(0.0f),
+            yaw(0.0f),
+            movementSpeed(5.0f) {};
+
+        FirstPersonCamera(_3f position, _3f lookAt, _3f up, _3f projection, float pitch, float yaw, float movementSpeed) :
+            Camera(position, lookAt, up, projection),
+            pitch(pitch),
+            yaw(yaw),
+            movementSpeed(movementSpeed) {};
+
+        void setPitch(float pitch) { FirstPersonCamera::pitch = pitch; };
+        float getPitch() { return pitch; };
+        void setYaw(float yaw) { FirstPersonCamera::yaw = yaw; };
+        float getYaw() { return yaw; };
+        void setMovementSpeed(float movementSpeed) { FirstPersonCamera::movementSpeed = movementSpeed; };
+        float getMovementSpeed() { return movementSpeed; };
+        void update(float deltaTime, bool forward, bool backward, bool left, bool right, float mouseX, float mouseY);
+        void updateVectors();
+
+
+
+};
+
 
 class Transform {
     public:

@@ -1,4 +1,5 @@
 #include "materials.h"
+#include <cmath>
 //                            VBO   PRIMITIVE  N_PTS
 map<string, vector<std::tuple<GLuint, int, int>>> fileModels;
 
@@ -571,4 +572,63 @@ void World::evaluateGroup(const string& path) {
         this->group = Group(group);
     }
 
+}
+
+_3f _3f::cross(const _3f &other) const {
+    _3f result;
+    result.x = y * other.z - z * other.y;
+    result.y = z * other.x - x * other.z;
+    result.z = x * other.y - y * other.x;
+    return result;
+}
+
+_3f& _3f::operator+=(const _3f &other) {
+    x += other.x;
+    y += other.y;
+    z += other.z;
+    return *this;
+}
+
+_3f& _3f::operator-=(const _3f &other) {
+    x -= other.x;
+    y -= other.y;
+    z -= other.z;
+    return *this;
+}
+
+
+
+void FirstPersonCamera::update(float deltaTime, bool forward, bool backward, bool left, bool right, float mouseX, float mouseY) {
+    // Update pitch and yaw based on mouse input
+    pitch += mouseY;
+    yaw += mouseX;
+
+    // Clamp pitch to prevent camera flipping
+    if (pitch > 89.0f) pitch = 89.0f;
+    if (pitch < -89.0f) pitch = -89.0f;
+
+    // Update camera direction
+    updateVectors();
+
+    // Update position based on keyboard input
+    _3f forwardVec = lookAt - position;
+    forwardVec.normalize();
+    _3f rightVec = forwardVec.cross(up);
+    rightVec.normalize();
+
+    if (forward) position += forwardVec * movementSpeed * deltaTime;
+    if (backward) position -= forwardVec * movementSpeed * deltaTime;
+    if (left) position -= rightVec * movementSpeed * deltaTime;
+    if (right) position += rightVec * movementSpeed * deltaTime;
+
+    // Update lookAt based on new position
+    lookAt = position + forwardVec;
+}
+
+void FirstPersonCamera::updateVectors() {
+    _3f newDirection;
+    newDirection.x = cos(yaw) * cos(pitch);
+    newDirection.y = sin(pitch);
+    newDirection.z = sin(yaw) * cos(pitch);
+    lookAt = position + newDirection;
 }

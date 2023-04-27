@@ -31,9 +31,11 @@ World * world;
 Window * window;
 Camera * camera;
 Group * group;
+FirstPersonCamera firstPersonCamera;
 
 int timebase = 0;
 float frames = 0;
+bool firstPersonCameraActive = false;
 
 void displayFrameRate() {
     char title[50];
@@ -86,6 +88,13 @@ void renderScene(void) {
     // set the camera
     glLoadIdentity();
 
+    if (firstPersonCameraActive) {
+        gluLookAt(
+            firstPersonCamera.getPosition().x, firstPersonCamera.getPosition().y, firstPersonCamera.getPosition().z,
+            firstPersonCamera.getLookAt().x, firstPersonCamera.getLookAt().y, firstPersonCamera.getLookAt().z,
+            firstPersonCamera.getUp().x, firstPersonCamera.getUp().y, firstPersonCamera.getUp().z
+        );
+    }
 
 
     _3f position = camera->getPosition();
@@ -117,6 +126,7 @@ void renderScene(void) {
     glutSwapBuffers();
 }
 
+
 int is_skeleton = 0;
 void processKeys(unsigned char key, int x, int y) {
     if (key == 'x') {
@@ -126,6 +136,9 @@ void processKeys(unsigned char key, int x, int y) {
             glPolygonMode(GL_FRONT, GL_LINE);
         is_skeleton = !is_skeleton;
         cout << "Pressed: " << key << endl;
+    }
+    if (key == 'c' || key == 'C') {
+        firstPersonCameraActive = !firstPersonCameraActive;
     }
     glutPostRedisplay();
 }
@@ -219,7 +232,7 @@ int main(int argc, char** argv) {
     glutReshapeFunc(changeSize);
 
     // Glew --> activate if not in mac
-    glewInit();
+    //glewInit();
     glEnableClientState(GL_VERTEX_ARRAY);
 
     // Callback registration for keyboard processing
