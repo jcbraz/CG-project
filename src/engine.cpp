@@ -266,12 +266,13 @@ int main(int argc, char** argv) {
     group = new Group(world->getGroup());
 
 
-    /*
-    TESTE
+    /**/
+    //TESTE
     
     //Sphere s = Sphere(1, 35, 35, 25, "boas");
+    //Sphere s = Sphere("../../test_files/solar_system/test.jpg", "sphere_spec.3d", 50, 10);
     //test = GeometricShape::convertToVBO(s.getPoints());
-    */
+    
 
     // Glut's main cycle
     glutMainLoop();

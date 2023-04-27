@@ -55,6 +55,7 @@ ILubyte * readImage(string fpath, int * width, int * height) {
     //ILubyte * imageData = new ILubyte[size];
     //ILboolean result = ilCopyPixels(0, 0, 0, *width, *height, 1, IL_LUMINANCE, IL_UNSIGNED_BYTE, imageData);
     ILubyte * imageData = ilGetData();
+    ILubyte * tmp = imageData;
 
     if (!imageData)
         cout << "error getting image data!" << endl;
@@ -74,7 +75,7 @@ unsigned char * genRandomData(int h, int w) {
     return data;
 }
 
-int height(int i, int j, ILubyte * imageData, int width, float multiplier) {
+float height(int i, int j, ILubyte * imageData, int width, float multiplier) {
     float h = imageData[i *  width + j];
     return h / 255.0f * multiplier;
 }
