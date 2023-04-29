@@ -24,14 +24,15 @@ _3f::_3f() {
     _3f::z = 0;
 }
 
-void _3f::normalize() {
-    float max = abs(x);
-    if (abs(y) > max) max = abs(y);
-    if (abs(z) > max) max = abs(z);
+_3f _3f::cross(_3f a, _3f b) {
+    return _3f(a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x);
+}
 
-    x = x / max;
-    y = y / max;
-    z = z / max;
+void _3f::normalize() {
+    float l = sqrt(x*x + y*y + z*z);
+    x /= l;
+    y /= l;
+    z /= l;
 }  
 
 

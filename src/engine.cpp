@@ -54,7 +54,6 @@ void displayFrameRate() {
     }
 }
 
-// vector<Point> vertexB;
 
 void changeSize(int w, int h) {
     // Prevent a divide by zero, when window is too short
@@ -216,7 +215,7 @@ int main(int argc, char** argv) {
 
 
     string path = "../../test_files/solar_system/solar_system.xml";
-    //string path = "../../test_files/test_files_phase_2/test_2_solar.xml";
+    //string path = "../../test_files/test_files_phase_3/test_3_1.xml";
 
     srand(time(nullptr));
 
@@ -236,6 +235,7 @@ int main(int argc, char** argv) {
 
     // Required callback registry
     glutDisplayFunc(renderScene);
+    glutIdleFunc(renderScene);
     glutReshapeFunc(changeSize);
 
     // Glew --> activate if not in mac

@@ -49,6 +49,7 @@ struct _3f {
     public:
         _3f();
         _3f(float x, float y, float z);
+        static _3f cross(_3f a, _3f b);//cross product
         void normalize();
         _3f operator+(const _3f& other) const { return _3f(x + other.x, y + other.y, z + other.z); }
         _3f operator+(const float& other) const { 

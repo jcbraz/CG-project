@@ -42,6 +42,7 @@ void getCatmullRomPoint(float t, _3f p0, _3f p1, _3f p2, _3f p3, _3f * pos, _3f 
 void getGlobalCatmullRomPoint(float gt, _3f * pos, _3f * deriv, vector<_3f> catmrPts) {
     float t = gt * catmrPts.size();
     int index = floor(t);
+    t = t - index;
 
     int indexes[4];
     indexes[0] = (index + catmrPts.size()-1) % catmrPts.size();
@@ -52,3 +53,10 @@ void getGlobalCatmullRomPoint(float gt, _3f * pos, _3f * deriv, vector<_3f> catm
     getCatmullRomPoint(t, catmrPts[indexes[0]], catmrPts[indexes[1]], catmrPts[indexes[2]], catmrPts[indexes[3]], pos, deriv);
 }
 
+void buildRotMatrix(_3f x, _3f y, _3f z,  float * m) {
+
+    m[0] = x.x; m[1] = x.y; m[2] = x.z; m[3] = 0;
+    m[4] = y.x; m[5] = y.y; m[6] = y.z; m[7] = 0;
+    m[8] = z.x; m[9] = z.y; m[10] = z.z; m[11] = 0;
+    m[12] = 0; m[13] = 0; m[14] = 0; m[15] = 1;
+}
