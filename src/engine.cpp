@@ -19,10 +19,9 @@
 #endif
 #define GLUT_
 
-// #include "engineMaterials.h"
-// #include "parseXML.h"
 #include "geometricShapes.h"
 #include "materials.h"
+
 
 using namespace std;
 

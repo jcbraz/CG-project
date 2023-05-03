@@ -2,8 +2,8 @@
 // Created by user13 on 03-03-2023.
 //
 
-#ifndef GROUP_PROJECT_GEOMETRICSHAPES_H
-#define GROUP_PROJECT_GEOMETRICSHAPES_H
+#ifndef __GEOMETRICSHAPES_H__
+#define __GEOMETRICSHAPES_H__
 
 
 #include <iostream>
@@ -30,6 +30,8 @@
 #include <fstream>
 #include <cstring>
 #include <iomanip>
+
+#include "splines.h"
 
 #define FLOAT_PRECISION 5
 
@@ -99,6 +101,7 @@ public:
     static vector<std::tuple<GLuint, int, int>>convertToVBO(vector<GSPoints> gsps);
     static vector<GSPoints> readFrom3DFile(string fName);
     static vector<std::tuple<GLuint, int, int>> readFrom3DFileVBOMode(string fName);
+    static vector<GSPoints> readFromBezierPatchFile(string pathFName,  int tesselation);
 
     string getFileName() { return fileName; }
 
@@ -269,4 +272,4 @@ class Sphere : public GeometricShape {
  *
  */
 
-#endif //GROUP_PROJECT_GEOMETRICSHAPES_H
+#endif //__GEOMETRICSHAPES_H__
