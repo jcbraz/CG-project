@@ -6,34 +6,7 @@
 
 #include <sstream>
 
-/*
- *
- * POINT STRUCT
- *
- */
 
-_3f::_3f(float x, float y, float z) {
-    _3f::x = x;
-    _3f::y = y;
-    _3f::z = z;
-}
-
-_3f::_3f() {
-    _3f::x = 0;
-    _3f::y = 0;
-    _3f::z = 0;
-}
-
-_3f _3f::cross(_3f a, _3f b) {
-    return _3f(a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x);
-}
-
-void _3f::normalize() {
-    float l = sqrt(x*x + y*y + z*z);
-    x /= l;
-    y /= l;
-    z /= l;
-}  
 
 
 ILubyte * readImage(string fpath, int * width, int * height) {
@@ -612,6 +585,84 @@ void GeometricShape::writeTo3DFile(vector<GSPoints> points, string fName) {
     }
     file.close();
     cout << "Done!" << endl;
+}
+
+#define SIZE_BUFFER 2048
+
+vector<GSPoints> GeometricShape::readFromBezierPatchFile(string pathFName,  int tesselation) {
+	vector<GSPoints> gspoints;
+    vector <_3f> points;
+    char line[SIZE_BUFFER];
+	int j;
+	int nPontos;
+	int nPatches;
+	FILE* f = fopen(pathFName.c_str(), "r");
+	if (!f) {
+		printf("Couldn't open file %s!\n", pathFName);
+		return gspoints;
+	}
+	fscanf(f, "%d\n", &nPatches);	//printf("%d\n", patches);
+
+	int ** indexes = (int**)malloc(sizeof(int*) * nPatches);
+	for (int i = 0; i < nPatches; i++) {
+		indexes[i] = (int*)malloc(sizeof(int) * 16);
+		memset(line, 0, SIZE_BUFFER);
+		fgets(line, SIZE_BUFFER, f);
+		char* token = NULL;
+		for (j = 0, token = strtok(line, ", "); token && j < 16; token = strtok(NULL, ", "), j++) {
+			indexes[i][j] = atoi(token);
+		}
+	}
+
+	fscanf(f, "%d\n", &nPontos);
+	float * XPoints = (float*)malloc(sizeof(float) * nPontos);
+	float * YPoints = (float*)malloc(sizeof(float) * nPontos);
+	float * ZPoints = (float*)malloc(sizeof(float) * nPontos);
+
+	for (int k = 0; k < nPontos; k++) {
+		memset(line, 0, SIZE_BUFFER);
+		fgets(line, SIZE_BUFFER, f);
+		XPoints[k] = atof(strtok(line, ", "));
+		YPoints[k] = atof(strtok(NULL, ", "));
+		ZPoints[k] = atof(strtok(NULL, ", "));
+	}
+	fclose(f);
+
+	float arrX[16];
+	float arrY[16];
+	float arrZ[16];
+
+	for (int i = 0; i <nPatches; i++) {
+		for (int j = 0; j < 16; j++) {
+			arrX[j] = XPoints[indexes[i][j]];
+			arrY[j] = YPoints[indexes[i][j]];
+			arrZ[j] = ZPoints[indexes[i][j]];
+		}
+		for (int u = 0; u < tesselation; u++) {
+			float p0[3];
+			float p1[3];
+			float p2[3];
+			float p3[3];
+			for (int v = 0; v < tesselation; v++) {
+				getBezierPoint(u / (float)tesselation, v / (float)tesselation, arrX, arrY, arrZ, p0);
+				getBezierPoint((u + 1) / (float)tesselation, v / (float)tesselation, arrX, arrY, arrZ, p1);
+				getBezierPoint(u / (float)tesselation, (v + 1) / (float)tesselation, arrX, arrY, arrZ, p2);
+				getBezierPoint((u + 1) / (float)tesselation, (v + 1) / (float)tesselation, arrX, arrY, arrZ, p3);
+
+                points.push_back(_3f(p0[0], p0[1], p0[2]));
+                points.push_back(_3f(p3[0], p3[1], p3[2]));
+                points.push_back(_3f(p2[0], p2[1], p2[2]));
+                
+                points.push_back(_3f(p1[0], p1[1], p1[2]));
+                points.push_back(_3f(p3[0], p3[1], p3[2]));
+                points.push_back(_3f(p0[0], p0[1], p0[2]));
+
+		    }
+        }
+	}
+    gspoints.push_back(GSPoints(GL_TRIANGLES, points));
+	return gspoints;
+
 }
 
 vector<int> _readInts(string line) {
