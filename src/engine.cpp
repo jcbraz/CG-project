@@ -238,8 +238,10 @@ int main(int argc, char** argv) {
     glutIdleFunc(renderScene);
     glutReshapeFunc(changeSize);
 
-    // Glew --> activate if not in mac
-    glewInit();
+    #ifndef  __APPLE__
+        glewInit();
+    #endif
+
     glEnableClientState(GL_VERTEX_ARRAY);
 
     // Callback registration for keyboard processing

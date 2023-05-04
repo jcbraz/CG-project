@@ -254,7 +254,7 @@ void Translate::run() {
 
             }
            
-            this->t += 1 / (this->time * 1000);
+            this->t += 1 / (this->time * 100);
         }
     }
 }
