@@ -598,6 +598,14 @@ _3f& _3f::operator-=(const _3f &other) {
 
 
 
+void FirstPersonCamera::updateVectors() {
+    _3f newDirection;
+    newDirection.x = cos(yaw) * cos(pitch);
+    newDirection.y = sin(pitch);
+    newDirection.z = sin(yaw) * cos(pitch);
+    lookAt = position + newDirection;
+}
+
 void FirstPersonCamera::update(float deltaTime, bool forward, bool backward, bool left, bool right, float mouseX, float mouseY) {
     // Update pitch and yaw based on mouse input
     pitch += mouseY;
@@ -623,12 +631,4 @@ void FirstPersonCamera::update(float deltaTime, bool forward, bool backward, boo
 
     // Update lookAt based on new position
     lookAt = position + forwardVec;
-}
-
-void FirstPersonCamera::updateVectors() {
-    _3f newDirection;
-    newDirection.x = cos(yaw) * cos(pitch);
-    newDirection.y = sin(pitch);
-    newDirection.z = sin(yaw) * cos(pitch);
-    lookAt = position + newDirection;
 }

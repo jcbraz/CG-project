@@ -26,6 +26,9 @@ using namespace std;
 
 int startX, startY, tracking = 0;
 float _alpha = 0, _beta = 35, r = 10;
+float lastX = 0, lastY = 0;
+bool firstMouse = true;
+bool keyW = false, keyA = false, keyS = false, keyD = false;
 
 World * world;
 Window * window;
@@ -80,13 +83,18 @@ void changeSize(int w, int h) {
     // return to the model view matrix mode
     glMatrixMode(GL_MODELVIEW);
 }
-
+float lastFrame = 0;
 void renderScene(void) {
     // clear buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // set the camera
     glLoadIdentity();
+    float currentFrame = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
+    float deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
+
+
 
     if (firstPersonCameraActive) {
         gluLookAt(
@@ -94,6 +102,8 @@ void renderScene(void) {
             firstPersonCamera.getLookAt().x, firstPersonCamera.getLookAt().y, firstPersonCamera.getLookAt().z,
             firstPersonCamera.getUp().x, firstPersonCamera.getUp().y, firstPersonCamera.getUp().z
         );
+        firstPersonCamera.update(deltaTime, keyW, keyS, keyA, keyD, 0, 0);
+       
     }
 
 
@@ -103,6 +113,7 @@ void renderScene(void) {
 
     gluLookAt(position.x, position.y, position.z, lookAt.x, lookAt.y, lookAt.z,
               up.x, up.y, up.z);
+
 
     glBegin(GL_LINES);
     glColor3f(1.0f, 0.0f, 0.0f);
@@ -140,6 +151,22 @@ void processKeys(unsigned char key, int x, int y) {
     if (key == 'c' || key == 'C') {
         firstPersonCameraActive = !firstPersonCameraActive;
     }
+    if (firstPersonCameraActive) {
+        if (key == 'w' || key == 'W') keyW = true;
+        if (key == 'a' || key == 'A') keyA = true;
+        if (key == 's' || key == 'S') keyS = true;
+        if (key == 'd' || key == 'D') keyD = true;
+    }
+    glutPostRedisplay();
+}
+
+void processKeyRelease(unsigned char key, int x, int y) {
+    if (firstPersonCameraActive) {
+        if (key == 'w' || key == 'W') keyW = false;
+        if (key == 'a' || key == 'A') keyA = false;
+        if (key == 's' || key == 'S') keyS = false;
+        if (key == 'd' || key == 'D') keyD = false;
+    }
     glutPostRedisplay();
 }
 
@@ -166,6 +193,10 @@ void processMouseButtons(int button, int state, int xx, int yy) {
             if (r < 3) r = 3.0;
         }
         tracking = 0;
+    }
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        lastX = xx;
+        lastY = yy;
     }
 }
 
@@ -194,6 +225,20 @@ void processMouseMotion(int xx, int yy) {
         _betaAux = _beta;
         rAux = r - deltaY;
         if (rAux < 3) rAux = 3;
+    }
+     if (firstPersonCameraActive && tracking == 1) {
+        if (firstMouse) {
+            lastX = xx;
+            lastY = yy;
+            firstMouse = false;
+        }
+
+        float xoffset = xx - lastX;
+        float yoffset = lastY - yy; // Reversed since y-coordinates go from bottom to top
+        lastX = xx;
+        lastY = yy;
+
+        firstPersonCamera.update(0, keyW, keyS, keyA, keyD, xoffset, yoffset);
     }
     float camX =
         rAux * sin(_alphaAux * 3.14 / 180.0) * cos(_betaAux * 3.14 / 180.0);
@@ -237,6 +282,7 @@ int main(int argc, char** argv) {
 
     // Callback registration for keyboard processing
     glutKeyboardFunc(processKeys);
+    glutKeyboardUpFunc(processKeyRelease);
     // glutSpecialFunc(processSpecialKeys);
 
     // Callback registration for mouse processing
