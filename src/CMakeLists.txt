@@ -19,7 +19,7 @@ FetchContent_MakeAvailable(
 )
 # add_executable(${PROJECT_NAME} engine.cpp geometricShapes.cpp)
 # change generator.cpp to engine.cpp when the files are generated
-add_executable(${PROJECT_NAME} engine.cpp geometricShapes.cpp materials.cpp)
+add_executable(${PROJECT_NAME} engine.cpp geometricShapes.cpp materials.cpp splines.cpp)
 target_link_libraries(${PROJECT_NAME} tinyxml2::tinyxml2)
 # disable if on Mac
 target_link_libraries(${PROJECT_NAME} GLEW)
@@ -57,7 +57,9 @@ else(WIN32) #Linux and Mac
     link_directories(${GLUT_LIBRARY_DIRS})
     add_definitions(${GLUT_DEFINITIONS})
     
-    target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} tinyxml2)
+    find_package(DevIL REQUIRED)
+    include_directories(${IL_INCLUDE_DIR})
+    target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} IL tinyxml2)
     if(NOT GLUT_FOUND)
         message(ERROR ": GLUT not found!")
     endif(NOT GLUT_FOUND)

@@ -6,33 +6,53 @@
 
 #include <sstream>
 
-/*
- *
- * POINT STRUCT
- *
- */
 
-_3f::_3f(float x, float y, float z) {
-    _3f::x = x;
-    _3f::y = y;
-    _3f::z = z;
+
+
+ILubyte * readImage(string fpath, int * width, int * height) {
+    ILuint t;
+
+    ilGenImages(1, &t);
+    ilBindImage(t);
+    ilLoadImage((ILstring) fpath.c_str());
+    ilConvertImage(IL_LUMINANCE, IL_UNSIGNED_BYTE);
+
+    ILenum error = ilGetError();
+    if (error != IL_NO_ERROR) {
+        cout << "Error loading image!" << ilGetString(error) << endl;
+    }
+
+    *width = ilGetInteger(IL_IMAGE_WIDTH);
+    *height = ilGetInteger(IL_IMAGE_HEIGHT);
+
+    //int size = *width * *height * ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL);
+    //ILubyte * imageData = new ILubyte[size];
+    //ILboolean result = ilCopyPixels(0, 0, 0, *width, *height, 1, IL_LUMINANCE, IL_UNSIGNED_BYTE, imageData);
+    ILubyte * imageData = ilGetData();
+    ILubyte * tmp = imageData;
+
+    if (!imageData)
+        cout << "error getting image data!" << endl;
+
+   // if (!result)
+     //   cout << "error getting data!" << endl << ilGetString(ilGetError()) << endl;
+
+    cout << "Loaded Image! W:" << *width << "H:" << *height << endl;
+    return imageData;
 }
 
-_3f::_3f() {
-    _3f::x = 0;
-    _3f::y = 0;
-    _3f::z = 0;
+unsigned char * genRandomData(int h, int w) {
+    unsigned char * data = (unsigned char *) malloc(sizeof(unsigned char) * h*w);
+    for (int i = 0; i < h*w; i++) {
+        data[i] = (unsigned char) rand();
+    }
+    return data;
 }
 
-void _3f::normalize() {
-    float max = abs(x);
-    if (abs(y) > max) max = abs(y);
-    if (abs(z) > max) max = abs(z);
-
-    x = x / max;
-    y = y / max;
-    z = z / max;
-}  
+float height(int i, int j, ILubyte * imageData, int width, float multiplier) {
+    float h = imageData[i *  width + j];
+    return h / 255.0f * multiplier;
+}
 
 /*
  *
@@ -82,10 +102,6 @@ void Plane::Print(ostream &) const {
     cout << "Length:" << Plane::length << endl;
     cout << "Divisions:" << Plane::divisions << endl;
 }
-
-
-
-
 
 
 /*
@@ -253,7 +269,7 @@ Ring::Ring(float innerRadius, float outerRadius, int slices, int segments, strin
                 points.push_back(_3f(r2 * cos(a2) , 0, r2 * sin(a2)));
         }
     }
-
+    
     this->points.push_back(GSPoints(GL_TRIANGLES, points));
 }
 
@@ -277,37 +293,140 @@ void Ring::Print(ostream &) const {
  *
  */
 
-Sphere::Sphere() {
-    radius = 1;
-    slices = 10;
-    stacks = 3;
-    fileName = "sphere.3d";
+Sphere::Sphere(float radius, int slices, int stacks, float multiplier, string fileName) : radius(radius), slices(slices), stacks(stacks) {
+    this->fileName = fileName;
+    float _alpha = 2 * M_PI / slices;
+    float _beta = M_PI / stacks;
+    unsigned char * imageData = genRandomData(this->slices, this->stacks);
+    for (int i = 0; i < slices-1; i++) {
+        vector<_3f> strip;
+        float av1 = i * _alpha;
+        float av2 = av1 + _alpha;
+
+        for (int j = 0; j <= stacks; j++) {
+            float bv1 = -M_PI/2 + j * _beta;
+            
+
+            float hr1 = this->radius - height(i, j, imageData, this->slices, multiplier);
+            float hr2 = this->radius - height(i+1, j, imageData, this->slices, multiplier);
+            strip.push_back(
+                _3f(
+                    hr1 * cos(bv1) * sin(av1),
+                    hr1 * sin(bv1),
+                    hr1 * cos(bv1) * cos(av1)
+                )
+            );
+
+            strip.push_back(
+                _3f(
+                    hr2 * cos(bv1) * sin(av2),
+                    hr2 * sin(bv1),
+                    hr2 * cos(bv1) * cos(av2)
+                )
+            );
+
+
+        }
+        this->points.push_back(GSPoints(GL_TRIANGLE_STRIP, strip));        
+    }  
+
+    vector<_3f> strip;
+    float av1 = (this->slices-1) * _alpha;
+    float av2 = 0;
+
+    for (int j = 0; j <= stacks; j++) {
+        float bv1 = -M_PI/2 + j * _beta;
+        
+
+        float hr1 = this->radius - height(this->slices-1, j, imageData, this->slices, multiplier);
+        float hr2 = this->radius - height(0, j, imageData, this->slices, multiplier);
+        strip.push_back(
+            _3f(
+                hr1 * cos(bv1) * sin(av1),
+                hr1 * sin(bv1),
+                hr1 * cos(bv1) * cos(av1)
+            )
+        );
+
+        strip.push_back(
+            _3f(
+                hr2 * cos(bv1) * sin(av2),
+                hr2 * sin(bv1),
+                hr2 * cos(bv1) * cos(av2)
+            )
+        );
+
+
+    }
+    this->points.push_back(GSPoints(GL_TRIANGLE_STRIP, strip));        
 }
 
-Sphere::Sphere(float radius, int slices, int stacks) {
-    Sphere::radius = radius;
-    Sphere::slices = slices;
-    Sphere::stacks = stacks;
-    fileName = "sphere.3d";
-}
+Sphere::Sphere(string specularMap, string fileName, float radius, float multiplier) : radius(radius) {
+    this->fileName = fileName;
+    ILubyte * imageData = readImage(specularMap, &this->slices, &this->stacks);
+    float _alpha = 2 * M_PI / slices;
+    float _beta = M_PI / stacks;
+    for (int i = 0; i < slices-1; i++) {
+        vector<_3f> strip;
+        float av1 = i * _alpha;
+        float av2 = av1 + _alpha;
 
-Sphere::Sphere(string specularMap, string fileName) {
-    /*
-    ILuint t;
-    ilInit();
-    ilGenImages(1, &t);
-    ilBindImage(t);
+        for (int j = 0; j <= stacks; j++) {
+            float bv1 = -M_PI/2 + j * _beta;
+            
 
-    ilLoadImage((ILstring) specularMap.c_str());
-    ilConvertImage(IL_LUMINANCE, IL_UNSIGNED_BYTE);
+            float hr1 = this->radius - height(i, j, imageData, this->slices, multiplier);
+            float hr2 = this->radius - height(i+1, j, imageData, this->slices, multiplier);
+            strip.push_back(
+                _3f(
+                    hr1 * cos(bv1) * sin(av1),
+                    hr1 * sin(bv1),
+                    hr1 * cos(bv1) * cos(av1)
+                )
+            );
 
-    this->slices = ilGetInteger(IL_IMAGE_WIDTH);
-    this->stacks = ilGetInteger(IL_IMAGE_HEIGHT);
-    
-    ILubyte * imageData;
-    imageData = ilGetData();
+            strip.push_back(
+                _3f(
+                    hr2 * cos(bv1) * sin(av2),
+                    hr2 * sin(bv1),
+                    hr2 * cos(bv1) * cos(av2)
+                )
+            );
 
-    */
+
+        }
+        this->points.push_back(GSPoints(GL_TRIANGLE_STRIP, strip));        
+    }  
+
+    vector<_3f> strip;
+    float av1 = (this->slices-1) * _alpha;
+    float av2 = 0;
+
+    for (int j = 0; j <= stacks; j++) {
+        float bv1 = -M_PI/2 + j * _beta;
+        
+
+        float hr1 = this->radius - height(this->slices-1, j, imageData, this->slices, multiplier);
+        float hr2 = this->radius - height(0, j, imageData, this->slices, multiplier);
+        strip.push_back(
+            _3f(
+                hr1 * cos(bv1) * sin(av1),
+                hr1 * sin(bv1),
+                hr1 * cos(bv1) * cos(av1)
+            )
+        );
+
+        strip.push_back(
+            _3f(
+                hr2 * cos(bv1) * sin(av2),
+                hr2 * sin(bv1),
+                hr2 * cos(bv1) * cos(av2)
+            )
+        );
+
+
+    }
+    this->points.push_back(GSPoints(GL_TRIANGLE_STRIP, strip));        
 }
 
 Sphere::Sphere(float radius, int slices, int stacks, string fileName) {
@@ -468,6 +587,84 @@ void GeometricShape::writeTo3DFile(vector<GSPoints> points, string fName) {
     cout << "Done!" << endl;
 }
 
+#define SIZE_BUFFER 2048
+
+vector<GSPoints> GeometricShape::readFromBezierPatchFile(string pathFName,  int tesselation) {
+	vector<GSPoints> gspoints;
+    vector <_3f> points;
+    char line[SIZE_BUFFER];
+	int j;
+	int nPontos;
+	int nPatches;
+	FILE* f = fopen(pathFName.c_str(), "r");
+	if (!f) {
+		printf("Couldn't open file %s!\n", pathFName);
+		return gspoints;
+	}
+	fscanf(f, "%d\n", &nPatches);	//printf("%d\n", patches);
+
+	int ** indexes = (int**)malloc(sizeof(int*) * nPatches);
+	for (int i = 0; i < nPatches; i++) {
+		indexes[i] = (int*)malloc(sizeof(int) * 16);
+		memset(line, 0, SIZE_BUFFER);
+		fgets(line, SIZE_BUFFER, f);
+		char* token = NULL;
+		for (j = 0, token = strtok(line, ", "); token && j < 16; token = strtok(NULL, ", "), j++) {
+			indexes[i][j] = atoi(token);
+		}
+	}
+
+	fscanf(f, "%d\n", &nPontos);
+	float * XPoints = (float*)malloc(sizeof(float) * nPontos);
+	float * YPoints = (float*)malloc(sizeof(float) * nPontos);
+	float * ZPoints = (float*)malloc(sizeof(float) * nPontos);
+
+	for (int k = 0; k < nPontos; k++) {
+		memset(line, 0, SIZE_BUFFER);
+		fgets(line, SIZE_BUFFER, f);
+		XPoints[k] = atof(strtok(line, ", "));
+		YPoints[k] = atof(strtok(NULL, ", "));
+		ZPoints[k] = atof(strtok(NULL, ", "));
+	}
+	fclose(f);
+
+	float arrX[16];
+	float arrY[16];
+	float arrZ[16];
+
+	for (int i = 0; i <nPatches; i++) {
+		for (int j = 0; j < 16; j++) {
+			arrX[j] = XPoints[indexes[i][j]];
+			arrY[j] = YPoints[indexes[i][j]];
+			arrZ[j] = ZPoints[indexes[i][j]];
+		}
+		for (int u = 0; u < tesselation; u++) {
+			float p0[3];
+			float p1[3];
+			float p2[3];
+			float p3[3];
+			for (int v = 0; v < tesselation; v++) {
+				getBezierPoint(u / (float)tesselation, v / (float)tesselation, arrX, arrY, arrZ, p0);
+				getBezierPoint((u + 1) / (float)tesselation, v / (float)tesselation, arrX, arrY, arrZ, p1);
+				getBezierPoint(u / (float)tesselation, (v + 1) / (float)tesselation, arrX, arrY, arrZ, p2);
+				getBezierPoint((u + 1) / (float)tesselation, (v + 1) / (float)tesselation, arrX, arrY, arrZ, p3);
+
+                points.push_back(_3f(p0[0], p0[1], p0[2]));
+                points.push_back(_3f(p3[0], p3[1], p3[2]));
+                points.push_back(_3f(p2[0], p2[1], p2[2]));
+                
+                points.push_back(_3f(p1[0], p1[1], p1[2]));
+                points.push_back(_3f(p3[0], p3[1], p3[2]));
+                points.push_back(_3f(p0[0], p0[1], p0[2]));
+
+		    }
+        }
+	}
+    gspoints.push_back(GSPoints(GL_TRIANGLES, points));
+	return gspoints;
+
+}
+
 vector<int> _readInts(string line) {
     vector<int> nms;
     std::istringstream ss(line);
@@ -531,10 +728,8 @@ vector<GSPoints> GeometricShape::readFrom3DFile(string fName) {
     return points;
 }
 
-vector<std::tuple<GLuint, int, int>> GeometricShape::readFrom3DFileVBOMode(string fName) {
+vector<std::tuple<GLuint, int, int>> GeometricShape::convertToVBO(vector<GSPoints> gsps) {
     vector<std::tuple<GLuint, int, int>> res;
-    vector<GSPoints> gsps = GeometricShape::readFrom3DFile(fName);
-
     for (GSPoints gsp : gsps) {
         
         vector<float> f_pts;
@@ -551,6 +746,16 @@ vector<std::tuple<GLuint, int, int>> GeometricShape::readFrom3DFileVBOMode(strin
 
         res.push_back(make_tuple(vbo, gsp.getPrimitive(), f_pts.size()));
     }
+
+    return res;
+
+}
+
+vector<std::tuple<GLuint, int, int>> GeometricShape::readFrom3DFileVBOMode(string fName) {
+    vector<std::tuple<GLuint, int, int>> res;
+    vector<GSPoints> gsps = GeometricShape::readFrom3DFile(fName);
+
+    res = GeometricShape::convertToVBO(gsps);
 
     return res;
 }

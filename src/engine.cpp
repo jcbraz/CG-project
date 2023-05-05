@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include <IL/il.h>
+
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
 #include <GLUT/glut.h>
@@ -17,8 +19,6 @@
 #endif
 #define GLUT_
 
-// #include "engineMaterials.h"
-// #include "parseXML.h"
 #include "geometricShapes.h"
 #include "materials.h"
 
@@ -26,11 +26,14 @@ using namespace std;
 
 int startX, startY, tracking = 0;
 float _alpha = 0, _beta = 35, r = 10;
+int polygonMode = GL_FILL;
 
 World * world;
 Window * window;
 Camera * camera;
 Group * group;
+
+vector<std::tuple<GLuint, int, int>> test;
 
 int timebase = 0;
 float frames = 0;
@@ -49,7 +52,6 @@ void displayFrameRate() {
     }
 }
 
-// vector<Point> vertexB;
 
 void changeSize(int w, int h) {
     // Prevent a divide by zero, when window is too short
@@ -86,14 +88,14 @@ void renderScene(void) {
     // set the camera
     glLoadIdentity();
 
-
-
     _3f position = camera->getPosition();
     _3f lookAt = camera->getLookAt();
     _3f up = camera->getUp();
 
     gluLookAt(position.x, position.y, position.z, lookAt.x, lookAt.y, lookAt.z,
               up.x, up.y, up.z);
+
+    glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
 
     glBegin(GL_LINES);
     glColor3f(1.0f, 0.0f, 0.0f);
@@ -110,6 +112,8 @@ void renderScene(void) {
     glEnd();
 
     group->run();
+    //glColor3f(1.0f, 1.0f, 1.0f);
+    //GeometricShape::drawObjectVBOMode(test);
 
     displayFrameRate();
 
@@ -117,15 +121,27 @@ void renderScene(void) {
     glutSwapBuffers();
 }
 
-int is_skeleton = 0;
+bool is_cull = true;
 void processKeys(unsigned char key, int x, int y) {
-    if (key == 'x') {
-        if (is_skeleton)
-            glPolygonMode(GL_FRONT, GL_FILL);
-        else
-            glPolygonMode(GL_FRONT, GL_LINE);
-        is_skeleton = !is_skeleton;
-        cout << "Pressed: " << key << endl;
+    switch (key) {
+        case 'l':
+            polygonMode = GL_LINE;
+            break;
+        case 'p':
+            polygonMode = GL_POINT;
+            break;
+        case 'f':
+            polygonMode = GL_FILL;
+            break;
+        case 'c':
+            if (is_cull)
+                glDisable(GL_CULL_FACE);
+            else
+                glEnable(GL_CULL_FACE);
+            is_cull = !is_cull;
+            break;
+        default:
+            break;
     }
     glutPostRedisplay();
 }
@@ -195,8 +211,9 @@ void processMouseMotion(int xx, int yy) {
 // Para executar, ir para a pasta build, "make group_project", "./group_project"
 int main(int argc, char** argv) {
 
+
     string path = "../../test_files/solar_system/solar_system.xml";
-    //string path = "../../test_files/test_files_phase_2/test_2_solar.xml";
+    //string path = "../../test_files/test_files_phase_3/test_3_1.xml";
 
     srand(time(nullptr));
 
@@ -216,10 +233,13 @@ int main(int argc, char** argv) {
 
     // Required callback registry
     glutDisplayFunc(renderScene);
+    glutIdleFunc(renderScene);
     glutReshapeFunc(changeSize);
 
-    // Glew --> activate if not in mac
-    glewInit();
+    #ifndef  __APPLE__
+        glewInit();
+    #endif
+
     glEnableClientState(GL_VERTEX_ARRAY);
 
     // Callback registration for keyboard processing
@@ -235,11 +255,24 @@ int main(int argc, char** argv) {
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
+    //glEnable(GL_LIGHTING);
+    //glEnable(GL_LIGHT0);
+
+    ilInit();
     // frames
     timebase = glutGet(GLUT_ELAPSED_TIME);
 
     world->evaluateGroup(path);
     group = new Group(world->getGroup());
+
+
+    /**/
+    //TESTE
+    
+    //Sphere s = Sphere(1, 35, 35, 25, "boas");
+    //Sphere s = Sphere("../../test_files/solar_system/test.jpg", "sphere_spec.3d", 50, 10);
+    //test = GeometricShape::convertToVBO(s.getPoints());
+    
 
     // Glut's main cycle
     glutMainLoop();

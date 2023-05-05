@@ -2,8 +2,8 @@
 // Created by user13 on 03-03-2023.
 //
 
-#ifndef GROUP_PROJECT_GEOMETRICSHAPES_H
-#define GROUP_PROJECT_GEOMETRICSHAPES_H
+#ifndef __GEOMETRICSHAPES_H__
+#define __GEOMETRICSHAPES_H__
 
 
 #include <iostream>
@@ -12,13 +12,16 @@
 #include <vector>
 #include <tuple>
 
+#include <IL/il.h>
+
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
 #include <GLUT/glut.h>
 #else
+
 #include <GL/glew.h>
 #include <GL/glut.h>
-#include <IL/il.h>
+
 #endif
 #define GLUT_
 
@@ -28,41 +31,11 @@
 #include <cstring>
 #include <iomanip>
 
+#include "splines.h"
+
 #define FLOAT_PRECISION 5
 
 using namespace std;
-
-/*
- *
- * POINT STRUCT
- *
- */
-
-struct _3f {
-    float x;
-    float y;
-    float z;
-
-    public:
-        _3f();
-        _3f(float x, float y, float z);
-        void normalize();
-        _3f operator+(const _3f& other) const { return _3f(x + other.x, y + other.y, z + other.z); }
-        _3f operator+(const float& other) const { 
-            cout << x << " " << y << " " << z << endl;
-            return _3f(x + other, y + other, z + other); 
-        }
-        _3f operator-(const _3f& other) const { return _3f(x - other.x, y - other.y, z - other.z); }
-        _3f operator*(const _3f& other) const { return _3f(x * other.x, y * other.y, z * other.z); }
-        _3f operator*(const float& other) const { return _3f(x * other, y * other, z * other); }
-
-};
-
-/*
- *
- * END POINT STRUCT
- *
- */
 
 /*
  *
@@ -92,9 +65,10 @@ public:
     static void drawObjectVBOMode(vector<std::tuple<GLuint, int, int>>);
 
     static void writeTo3DFile(vector<GSPoints> points, string fName);
-
+    static vector<std::tuple<GLuint, int, int>>convertToVBO(vector<GSPoints> gsps);
     static vector<GSPoints> readFrom3DFile(string fName);
     static vector<std::tuple<GLuint, int, int>> readFrom3DFileVBOMode(string fName);
+    static vector<GSPoints> readFromBezierPatchFile(string pathFName,  int tesselation);
 
     string getFileName() { return fileName; }
 
@@ -250,10 +224,10 @@ class Sphere : public GeometricShape {
         int stacks;
 
     public:
-        Sphere();
         Sphere(float radius, int slices, int stacks);
         Sphere(float radius, int slices, int stacks, string pathFile);
-        Sphere(string specularMap, string fileName);
+        Sphere(string specularMap, string fileName, float radius, float multiplier);
+        Sphere(float radius, int slices, int stacks, float multiplier, string fileName);
 
     protected:
         void Print(ostream &) const override;
@@ -265,4 +239,4 @@ class Sphere : public GeometricShape {
  *
  */
 
-#endif //GROUP_PROJECT_GEOMETRICSHAPES_H
+#endif //__GEOMETRICSHAPES_H__

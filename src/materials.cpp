@@ -160,29 +160,103 @@ Camera::Camera(XMLElement * camera) {
     );
 }
 
-Rotate::Rotate(XMLElement * rotate) {
+Rotate::Rotate(XMLElement * rotate) : t(0), time(0) {
     this->angle = rotate->FloatAttribute("angle");
     this->p = _3f(
         rotate->FloatAttribute("x"),
         rotate->FloatAttribute("y"),
         rotate->FloatAttribute("z")
     );
+
+    this->time = rotate->FloatAttribute("time");
 }
 
 void Rotate::run() {
-    glRotatef(this->angle, this->p.x, this->p.y, this->p.z);
+    if (this->time > 0) {
+        glRotatef(t, this->p.x, this->p.y, this->p.z);
+        t += 360 / (this->time * 1000);
+    }
+    else {
+        glRotatef(this->angle, this->p.x, this->p.y, this->p.z);
+    }
 }
 
-Translate::Translate(XMLElement * translate) {
+Translate::Translate(XMLElement * translate) : t(0), isAlign(false), prev_y(_3f(0, -1, 0)) {
     this->p = _3f(
         translate->FloatAttribute("x"),
         translate->FloatAttribute("y"),
         translate->FloatAttribute("z")
     );
+
+    XMLElement * translate_child = _getChildElement(translate, "point");
+    if (translate_child) {
+
+        this->time = translate->FloatAttribute("time");
+        this->isAlign = translate->BoolAttribute("align");
+
+        while (translate_child) {
+            this->catmullPoints.push_back(_3f(
+            translate_child->FloatAttribute("x"),
+            translate_child->FloatAttribute("y"),
+            translate_child->FloatAttribute("z")
+        ));
+            translate_child = translate_child->NextSiblingElement("point");
+        }
+    }    
+}
+
+void renderCatmullRomCurve(vector<_3f> catmrPts) {
+    _3f pos = _3f();
+    _3f deriv = _3f();
+
+    glColor3f(1, 1, 1);
+
+    glBegin(GL_LINE_LOOP);
+    float gt = 0;
+    while (gt < 1) {
+        getGlobalCatmullRomPoint(gt, &pos, &deriv, catmrPts);
+        glVertex3f(pos.x, pos.y, pos.z);
+        gt += 1.0 / 100.0;
+    }
+    glEnd();
 }
 
 void Translate::run() {
     glTranslatef(this->p.x, this->p.y, this->p.z);
+    if (this->catmullPoints.size() > 0) {
+        if (this->catmullPoints.size() < 4) {
+            throw "excpected atleast 4 points but less were given!";
+        }
+        else {
+            
+            renderCatmullRomCurve(this->catmullPoints);
+
+            _3f pos = _3f();
+            _3f deriv = _3f();
+
+            getGlobalCatmullRomPoint(this->t, &pos, &deriv, this->catmullPoints);
+            
+            glTranslatef(pos.x, pos.y, pos.z);
+
+            if (this->isAlign) {
+           
+            _3f x = deriv;
+            x.normalize();
+            _3f z = _3f::cross(x, this->prev_y);
+            z.normalize();
+            _3f y = _3f::cross(z, x);
+            y.normalize();
+            this->prev_y = y;
+
+            float m[16];
+            buildRotMatrix(x, y, z, m);
+            glMultMatrixf(m);
+
+            }
+           
+            this->t += 1 / (this->time * 100);
+        }
+    }
 }
 
 Scale::Scale(XMLElement * scale) {
