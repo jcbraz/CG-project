@@ -29,6 +29,7 @@ float _alpha = 0, _beta = 35, r = 10;
 int polygonMode = GL_FILL;
 
 World * world;
+Lights * lights;
 Window * window;
 Camera * camera;
 Group * group;
@@ -82,6 +83,8 @@ void changeSize(int w, int h) {
 }
 
 void renderScene(void) {
+
+
     // clear buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -97,6 +100,7 @@ void renderScene(void) {
 
     glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
 
+    glDisable(GL_LIGHTING);
     glBegin(GL_LINES);
     glColor3f(1.0f, 0.0f, 0.0f);
     glVertex3f(-1000.0f, 0.0f, 0.0f);
@@ -110,6 +114,9 @@ void renderScene(void) {
     glVertex3f(0.0f, 0.0f, -1000.0f);
     glVertex3f(0.0f, 0.0f, 1000.0f);
     glEnd();
+    glEnable(GL_LIGHTING);
+
+    lights->run();
 
     group->run();
     //glColor3f(1.0f, 1.0f, 1.0f);
@@ -213,13 +220,14 @@ int main(int argc, char** argv) {
 
 
     string path = "../../test_files/solar_system/solar_system.xml";
-    //string path = "../../test_files/test_files_phase_3/test_3_1.xml";
+    //string path = "../../test_files/test_files_phase_4/test_4_1.xml";
 
     srand(time(nullptr));
 
     world = new World(path);
     window = new Window(world->getWindow());
     camera = new Camera(world->getCamera());
+    lights = new Lights(world->getLights());
 
     // init glut and window
 
@@ -253,10 +261,9 @@ int main(int argc, char** argv) {
     //  OpenGL settings
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    //glCullFace(GL_BACK);
 
-    //glEnable(GL_LIGHTING);
-    //glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHTING);
 
     ilInit();
     // frames
@@ -270,7 +277,7 @@ int main(int argc, char** argv) {
     //TESTE
     
     //Sphere s = Sphere(1, 35, 35, 25, "boas");
-    //Sphere s = Sphere("../../test_files/solar_system/test.jpg", "sphere_spec.3d", 50, 10);
+    //Sphere s = Sphere("../../test_files/solar_system/earth_specular.jpg", "sphere_spec.3d", 50, 10);
     //test = GeometricShape::convertToVBO(s.getPoints());
     
 

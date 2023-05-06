@@ -127,6 +127,7 @@ Box::Box(float length, int divisions, string pathFile) {
     this->fileName = std::move(pathFile);
 
     vector<_3f> points;
+    vector<_3f> normals;
     float measure = length / 2.0f;
     float division_size = length / (float)divisions;
 
@@ -140,19 +141,33 @@ Box::Box(float length, int divisions, string pathFile) {
             points.push_back(_3f(x, y+division_size, -measure));
             points.push_back(_3f(x+division_size, y, -measure));
 
+            normals.push_back(_3f(0, 0, -1));
+            normals.push_back(_3f(0, 0, -1));
+            normals.push_back(_3f(0, 0, -1));
+
             points.push_back(_3f(x+division_size, y, -measure));
             points.push_back(_3f(x, y+division_size, -measure));
             points.push_back(_3f(x+division_size, y+division_size, -measure));
 
-
+            normals.push_back(_3f(0, 0, -1));
+            normals.push_back(_3f(0, 0, -1));
+            normals.push_back(_3f(0, 0, -1));
+            
             points.push_back(_3f(x, y, measure));
             points.push_back(_3f(x+division_size, y, measure));
             points.push_back(_3f(x, y+division_size, measure));
+
+            normals.push_back(_3f(0, 0, 1));
+            normals.push_back(_3f(0, 0, 1));
+            normals.push_back(_3f(0, 0, 1));
 
             points.push_back(_3f(x+division_size, y, measure));
             points.push_back(_3f(x+division_size, y+division_size, measure));
             points.push_back(_3f(x, y+division_size, measure));
 
+            normals.push_back(_3f(0, 0, 1));
+            normals.push_back(_3f(0, 0, 1));
+            normals.push_back(_3f(0, 0, 1));
         }
     }
 
@@ -169,20 +184,34 @@ Box::Box(float length, int divisions, string pathFile) {
             points.push_back(_3f(x, measure, z+division_size));
             points.push_back(_3f(x+division_size, measure, z));
 
+            normals.push_back(_3f(0, 1, 0));
+            normals.push_back(_3f(0, 1, 0));
+            normals.push_back(_3f(0, 1, 0));            
 
             points.push_back(_3f(x+division_size, measure, z));
             points.push_back(_3f(x, measure, z+division_size));
             points.push_back(_3f(x+division_size, measure, z+division_size));
+
+            normals.push_back(_3f(0, 1, 0));
+            normals.push_back(_3f(0, 1, 0));
+            normals.push_back(_3f(0, 1, 0));
 
             // Bottom
             points.push_back(_3f(x, -measure, z));
             points.push_back(_3f(x+division_size, -measure, z));
             points.push_back(_3f(x, -measure, z+division_size));
 
+            normals.push_back(_3f(0, -1, 0));
+            normals.push_back(_3f(0, -1, 0));
+            normals.push_back(_3f(0, -1, 0));
 
             points.push_back(_3f(x+division_size, -measure, z));
             points.push_back(_3f(x+division_size, -measure, z+division_size));
             points.push_back(_3f(x, -measure, z+division_size));
+
+            normals.push_back(_3f(0, -1, 0));
+            normals.push_back(_3f(0, -1, 0));
+            normals.push_back(_3f(0, -1, 0));
 
         }
     }
@@ -197,26 +226,39 @@ Box::Box(float length, int divisions, string pathFile) {
             points.push_back(_3f(-measure, y, z+division_size));
             points.push_back(_3f(-measure, y+division_size, z));
 
+            normals.push_back(_3f(-1, 0, 0));
+            normals.push_back(_3f(-1, 0, 0));
+            normals.push_back(_3f(-1, 0, 0));
 
             points.push_back(_3f(-measure, y+division_size, z));
             points.push_back(_3f(-measure, y, z+division_size));
             points.push_back(_3f(-measure, y+division_size, z+division_size));
 
+            normals.push_back(_3f(-1, 0, 0));
+            normals.push_back(_3f(-1, 0, 0));
+            normals.push_back(_3f(-1, 0, 0));
 
             points.push_back(_3f(measure, y, z));
             points.push_back(_3f(measure, y+division_size, z));
             points.push_back(_3f(measure, y, z+division_size));
 
+            normals.push_back(_3f(-1, 0, 0));
+            normals.push_back(_3f(-1, 0, 0));
+            normals.push_back(_3f(-1, 0, 0));
 
             points.push_back(_3f(measure, y+division_size, z));
             points.push_back(_3f(measure, y+division_size, z+division_size));
             points.push_back(_3f(measure, y, z+division_size));
 
+            normals.push_back(_3f(-1, 0, 0));
+            normals.push_back(_3f(-1, 0, 0));
+            normals.push_back(_3f(-1, 0, 0));
+
         }
     }
 
 
-    this->points.push_back(GSPoints(GL_TRIANGLES, points));
+    this->points.push_back(GSPoints(GL_TRIANGLES, points,  normals));
 }
 
 
@@ -436,6 +478,7 @@ Sphere::Sphere(float radius, int slices, int stacks, string fileName) {
     this->fileName = std::move(fileName);
 
     vector<_3f> points;
+    vector<_3f> normals;
 
     float _alpha = 2 * M_PI / slices;
     float _beta = M_PI / stacks;
@@ -450,14 +493,22 @@ Sphere::Sphere(float radius, int slices, int stacks, string fileName) {
             points.push_back(_3f(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));
             points.push_back(_3f(r * cos(bv) * sin(ahv), r * sin(bv) ,r * cos(bv) * cos(ahv)));
             points.push_back(_3f(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
+            
+            normals.push_back(_3f(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));
+            normals.push_back(_3f(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));  
+            normals.push_back(_3f(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
 
             points.push_back(_3f(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));
             points.push_back(_3f(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
             points.push_back(_3f(r * cos(bhv) * sin(av), r * sin(bhv) ,r * cos(bhv) * cos(av)));
+
+            normals.push_back(_3f(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));
+            normals.push_back(_3f(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
+            normals.push_back(_3f(r * cos(bhv) * sin(av), r * sin(bhv) ,r * cos(bhv) * cos(av)));
         }
     }
 
-    this->points.push_back(GSPoints(GL_TRIANGLES, points));
+    this->points.push_back(GSPoints(GL_TRIANGLES, points, normals));
 }
 
 void Sphere::Print(ostream &) const {
@@ -564,24 +615,40 @@ void GeometricShape::drawObject(vector<GSPoints> points) {
     }
 }
 
-void GeometricShape::drawObjectVBOMode(vector<std::tuple<GLuint, int, int>> v) {
-    for (auto t : v) {
-        glBindBuffer(GL_ARRAY_BUFFER, std::get<0>(t));
-        glEnableClientState(GL_VERTEX_ARRAY);
+void GeometricShape::drawObjectVBOMode(vector<VBOStruct> vbos) {
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+
+    for (auto vbo : vbos) {
+        glBindBuffer(GL_ARRAY_BUFFER, vbo.points);
         glVertexPointer(3, GL_FLOAT, 0 ,0);
-        glDrawArrays(std::get<1>(t), 0, std::get<2>(t));
+
+        if (vbo.normals != 0) {
+            glBindBuffer(GL_ARRAY_BUFFER, vbo.normals);
+            glNormalPointer(GL_FLOAT, 0, 0);
+        }
+
+        glDrawArrays(vbo.primitive, 0, vbo.size);
     }
 }
 
-void GeometricShape::writeTo3DFile(vector<GSPoints> points, string fName) {
+void GeometricShape::writeTo3DFile(vector<GSPoints> gsps, string fName) {
     ofstream file(fName);
     cout << "Writing Points to:" << fName << endl;
-    for (GSPoints gsp : points) {
-        vector<_3f> ps = gsp.getPoints();
-        file << gsp.getPrimitive() << " " << ps.size() << endl;
-        for (_3f p : ps) {
-            file << setprecision(FLOAT_PRECISION) << p.x << " " << p.y << " " << p.z << endl;
+    
+    for (GSPoints gsp : gsps) {
+        file << gsp.getPrimitive() << " " << gsp.getPoints().size() << endl;
+        vector<_3f> points = gsp.getPoints();
+        vector<_3f> normals = gsp.getNormals();
+        for (int i = 0; i < points.size(); i++) {
+
+
+            file << setprecision(FLOAT_PRECISION) << points[i].x << " " << points[i].y << " " << points[i].z;
+            if (normals.size() > 0)
+                    file << " " << normals[i].x << " " << normals[i].y << " " << normals[i].z;
+            file << endl; 
         }
+
     }
     file.close();
     cout << "Done!" << endl;
@@ -686,12 +753,12 @@ vector<float> _readFloats(string line) {
 }
 
 vector<GSPoints> GeometricShape::readFrom3DFile(string fName) {
-    vector<GSPoints> points;
+    vector<GSPoints> gspoints;
     ifstream file(fName);
 
     if (!file) {
         cout << "File " << fName << " doesn't exist!" << endl;
-        return points;
+        return gspoints;
     }
 
     cout << "Reading From:" << fName << endl;
@@ -700,6 +767,7 @@ vector<GSPoints> GeometricShape::readFrom3DFile(string fName) {
     bool readingPoints = false;
     int k;
     vector<_3f> pts; 
+    vector<_3f> normals;
     int primitive;
     while (getline(file, line)) {
 
@@ -714,10 +782,13 @@ vector<GSPoints> GeometricShape::readFrom3DFile(string fName) {
         else {
             vector<float> nms = _readFloats(line);
             pts.push_back(_3f(nms[0], nms[1], nms[2]));
+            if (nms.size() >  3) {
+                normals.push_back(_3f(nms[3], nms[4], nms[5]));
+            } 
             k--;
         
             if (k == 0) {
-                points.push_back(GSPoints(primitive, pts));
+                gspoints.push_back(GSPoints(primitive, pts, normals));
                 pts.clear();
                 readingPoints = false;
             }
@@ -725,34 +796,46 @@ vector<GSPoints> GeometricShape::readFrom3DFile(string fName) {
     }
     file.close();
     cout << "Done!" << endl;
-    return points;
+    return gspoints;
 }
 
-vector<std::tuple<GLuint, int, int>> GeometricShape::convertToVBO(vector<GSPoints> gsps) {
-    vector<std::tuple<GLuint, int, int>> res;
+vector<VBOStruct> GeometricShape::convertToVBO(vector<GSPoints> gsps) {
+    vector<VBOStruct> res;
     for (GSPoints gsp : gsps) {
-        
-        vector<float> f_pts;
+
+        vector<float> points;
+        vector<float> normals;
         for (_3f p : gsp.getPoints()) {
-            f_pts.push_back(p.x);
-            f_pts.push_back(p.y);
-            f_pts.push_back(p.z);
+            points.push_back(p.x);
+            points.push_back(p.y);
+            points.push_back(p.z);
         }
 
-        GLuint vbo;
-        glGenBuffers(1, &vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, f_pts.size() * sizeof(float), f_pts.data(), GL_STATIC_DRAW);
+        for (_3f n : gsp.getNormals()) {
+            normals.push_back(n.x);
+            normals.push_back(n.y);
+            normals.push_back(n.z);
+        }
+        GLuint pointsVBO;
+        glGenBuffers(1, &pointsVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
+        glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(float), points.data(), GL_STATIC_DRAW);
 
-        res.push_back(make_tuple(vbo, gsp.getPrimitive(), f_pts.size()));
+        GLuint normalsVBO = 0;
+        if (gsp.getNormals().size() > 0) {
+            glGenBuffers(1, &normalsVBO);
+            glBindBuffer(GL_ARRAY_BUFFER, normalsVBO);
+            glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), normals.data(), GL_STATIC_DRAW);
+        }
+        res.push_back(VBOStruct(pointsVBO, normalsVBO, gsp.getPrimitive(), gsp.getPoints().size()));
     }
 
     return res;
 
 }
 
-vector<std::tuple<GLuint, int, int>> GeometricShape::readFrom3DFileVBOMode(string fName) {
-    vector<std::tuple<GLuint, int, int>> res;
+vector<VBOStruct> GeometricShape::readFrom3DFileVBOMode(string fName) {
+    vector<VBOStruct> res;
     vector<GSPoints> gsps = GeometricShape::readFrom3DFile(fName);
 
     res = GeometricShape::convertToVBO(gsps);
