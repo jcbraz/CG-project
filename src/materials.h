@@ -127,10 +127,16 @@ class Scale : public Transform {
 
 class Colour {
     private:
-        _3f p;
-    
+        _3f colour;
+        GLfloat * diffuse;
+        GLfloat * ambient;
+        GLfloat * specular;
+        GLfloat * emissive;
+        float shininess;
+        bool hasColour;
+
     public:
-        Colour() { p = _3f(1.0f, 1.0f, 1.0f); };
+        Colour() { colour = _3f(1.0f, 1.0f, 1.0f); };
         explicit Colour(XMLElement * colour);
         void run();
 };
@@ -211,29 +217,52 @@ class Model : public Models {
         void run() override;
 };
 
-
-
-
-/*
-class Events {
-    private:
-        map<int, Event> events;
-    
+class Light {
     public:
-        Events() = default;
-        void addEvent(XMLElement * event, unsigned int code);
-        int addEvent(XMLElement * event);
-        int getNextAvailableCode();
-        void handleEvent(unsigned int code);
+        virtual ~Light() = default;
+        virtual void run(GLuint light) = 0;
 };
 
-*/
+class DirectionalLight : public Light {
+    private:
+        GLfloat direction[4];
+    public:
+        DirectionalLight(XMLElement  * directionalLight);
+        void run(GLuint light) override;
+};
 
+class PointLight : public Light {
+    private:
+        GLfloat position[4];
+    public:
+        PointLight(XMLElement * pointLight);
+        void run(GLuint light) override;
+};
+
+class SpotLight : public Light {
+    private:
+        GLfloat point[4];
+        GLfloat direction[4];
+        float cutoff;
+    public:
+        SpotLight(XMLElement * spotLight);
+        void run(GLuint light) override;
+};
+
+class Lights {
+    private:
+        vector<Light *> lights;
+    public:
+        Lights() = default;
+        Lights(XMLElement * lights);
+        void run();
+};
 
 class World {
     private:
         Window window;
         Camera camera;
+        Lights lights;
         Group group;
     
     public:
@@ -242,11 +271,11 @@ class World {
         Camera getCamera() {return camera;};
         Window getWindow() {return window;};
         Group getGroup() {return group;};
+        Lights getLights() {return lights;};
 };
 
 
 int picking(int x, int y, Camera * c, Group * g);
-void handlePickingEvents();
 
 #endif
 

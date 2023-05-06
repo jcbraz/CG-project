@@ -37,6 +37,16 @@
 
 using namespace std;
 
+struct VBOStruct {
+    GLuint points;
+    GLuint normals;
+    int primitive;
+    int size;
+
+    public:
+        VBOStruct(GLuint points, GLuint normals, int primitive, int size) : points(points), normals(normals), primitive(primitive), size(size) {};
+};
+
 /*
  *
  * GEOMETRIC OBJECT ABSTRACT CLASS
@@ -47,10 +57,13 @@ class GSPoints {
     private:
         int primitive;
         vector<_3f> points;
+        vector<_3f> normals;
     public:
         GSPoints(int primitive, vector<_3f> points) : primitive(primitive), points(points) {};
+        GSPoints(int primitive, vector<_3f> points, vector<_3f> normals) : primitive(primitive), points(points), normals(normals) {};
         int getPrimitive() {return this->primitive;};
         vector<_3f> getPoints() {return this->points;};
+        vector<_3f> getNormals() {return this->normals;};
 };
 
 class GeometricShape {
@@ -62,12 +75,12 @@ public:
     virtual vector<GSPoints> getPoints() {return points;};
 
     static void drawObject(vector<GSPoints> points);
-    static void drawObjectVBOMode(vector<std::tuple<GLuint, int, int>>);
+    static void drawObjectVBOMode(vector<VBOStruct> vbos);
 
     static void writeTo3DFile(vector<GSPoints> points, string fName);
-    static vector<std::tuple<GLuint, int, int>>convertToVBO(vector<GSPoints> gsps);
+    static vector<VBOStruct> convertToVBO(vector<GSPoints> gsps);
     static vector<GSPoints> readFrom3DFile(string fName);
-    static vector<std::tuple<GLuint, int, int>> readFrom3DFileVBOMode(string fName);
+    static vector<VBOStruct> readFrom3DFileVBOMode(string fName);
     static vector<GSPoints> readFromBezierPatchFile(string pathFName,  int tesselation);
 
     string getFileName() { return fileName; }

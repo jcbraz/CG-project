@@ -189,5 +189,5 @@ void getBezierPoint(float u, float v, float* px, float* py, float* pz, float* no
 	normalize(derivU);
 	normalize(derivV);
 	//cross(derivU, derivV,normalV);
-	//normalize(normalV);
+	//normalize(normalV); 
 }

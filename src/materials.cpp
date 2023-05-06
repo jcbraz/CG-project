@@ -1,6 +1,6 @@
 #include "materials.h"
 //                            VBO   PRIMITIVE  N_PTS
-map<string, vector<std::tuple<GLuint, int, int>>> fileModels;
+map<string, vector<VBOStruct>> vboMap;
 
 unsigned int picked;
 
@@ -79,7 +79,7 @@ void _setUnavailableCode(unsigned int code) {
 
 int picking(int xx, int yy, Camera * camera, Group * group) {    
 	// Turn off lighting and texturing
-	//glDisable(GL_LIGHTING);
+	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
 
 	// Clear the frame buffer and place the camera
@@ -107,7 +107,7 @@ int picking(int xx, int yy, Camera * camera, Group * group) {
     glReadPixels(xx,viewport[3] - yy,1,1, GL_RGBA,GL_UNSIGNED_BYTE, res);
 
 	// Reactivate lighting and texturing
-	//glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
 
     if (picked)
@@ -339,18 +339,80 @@ void Text::run() {
 
 Colour::Colour(XMLElement * colour) {
     if (!colour) {
-        this->p = _3f(1, 1, 1);
+        this->colour = _3f(1, 1, 1);
     } else {
-        this->p = _3f(
-            colour->FloatAttribute("r"),
-            colour->FloatAttribute("g"),
-            colour->FloatAttribute("b")
-        );
+        const XMLAttribute * colour_attr = colour->FindAttribute("r");
+        if (colour_attr) {    
+            this->colour = _3f(
+                colour->FloatAttribute("r"),
+                colour->FloatAttribute("g"),
+                colour->FloatAttribute("b")
+            );
+            this->hasColour = true;
+            return;
+        }
+        
+        this->hasColour = false;
+        XMLElement * colour_child = _getChildElement(colour, nullptr);
+        
+        while (colour_child) {
+            string value = colour_child->Value();
+            if (value == "diffuse") {
+                this->diffuse = (GLfloat *) malloc(sizeof(GLfloat) * 4);
+                this->diffuse[0] = colour_child->FloatAttribute("R") / 255.0f;
+                this->diffuse[1] = colour_child->FloatAttribute("G") / 255.0f;
+                this->diffuse[2] = colour_child->FloatAttribute("B") / 255.0f;
+                this->diffuse[3] = 1.0f;
+            } else if (value == "specular") {
+                this->specular = (GLfloat *) malloc(sizeof(GLfloat) * 4);
+                this->specular[0] = colour_child->FloatAttribute("R") / 255.0f;
+                this->specular[1] = colour_child->FloatAttribute("G") / 255.0f;
+                this->specular[2] = colour_child->FloatAttribute("B") / 255.0f;
+                this->specular[3] = 1.0f;
+            } else if (value == "ambient") {
+                this->ambient = (GLfloat *) malloc(sizeof(GLfloat) * 4);
+                this->ambient[0] = colour_child->FloatAttribute("R") / 255.0f;
+                this->ambient[1] = colour_child->FloatAttribute("G") / 255.0f;
+                this->ambient[2] = colour_child->FloatAttribute("B") / 255.0f;
+                this->ambient[3] = 1.0f;
+            } else if (value == "emissive") {
+                this->emissive = (GLfloat *) malloc(sizeof(GLfloat) * 4);
+                this->emissive[0] = colour_child->FloatAttribute("R")/ 255.0f;
+                this->emissive[1] = colour_child->FloatAttribute("G")/ 255.0f;
+                this->emissive[2] = colour_child->FloatAttribute("B")/ 255.0f;
+                this->emissive[3] = 1.0f;
+            } else if (value == "shininess") {
+                this->shininess = colour_child->FloatAttribute("value");
+            } else {
+                throw std::runtime_error("Invalid color's element '" + value + "'!");
+            }
+
+            colour_child = colour_child->NextSiblingElement();
+        }
     }
 }
 
 void Colour::run() {
-    glColor3f(this->p.x, this->p.y, this->p.z);
+    if (this->hasColour) {
+        glColor3f(this->colour.x, this->colour.y, this->colour.z);
+        GLfloat colourf[4] = {this->colour.x, this->colour.y, this->colour.z, 1.0f};
+        GLfloat emissivef[4] = {this->colour.x/3, this->colour.y/3, this->colour.z/3, 1.0f};
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, colourf);
+        glMaterialfv(GL_FRONT, GL_EMISSION, emissivef);
+        glMaterialf(GL_FRONT, GL_SHININESS, 10);
+
+    } else {
+        if (this->diffuse)
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, this->diffuse);
+        if (this->specular)
+            glMaterialfv(GL_FRONT, GL_SPECULAR, this->specular);
+        if (this->emissive)
+            glMaterialfv(GL_FRONT, GL_EMISSION, this->emissive);
+        if (this->ambient)
+            glMaterialfv(GL_FRONT, GL_AMBIENT, this->ambient);
+        if (this->shininess)
+            glMaterialf(GL_FRONT, GL_SHININESS, this->shininess);
+    }
 }
 
 Model::Model(XMLElement * model) : disableCull(false), code(0) {
@@ -384,9 +446,9 @@ Model::Model(XMLElement * model) : disableCull(false), code(0) {
     
 
     string fpath = model->Attribute("file");
-    if (fileModels.find(fpath) == fileModels.end()) {
+    if (vboMap.find(fpath) == vboMap.end()) {
 
-        fileModels[fpath] = GeometricShape::readFrom3DFileVBOMode(fpath);
+        vboMap[fpath] = GeometricShape::readFrom3DFileVBOMode(fpath);
     }
     this->modelName = fpath;
 }
@@ -406,7 +468,7 @@ void Model::run() {
     if (this->disableCull)
         glDisable(GL_CULL_FACE);
     
-    GeometricShape::drawObjectVBOMode(fileModels[this->modelName]);
+    GeometricShape::drawObjectVBOMode(vboMap[this->modelName]);
     
     if (this->disableCull)
         glEnable(GL_CULL_FACE);
@@ -580,6 +642,78 @@ void Group::run() {
 
 }
 
+PointLight::PointLight(XMLElement * point_light) {
+    this->position[0] = point_light->FloatAttribute("PosX");
+    this->position[1] = point_light->FloatAttribute("PosY");
+    this->position[2] = point_light->FloatAttribute("PosZ");
+    this->position[3] = 1.0f;
+}
+
+void PointLight::run(GLuint light) {
+    //GLfloat amb[4] = { 0.1, 0.1, 0.1, 1.0 };
+    //GLfloat diff[4] = { 1.0, 1.0, 1.0, 1.0 };
+
+    glLightfv(light, GL_POSITION, this->position);
+    //glLightfv(light, GL_AMBIENT, amb);
+    //glLightfv(light, GL_DIFFUSE, diff);
+}
+
+DirectionalLight::DirectionalLight(XMLElement * directional_light) {
+    this->direction[0] = directional_light->FloatAttribute("DirX");
+    this->direction[1] = directional_light->FloatAttribute("DirY");
+    this->direction[2] = directional_light->FloatAttribute("DirZ");
+    this->direction[3] = 0.0f;
+}
+
+void DirectionalLight::run(GLuint light) {
+    GLfloat amb[4] = { 0.1, 0.1, 0.1, 1.0 };
+    GLfloat diff[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
+    glLightfv(light, GL_POSITION, this->direction);
+    glLightfv(light, GL_AMBIENT, amb);
+    glLightfv(light, GL_DIFFUSE, diff);
+}
+
+SpotLight::SpotLight(XMLElement * spot_light) {
+
+}
+
+void SpotLight::run(GLuint light) {
+
+}
+
+Lights::Lights(XMLElement * light) {
+    XMLElement * light_child = _getChildElement(light, "light");
+
+    while (light_child) {
+        string type = light_child->Attribute("type");
+        if (type == "point") {
+            this->lights.push_back(new PointLight(light_child));
+        } else if (type == "directional") {
+            this->lights.push_back(new DirectionalLight(light_child));
+        } else if (type == "spot") {
+            this->lights.push_back(new SpotLight(light_child));
+        } else {
+            throw std::runtime_error("Invalid light type'" + type + "'!");
+        }
+
+        light_child = light_child->NextSiblingElement("light");
+    }
+}    
+
+void Lights::run() {
+	float black[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, black);
+
+    for (int i = 0; i < this->lights.size(); i++) {
+        
+        glEnable(GL_LIGHT0 + i);
+
+        lights[i]->run(GL_LIGHT0 + i); 
+    }
+
+}
+
 World::World(const string& path) {
 
     XMLDocument doc;
@@ -619,6 +753,12 @@ World::World(const string& path) {
         cout << message << endl;
     }
     this->camera = Camera(camera);
+
+    XMLElement * lights = world->FirstChildElement("lights");
+    if (lights) {
+        this->lights = Lights(lights);
+    } else this->lights = Lights();
+
 }
 
 void World::evaluateGroup(const string& path) {
