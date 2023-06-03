@@ -17,7 +17,7 @@
 
 #include <tinyxml2.h>
 
-#include "geometricShapes.h"
+#include "geometricShapes/geometricShapes.h"
 #include "splines.h"
 
 using namespace std;
@@ -203,11 +203,20 @@ class Event {
         void run();
 };
 
+class Texture { 
+    private:
+        GLuint texture;
+    public:
+        Texture() = default;
+        Texture(XMLElement * texture);
+        GLuint getTexture() { return texture; };
+};
 
 class Model : public Models {
     private:
         unsigned int code;
         string modelName;
+        Texture texture;
         Colour colour;
         bool disableCull;
         Event event;
@@ -273,7 +282,6 @@ class World {
         Group getGroup() {return group;};
         Lights getLights() {return lights;};
 };
-
 
 int picking(int x, int y, Camera * c, Group * g);
 

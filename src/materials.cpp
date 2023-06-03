@@ -1,7 +1,6 @@
 #include "materials.h"
 //                            VBO   PRIMITIVE  N_PTS
 map<string, vector<VBOStruct>> vboMap;
-
 unsigned int picked;
 
 bool mt_drawCodeColour = false;
@@ -394,7 +393,7 @@ Colour::Colour(XMLElement * colour) {
 
 void Colour::run() {
     if (this->hasColour) {
-        glColor3f(this->colour.x, this->colour.y, this->colour.z);
+        //glColor3f(this->colour.x, this->colour.y, this->colour.z);
         GLfloat colourf[4] = {this->colour.x, this->colour.y, this->colour.z, 1.0f};
         GLfloat emissivef[4] = {this->colour.x/3, this->colour.y/3, this->colour.z/3, 1.0f};
         glMaterialfv(GL_FRONT, GL_DIFFUSE, colourf);
@@ -415,7 +414,16 @@ void Colour::run() {
     }
 }
 
+Texture::Texture(XMLElement * texture) {
+    this->texture = GeometricShape::loadTextureImageVBO(texture->Attribute("file"));
+}
+
 Model::Model(XMLElement * model) : disableCull(false), code(0) {
+
+    XMLElement * texture = model->FirstChildElement("texture");
+    if (texture) {
+        this->texture = Texture(texture);
+    }
 
     XMLElement * colour = model->FirstChildElement("color");
     this->colour = Colour(colour);
@@ -468,7 +476,7 @@ void Model::run() {
     if (this->disableCull)
         glDisable(GL_CULL_FACE);
     
-    GeometricShape::drawObjectVBOMode(vboMap[this->modelName]);
+    GeometricShape::drawObjectVBOMode(vboMap[this->modelName], this->texture.getTexture());
     
     if (this->disableCull)
         glEnable(GL_CULL_FACE);
@@ -650,12 +658,12 @@ PointLight::PointLight(XMLElement * point_light) {
 }
 
 void PointLight::run(GLuint light) {
-    //GLfloat amb[4] = { 0.1, 0.1, 0.1, 1.0 };
-    //GLfloat diff[4] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat amb[4] = { 0.1, 0.1, 0.1, 1.0 };
+    GLfloat diff[4] = { 1.0, 1.0, 1.0, 1.0 };
 
     glLightfv(light, GL_POSITION, this->position);
-    //glLightfv(light, GL_AMBIENT, amb);
-    //glLightfv(light, GL_DIFFUSE, diff);
+    glLightfv(light, GL_AMBIENT, amb);
+    glLightfv(light, GL_DIFFUSE, diff);
 }
 
 DirectionalLight::DirectionalLight(XMLElement * directional_light) {
@@ -666,7 +674,7 @@ DirectionalLight::DirectionalLight(XMLElement * directional_light) {
 }
 
 void DirectionalLight::run(GLuint light) {
-    GLfloat amb[4] = { 0.1, 0.1, 0.1, 1.0 };
+    GLfloat amb[4] = { 0.8, 0.8, 0.8, 1.0 };
     GLfloat diff[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
     glLightfv(light, GL_POSITION, this->direction);
     glLightfv(light, GL_AMBIENT, amb);

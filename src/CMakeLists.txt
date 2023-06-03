@@ -19,7 +19,7 @@ FetchContent_MakeAvailable(
 )
 # add_executable(${PROJECT_NAME} engine.cpp geometricShapes.cpp)
 # change generator.cpp to engine.cpp when the files are generated
-add_executable(${PROJECT_NAME} engine.cpp geometricShapes.cpp materials.cpp splines.cpp)
+add_executable(${PROJECT_NAME} engine.cpp geometricShapes/geometricShapes.cpp materials.cpp splines.cpp)
 target_link_libraries(${PROJECT_NAME} tinyxml2::tinyxml2)
 # disable if on Mac
 target_link_libraries(${PROJECT_NAME} GLEW)
