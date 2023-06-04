@@ -6,15 +6,12 @@
 
 #include <sstream>
 
-
-
-
-ILubyte * readImage(string fpath, int * width, int * height) {
+ILubyte *readImage(string fpath, int *width, int *height) {
     ILuint t;
 
     ilGenImages(1, &t);
     ilBindImage(t);
-    ilLoadImage((ILstring) fpath.c_str());
+    ilLoadImage((ILstring)fpath.c_str());
     ilConvertImage(IL_LUMINANCE, IL_UNSIGNED_BYTE);
 
     ILenum error = ilGetError();
@@ -25,38 +22,40 @@ ILubyte * readImage(string fpath, int * width, int * height) {
     *width = ilGetInteger(IL_IMAGE_WIDTH);
     *height = ilGetInteger(IL_IMAGE_HEIGHT);
 
-    //int size = *width * *height * ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL);
-    //ILubyte * imageData = new ILubyte[size];
-    //ILboolean result = ilCopyPixels(0, 0, 0, *width, *height, 1, IL_LUMINANCE, IL_UNSIGNED_BYTE, imageData);
-    ILubyte * imageData = ilGetData();
-    ILubyte * tmp = imageData;
+    // int size = *width * *height * ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL);
+    // ILubyte * imageData = new ILubyte[size];
+    // ILboolean result = ilCopyPixels(0, 0, 0, *width, *height, 1,
+    // IL_LUMINANCE, IL_UNSIGNED_BYTE, imageData);
+    ILubyte *imageData = ilGetData();
+    ILubyte *tmp = imageData;
 
-    if (!imageData)
-        cout << "error getting image data!" << endl;
+    if (!imageData) cout << "error getting image data!" << endl;
 
-   // if (!result)
-     //   cout << "error getting data!" << endl << ilGetString(ilGetError()) << endl;
+    // if (!result)
+    //   cout << "error getting data!" << endl << ilGetString(ilGetError()) <<
+    //   endl;
 
     cout << "Loaded Image! W:" << *width << "H:" << *height << endl;
     return imageData;
 }
 
-unsigned char * genRandomData(int h, int w) {
-    unsigned char * data = (unsigned char *) malloc(sizeof(unsigned char) * h*w);
-    for (int i = 0; i < h*w; i++) {
-        data[i] = (unsigned char) rand();
+unsigned char *genRandomData(int h, int w) {
+    unsigned char *data =
+        (unsigned char *)malloc(sizeof(unsigned char) * h * w);
+    for (int i = 0; i < h * w; i++) {
+        data[i] = (unsigned char)rand();
     }
     return data;
 }
 
-float height(int i, int j, ILubyte * imageData, int width, float multiplier) {
-    float h = imageData[i *  width + j];
+float height(int i, int j, ILubyte *imageData, int width, float multiplier) {
+    float h = imageData[i * width + j];
     return h / 255.0f * multiplier;
 }
 
 /*
  *
- * PLANE 
+ * PLANE
  *
  */
 
@@ -70,7 +69,6 @@ Plane::Plane(float length, int divisions) {
     Plane::length = length;
     Plane::divisions = divisions;
     Plane::fileName = "plane.3d";
-
 }
 
 Plane::Plane(float length, int divisions, string fileName) {
@@ -79,18 +77,19 @@ Plane::Plane(float length, int divisions, string fileName) {
     this->fileName = std::move(fileName);
 
     vector<_3f> points;
-    float n_d = (float) length / (float) divisions;
-    float h_l = (float) length / 2;
+    float n_d = (float)length / (float)divisions;
+    float h_l = (float)length / 2;
     for (int i = 0; i < divisions; i++) {
         for (int j = 0; j < divisions; j++) {
-            //primeiro triangulo
-            points.push_back(_3f(-h_l + n_d * j, 0, -h_l+ n_d * i));
-            points.push_back(_3f(-h_l + n_d * j, 0, -h_l + n_d * (i+1)));
-            points.push_back(_3f(-h_l + n_d * (j+1), 0, -h_l + n_d * i));
-            //segundo triangulo
-            points.push_back(_3f(-h_l + n_d * j, 0, -h_l + n_d * (i+1)));
-            points.push_back(_3f(-h_l + n_d * (j+1), 0, -h_l + n_d * (i+1)));
-            points.push_back(_3f(-h_l + n_d * (j+1), 0, -h_l + n_d * i));
+            // primeiro triangulo
+            points.push_back(_3f(-h_l + n_d * j, 0, -h_l + n_d * i));
+            points.push_back(_3f(-h_l + n_d * j, 0, -h_l + n_d * (i + 1)));
+            points.push_back(_3f(-h_l + n_d * (j + 1), 0, -h_l + n_d * i));
+            // segundo triangulo
+            points.push_back(_3f(-h_l + n_d * j, 0, -h_l + n_d * (i + 1)));
+            points.push_back(
+                _3f(-h_l + n_d * (j + 1), 0, -h_l + n_d * (i + 1)));
+            points.push_back(_3f(-h_l + n_d * (j + 1), 0, -h_l + n_d * i));
         }
     }
 
@@ -102,7 +101,6 @@ void Plane::Print(ostream &) const {
     cout << "Length:" << Plane::length << endl;
     cout << "Divisions:" << Plane::divisions << endl;
 }
-
 
 /*
  *
@@ -138,39 +136,40 @@ Box::Box(float length, int divisions, string pathFile) {
         for (int j = 0; j < divisions; j++) {
             float y = -measure + j * division_size;
             points.push_back(_3f(x, y, -measure));
-            points.push_back(_3f(x, y+division_size, -measure));
-            points.push_back(_3f(x+division_size, y, -measure));
+            points.push_back(_3f(x, y + division_size, -measure));
+            points.push_back(_3f(x + division_size, y, -measure));
 
             normals.push_back(_3f(0, 0, -1));
             normals.push_back(_3f(0, 0, -1));
             normals.push_back(_3f(0, 0, -1));
 
-            points.push_back(_3f(x+division_size, y, -measure));
-            points.push_back(_3f(x, y+division_size, -measure));
-            points.push_back(_3f(x+division_size, y+division_size, -measure));
+            points.push_back(_3f(x + division_size, y, -measure));
+            points.push_back(_3f(x, y + division_size, -measure));
+            points.push_back(
+                _3f(x + division_size, y + division_size, -measure));
 
             normals.push_back(_3f(0, 0, -1));
             normals.push_back(_3f(0, 0, -1));
             normals.push_back(_3f(0, 0, -1));
-            
+
             points.push_back(_3f(x, y, measure));
-            points.push_back(_3f(x+division_size, y, measure));
-            points.push_back(_3f(x, y+division_size, measure));
+            points.push_back(_3f(x + division_size, y, measure));
+            points.push_back(_3f(x, y + division_size, measure));
 
             normals.push_back(_3f(0, 0, 1));
             normals.push_back(_3f(0, 0, 1));
             normals.push_back(_3f(0, 0, 1));
 
-            points.push_back(_3f(x+division_size, y, measure));
-            points.push_back(_3f(x+division_size, y+division_size, measure));
-            points.push_back(_3f(x, y+division_size, measure));
+            points.push_back(_3f(x + division_size, y, measure));
+            points.push_back(
+                _3f(x + division_size, y + division_size, measure));
+            points.push_back(_3f(x, y + division_size, measure));
 
             normals.push_back(_3f(0, 0, 1));
             normals.push_back(_3f(0, 0, 1));
             normals.push_back(_3f(0, 0, 1));
         }
     }
-
 
     // Top & Bottom
     for (int i = 0; i < divisions; i++) {
@@ -178,19 +177,19 @@ Box::Box(float length, int divisions, string pathFile) {
         for (int j = 0; j < divisions; j++) {
             float z = -measure + j * division_size;
 
-
             // Top
             points.push_back(_3f(x, measure, z));
-            points.push_back(_3f(x, measure, z+division_size));
-            points.push_back(_3f(x+division_size, measure, z));
+            points.push_back(_3f(x, measure, z + division_size));
+            points.push_back(_3f(x + division_size, measure, z));
 
             normals.push_back(_3f(0, 1, 0));
             normals.push_back(_3f(0, 1, 0));
-            normals.push_back(_3f(0, 1, 0));            
+            normals.push_back(_3f(0, 1, 0));
 
-            points.push_back(_3f(x+division_size, measure, z));
-            points.push_back(_3f(x, measure, z+division_size));
-            points.push_back(_3f(x+division_size, measure, z+division_size));
+            points.push_back(_3f(x + division_size, measure, z));
+            points.push_back(_3f(x, measure, z + division_size));
+            points.push_back(
+                _3f(x + division_size, measure, z + division_size));
 
             normals.push_back(_3f(0, 1, 0));
             normals.push_back(_3f(0, 1, 0));
@@ -198,24 +197,23 @@ Box::Box(float length, int divisions, string pathFile) {
 
             // Bottom
             points.push_back(_3f(x, -measure, z));
-            points.push_back(_3f(x+division_size, -measure, z));
-            points.push_back(_3f(x, -measure, z+division_size));
+            points.push_back(_3f(x + division_size, -measure, z));
+            points.push_back(_3f(x, -measure, z + division_size));
 
             normals.push_back(_3f(0, -1, 0));
             normals.push_back(_3f(0, -1, 0));
             normals.push_back(_3f(0, -1, 0));
 
-            points.push_back(_3f(x+division_size, -measure, z));
-            points.push_back(_3f(x+division_size, -measure, z+division_size));
-            points.push_back(_3f(x, -measure, z+division_size));
+            points.push_back(_3f(x + division_size, -measure, z));
+            points.push_back(
+                _3f(x + division_size, -measure, z + division_size));
+            points.push_back(_3f(x, -measure, z + division_size));
 
             normals.push_back(_3f(0, -1, 0));
             normals.push_back(_3f(0, -1, 0));
             normals.push_back(_3f(0, -1, 0));
-
         }
     }
-
 
     // Right & Left
     for (int i = 0; i < divisions; i++) {
@@ -223,44 +221,43 @@ Box::Box(float length, int divisions, string pathFile) {
         for (int j = 0; j < divisions; j++) {
             float z = -measure + j * division_size;
             points.push_back(_3f(-measure, y, z));
-            points.push_back(_3f(-measure, y, z+division_size));
-            points.push_back(_3f(-measure, y+division_size, z));
+            points.push_back(_3f(-measure, y, z + division_size));
+            points.push_back(_3f(-measure, y + division_size, z));
 
             normals.push_back(_3f(-1, 0, 0));
             normals.push_back(_3f(-1, 0, 0));
             normals.push_back(_3f(-1, 0, 0));
 
-            points.push_back(_3f(-measure, y+division_size, z));
-            points.push_back(_3f(-measure, y, z+division_size));
-            points.push_back(_3f(-measure, y+division_size, z+division_size));
+            points.push_back(_3f(-measure, y + division_size, z));
+            points.push_back(_3f(-measure, y, z + division_size));
+            points.push_back(
+                _3f(-measure, y + division_size, z + division_size));
 
             normals.push_back(_3f(-1, 0, 0));
             normals.push_back(_3f(-1, 0, 0));
             normals.push_back(_3f(-1, 0, 0));
 
             points.push_back(_3f(measure, y, z));
-            points.push_back(_3f(measure, y+division_size, z));
-            points.push_back(_3f(measure, y, z+division_size));
+            points.push_back(_3f(measure, y + division_size, z));
+            points.push_back(_3f(measure, y, z + division_size));
 
             normals.push_back(_3f(-1, 0, 0));
             normals.push_back(_3f(-1, 0, 0));
             normals.push_back(_3f(-1, 0, 0));
 
-            points.push_back(_3f(measure, y+division_size, z));
-            points.push_back(_3f(measure, y+division_size, z+division_size));
-            points.push_back(_3f(measure, y, z+division_size));
+            points.push_back(_3f(measure, y + division_size, z));
+            points.push_back(
+                _3f(measure, y + division_size, z + division_size));
+            points.push_back(_3f(measure, y, z + division_size));
 
             normals.push_back(_3f(-1, 0, 0));
             normals.push_back(_3f(-1, 0, 0));
             normals.push_back(_3f(-1, 0, 0));
-
         }
     }
 
-
-    this->points.push_back(GSPoints(GL_TRIANGLES, points,  normals));
+    this->points.push_back(GSPoints(GL_TRIANGLES, points, normals));
 }
-
 
 void Box::Print(ostream &) const {
     cout << "Geometric Shape: Box" << endl;
@@ -274,44 +271,41 @@ void Box::Print(ostream &) const {
  *
  */
 
-
 /*
  *
  * RING CLASS
  *
  */
-Ring::Ring(float innerRadius, float outerRadius, int slices, int segments, string fName) :
- innerRadius(innerRadius),
- outerRadius(outerRadius),
- slices(slices),
- segments(segments)
-{
+Ring::Ring(float innerRadius, float outerRadius, int slices, int segments,
+           string fName)
+    : innerRadius(innerRadius),
+      outerRadius(outerRadius),
+      slices(slices),
+      segments(segments) {
     this->fileName = fName;
 
     vector<_3f> points;
     float _alpha = 2 * M_PI / slices;
     float seg_size = (outerRadius - innerRadius) / segments;
-    
+
     for (int i = 0; i < segments; i++) {
-        
         float r1 = innerRadius + i * seg_size;
         float r2 = r1 + seg_size;
 
         for (int j = 0; j < slices; j++) {
-            
             float a1 = _alpha * j;
             float a2 = a1 + _alpha;
 
-                points.push_back(_3f(r1 * cos(a1) , 0, r1 * sin(a1)));
-                points.push_back(_3f(r1 * cos(a2) , 0, r1 * sin(a2)));
-                points.push_back(_3f(r2 * cos(a1) , 0, r2 * sin(a1)));
-        
-                points.push_back(_3f(r2 * cos(a1) , 0, r2 * sin(a1)));
-                points.push_back(_3f(r1 * cos(a2) , 0, r1 * sin(a2)));
-                points.push_back(_3f(r2 * cos(a2) , 0, r2 * sin(a2)));
+            points.push_back(_3f(r1 * cos(a1), 0, r1 * sin(a1)));
+            points.push_back(_3f(r1 * cos(a2), 0, r1 * sin(a2)));
+            points.push_back(_3f(r2 * cos(a1), 0, r2 * sin(a1)));
+
+            points.push_back(_3f(r2 * cos(a1), 0, r2 * sin(a1)));
+            points.push_back(_3f(r1 * cos(a2), 0, r1 * sin(a2)));
+            points.push_back(_3f(r2 * cos(a2), 0, r2 * sin(a2)));
         }
     }
-    
+
     this->points.push_back(GSPoints(GL_TRIANGLES, points));
 }
 
@@ -335,140 +329,100 @@ void Ring::Print(ostream &) const {
  *
  */
 
-Sphere::Sphere(float radius, int slices, int stacks, float multiplier, string fileName) : radius(radius), slices(slices), stacks(stacks) {
+Sphere::Sphere(float radius, int slices, int stacks, float multiplier,
+               string fileName)
+    : radius(radius), slices(slices), stacks(stacks) {
     this->fileName = fileName;
     float _alpha = 2 * M_PI / slices;
     float _beta = M_PI / stacks;
-    unsigned char * imageData = genRandomData(this->slices, this->stacks);
-    for (int i = 0; i < slices-1; i++) {
+    unsigned char *imageData = genRandomData(this->slices, this->stacks);
+    for (int i = 0; i < slices - 1; i++) {
         vector<_3f> strip;
         float av1 = i * _alpha;
         float av2 = av1 + _alpha;
 
         for (int j = 0; j <= stacks; j++) {
-            float bv1 = -M_PI/2 + j * _beta;
-            
+            float bv1 = -M_PI / 2 + j * _beta;
 
-            float hr1 = this->radius - height(i, j, imageData, this->slices, multiplier);
-            float hr2 = this->radius - height(i+1, j, imageData, this->slices, multiplier);
-            strip.push_back(
-                _3f(
-                    hr1 * cos(bv1) * sin(av1),
-                    hr1 * sin(bv1),
-                    hr1 * cos(bv1) * cos(av1)
-                )
-            );
+            float hr1 = this->radius -
+                        height(i, j, imageData, this->slices, multiplier);
+            float hr2 = this->radius -
+                        height(i + 1, j, imageData, this->slices, multiplier);
+            strip.push_back(_3f(hr1 * cos(bv1) * sin(av1), hr1 * sin(bv1),
+                                hr1 * cos(bv1) * cos(av1)));
 
-            strip.push_back(
-                _3f(
-                    hr2 * cos(bv1) * sin(av2),
-                    hr2 * sin(bv1),
-                    hr2 * cos(bv1) * cos(av2)
-                )
-            );
-
-
+            strip.push_back(_3f(hr2 * cos(bv1) * sin(av2), hr2 * sin(bv1),
+                                hr2 * cos(bv1) * cos(av2)));
         }
-        this->points.push_back(GSPoints(GL_TRIANGLE_STRIP, strip));        
-    }  
+        this->points.push_back(GSPoints(GL_TRIANGLE_STRIP, strip));
+    }
 
     vector<_3f> strip;
-    float av1 = (this->slices-1) * _alpha;
+    float av1 = (this->slices - 1) * _alpha;
     float av2 = 0;
 
     for (int j = 0; j <= stacks; j++) {
-        float bv1 = -M_PI/2 + j * _beta;
-        
+        float bv1 = -M_PI / 2 + j * _beta;
 
-        float hr1 = this->radius - height(this->slices-1, j, imageData, this->slices, multiplier);
-        float hr2 = this->radius - height(0, j, imageData, this->slices, multiplier);
-        strip.push_back(
-            _3f(
-                hr1 * cos(bv1) * sin(av1),
-                hr1 * sin(bv1),
-                hr1 * cos(bv1) * cos(av1)
-            )
-        );
+        float hr1 = this->radius - height(this->slices - 1, j, imageData,
+                                          this->slices, multiplier);
+        float hr2 =
+            this->radius - height(0, j, imageData, this->slices, multiplier);
+        strip.push_back(_3f(hr1 * cos(bv1) * sin(av1), hr1 * sin(bv1),
+                            hr1 * cos(bv1) * cos(av1)));
 
-        strip.push_back(
-            _3f(
-                hr2 * cos(bv1) * sin(av2),
-                hr2 * sin(bv1),
-                hr2 * cos(bv1) * cos(av2)
-            )
-        );
-
-
+        strip.push_back(_3f(hr2 * cos(bv1) * sin(av2), hr2 * sin(bv1),
+                            hr2 * cos(bv1) * cos(av2)));
     }
-    this->points.push_back(GSPoints(GL_TRIANGLE_STRIP, strip));        
+    this->points.push_back(GSPoints(GL_TRIANGLE_STRIP, strip));
 }
 
-Sphere::Sphere(string specularMap, string fileName, float radius, float multiplier) : radius(radius) {
+Sphere::Sphere(string specularMap, string fileName, float radius,
+               float multiplier)
+    : radius(radius) {
     this->fileName = fileName;
-    ILubyte * imageData = readImage(specularMap, &this->slices, &this->stacks);
+    ILubyte *imageData = readImage(specularMap, &this->slices, &this->stacks);
     float _alpha = 2 * M_PI / slices;
     float _beta = M_PI / stacks;
-    for (int i = 0; i < slices-1; i++) {
+    for (int i = 0; i < slices - 1; i++) {
         vector<_3f> strip;
         float av1 = i * _alpha;
         float av2 = av1 + _alpha;
 
         for (int j = 0; j <= stacks; j++) {
-            float bv1 = -M_PI/2 + j * _beta;
-            
+            float bv1 = -M_PI / 2 + j * _beta;
 
-            float hr1 = this->radius - height(i, j, imageData, this->slices, multiplier);
-            float hr2 = this->radius - height(i+1, j, imageData, this->slices, multiplier);
-            strip.push_back(
-                _3f(
-                    hr1 * cos(bv1) * sin(av1),
-                    hr1 * sin(bv1),
-                    hr1 * cos(bv1) * cos(av1)
-                )
-            );
+            float hr1 = this->radius -
+                        height(i, j, imageData, this->slices, multiplier);
+            float hr2 = this->radius -
+                        height(i + 1, j, imageData, this->slices, multiplier);
+            strip.push_back(_3f(hr1 * cos(bv1) * sin(av1), hr1 * sin(bv1),
+                                hr1 * cos(bv1) * cos(av1)));
 
-            strip.push_back(
-                _3f(
-                    hr2 * cos(bv1) * sin(av2),
-                    hr2 * sin(bv1),
-                    hr2 * cos(bv1) * cos(av2)
-                )
-            );
-
-
+            strip.push_back(_3f(hr2 * cos(bv1) * sin(av2), hr2 * sin(bv1),
+                                hr2 * cos(bv1) * cos(av2)));
         }
-        this->points.push_back(GSPoints(GL_TRIANGLE_STRIP, strip));        
-    }  
+        this->points.push_back(GSPoints(GL_TRIANGLE_STRIP, strip));
+    }
 
     vector<_3f> strip;
-    float av1 = (this->slices-1) * _alpha;
+    float av1 = (this->slices - 1) * _alpha;
     float av2 = 0;
 
     for (int j = 0; j <= stacks; j++) {
-        float bv1 = -M_PI/2 + j * _beta;
-        
+        float bv1 = -M_PI / 2 + j * _beta;
 
-        float hr1 = this->radius - height(this->slices-1, j, imageData, this->slices, multiplier);
-        float hr2 = this->radius - height(0, j, imageData, this->slices, multiplier);
-        strip.push_back(
-            _3f(
-                hr1 * cos(bv1) * sin(av1),
-                hr1 * sin(bv1),
-                hr1 * cos(bv1) * cos(av1)
-            )
-        );
+        float hr1 = this->radius - height(this->slices - 1, j, imageData,
+                                          this->slices, multiplier);
+        float hr2 =
+            this->radius - height(0, j, imageData, this->slices, multiplier);
+        strip.push_back(_3f(hr1 * cos(bv1) * sin(av1), hr1 * sin(bv1),
+                            hr1 * cos(bv1) * cos(av1)));
 
-        strip.push_back(
-            _3f(
-                hr2 * cos(bv1) * sin(av2),
-                hr2 * sin(bv1),
-                hr2 * cos(bv1) * cos(av2)
-            )
-        );
-
-
+        strip.push_back(_3f(hr2 * cos(bv1) * sin(av2), hr2 * sin(bv1),
+                            hr2 * cos(bv1) * cos(av2)));
     }
-    this->points.push_back(GSPoints(GL_TRIANGLE_STRIP, strip));        
+    this->points.push_back(GSPoints(GL_TRIANGLE_STRIP, strip));
 }
 
 Sphere::Sphere(float radius, int slices, int stacks, string fileName) {
@@ -484,27 +438,39 @@ Sphere::Sphere(float radius, int slices, int stacks, string fileName) {
     float _beta = M_PI / stacks;
     float r = radius;
     for (int j = 0; j < stacks; j++) {
-        float bv = -M_PI/2 + j * _beta;
+        float bv = -M_PI / 2 + j * _beta;
         float bhv = bv + _beta;
 
         for (int i = 0; i < slices; i++) {
             float av = i * _alpha;
             float ahv = av + _alpha;
-            points.push_back(_3f(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));
-            points.push_back(_3f(r * cos(bv) * sin(ahv), r * sin(bv) ,r * cos(bv) * cos(ahv)));
-            points.push_back(_3f(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
-            
-            normals.push_back(_3f(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));
-            normals.push_back(_3f(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));  
-            normals.push_back(_3f(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
+            points.push_back(
+                _3f(r * cos(bv) * sin(av), r * sin(bv), r * cos(bv) * cos(av)));
+            points.push_back(_3f(r * cos(bv) * sin(ahv), r * sin(bv),
+                                 r * cos(bv) * cos(ahv)));
+            points.push_back(_3f(r * cos(bhv) * sin(ahv), r * sin(bhv),
+                                 r * cos(bhv) * cos(ahv)));
 
-            points.push_back(_3f(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));
-            points.push_back(_3f(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
-            points.push_back(_3f(r * cos(bhv) * sin(av), r * sin(bhv) ,r * cos(bhv) * cos(av)));
+            normals.push_back(
+                _3f(r * cos(bv) * sin(av), r * sin(bv), r * cos(bv) * cos(av)));
+            normals.push_back(
+                _3f(r * cos(bv) * sin(av), r * sin(bv), r * cos(bv) * cos(av)));
+            normals.push_back(_3f(r * cos(bhv) * sin(ahv), r * sin(bhv),
+                                  r * cos(bhv) * cos(ahv)));
 
-            normals.push_back(_3f(r * cos(bv) * sin(av), r * sin(bv) ,r * cos(bv) * cos(av)));
-            normals.push_back(_3f(r * cos(bhv) * sin(ahv), r * sin(bhv) ,r * cos(bhv) * cos(ahv)));
-            normals.push_back(_3f(r * cos(bhv) * sin(av), r * sin(bhv) ,r * cos(bhv) * cos(av)));
+            points.push_back(
+                _3f(r * cos(bv) * sin(av), r * sin(bv), r * cos(bv) * cos(av)));
+            points.push_back(_3f(r * cos(bhv) * sin(ahv), r * sin(bhv),
+                                 r * cos(bhv) * cos(ahv)));
+            points.push_back(_3f(r * cos(bhv) * sin(av), r * sin(bhv),
+                                 r * cos(bhv) * cos(av)));
+
+            normals.push_back(
+                _3f(r * cos(bv) * sin(av), r * sin(bv), r * cos(bv) * cos(av)));
+            normals.push_back(_3f(r * cos(bhv) * sin(ahv), r * sin(bhv),
+                                  r * cos(bhv) * cos(ahv)));
+            normals.push_back(_3f(r * cos(bhv) * sin(av), r * sin(bhv),
+                                  r * cos(bhv) * cos(av)));
         }
     }
 
@@ -544,7 +510,8 @@ Cone::Cone(float radius, float height, int slices, int stacks) {
     Cone::fileName = "cone.3d";
 }
 
-Cone::Cone(float radius, float height, int slices, int stacks, string pathFile) {
+Cone::Cone(float radius, float height, int slices, int stacks,
+           string pathFile) {
     Cone::radius = radius;
     Cone::height = height;
     Cone::slices = slices;
@@ -559,26 +526,43 @@ Cone::Cone(float radius, float height, int slices, int stacks, string pathFile) 
     // Base
     for (int i = 0; i < slices; i++) {
         points.push_back(_3f(0, 0, 0));
-        points.push_back(_3f(radius * sin(alpha * (i + 1)), 0, radius * cos(alpha * (i + 1))));
-        points.push_back(_3f(radius * sin(alpha * i), 0, radius * cos(alpha * i)));
+        points.push_back(_3f(radius * sin(alpha * (i + 1)), 0,
+                             radius * cos(alpha * (i + 1))));
+        points.push_back(
+            _3f(radius * sin(alpha * i), 0, radius * cos(alpha * i)));
 
-        for (int j = 0; j < stacks-1; j++) {
+        for (int j = 0; j < stacks - 1; j++) {
+            points.push_back(_3f((radius - v_r * j) * sin(alpha * i), j * v_h,
+                                 (radius - v_r * j) * cos(alpha * i)));
+            points.push_back(_3f((radius - v_r * j) * sin(alpha * (i + 1)),
+                                 j * v_h,
+                                 (radius - v_r * j) * cos(alpha * (i + 1))));
+            points.push_back(_3f(
+                (radius - v_r * (j + 1)) * sin(alpha * (i + 1)), (j + 1) * v_h,
+                (radius - v_r * (j + 1)) * cos(alpha * (i + 1))));
 
-            points.push_back(_3f((radius - v_r * j) * sin(alpha * i), j * v_h,(radius - v_r * j) * cos(alpha * i)));
-            points.push_back(_3f((radius - v_r * j) * sin(alpha * (i+1)), j * v_h, (radius - v_r * j) * cos(alpha * (i+1))));
-            points.push_back(_3f((radius - v_r * (j+1)) * sin(alpha * (i+1)), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * (i+1))));
-
-            points.push_back(_3f((radius - v_r * j) * sin (alpha * i), j * v_h, (radius - v_r * j) * cos(alpha * i)));
-            points.push_back(_3f((radius - v_r * (j+1)) * sin (alpha * (i+1)), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * (i+1))));
-            points.push_back(_3f((radius - v_r * (j+1)) * sin (alpha * i), (j+1) * v_h, (radius - v_r * (j+1)) * cos(alpha * i)));
-
+            points.push_back(_3f((radius - v_r * j) * sin(alpha * i), j * v_h,
+                                 (radius - v_r * j) * cos(alpha * i)));
+            points.push_back(_3f(
+                (radius - v_r * (j + 1)) * sin(alpha * (i + 1)), (j + 1) * v_h,
+                (radius - v_r * (j + 1)) * cos(alpha * (i + 1))));
+            points.push_back(_3f((radius - v_r * (j + 1)) * sin(alpha * i),
+                                 (j + 1) * v_h,
+                                 (radius - v_r * (j + 1)) * cos(alpha * i)));
         }
     }
 
     for (int i = 0; i < slices; i++) {
-        points.push_back(_3f((radius - v_r * (stacks-1)) * sin(alpha * i), (stacks-1) * v_h,(radius - v_r * (stacks-1)) * cos(alpha * i)));
-        points.push_back(_3f((radius - v_r * (stacks-1)) * sin(alpha * (i+1)), (stacks-1) * v_h, (radius - v_r * (stacks-1)) * cos(alpha * (i+1))));
-        points.push_back(_3f((radius - v_r * stacks) * sin(alpha * (i+1)), stacks * v_h, (radius - v_r * stacks) * cos(alpha * (i+1))));
+        points.push_back(_3f((radius - v_r * (stacks - 1)) * sin(alpha * i),
+                             (stacks - 1) * v_h,
+                             (radius - v_r * (stacks - 1)) * cos(alpha * i)));
+        points.push_back(
+            _3f((radius - v_r * (stacks - 1)) * sin(alpha * (i + 1)),
+                (stacks - 1) * v_h,
+                (radius - v_r * (stacks - 1)) * cos(alpha * (i + 1))));
+        points.push_back(_3f((radius - v_r * stacks) * sin(alpha * (i + 1)),
+                             stacks * v_h,
+                             (radius - v_r * stacks) * cos(alpha * (i + 1))));
     }
 
     this->points.push_back(GSPoints(GL_TRIANGLES, points));
@@ -590,9 +574,7 @@ void Cone::Print(ostream &) const {
     cout << "Stacks:" << Cone::stacks << endl;
     cout << "Height:" << Cone::height << endl;
     cout << "Slices:" << Cone::slices << endl;
-
 }
-
 
 /*
  *
@@ -608,9 +590,8 @@ void Cone::Print(ostream &) const {
 void GeometricShape::drawObject(vector<GSPoints> points) {
     for (GSPoints gsp : points) {
         glBegin(gsp.getPrimitive());
-            vector<_3f> pts = gsp.getPoints();
-            for (auto p : pts)
-                glVertex3f(p.x, p.y, p.z);
+        vector<_3f> pts = gsp.getPoints();
+        for (auto p : pts) glVertex3f(p.x, p.y, p.z);
         glEnd();
     }
 }
@@ -621,7 +602,7 @@ void GeometricShape::drawObjectVBOMode(vector<VBOStruct> vbos) {
 
     for (auto vbo : vbos) {
         glBindBuffer(GL_ARRAY_BUFFER, vbo.points);
-        glVertexPointer(3, GL_FLOAT, 0 ,0);
+        glVertexPointer(3, GL_FLOAT, 0, 0);
 
         if (vbo.normals != 0) {
             glBindBuffer(GL_ARRAY_BUFFER, vbo.normals);
@@ -635,20 +616,19 @@ void GeometricShape::drawObjectVBOMode(vector<VBOStruct> vbos) {
 void GeometricShape::writeTo3DFile(vector<GSPoints> gsps, string fName) {
     ofstream file(fName);
     cout << "Writing Points to:" << fName << endl;
-    
+
     for (GSPoints gsp : gsps) {
         file << gsp.getPrimitive() << " " << gsp.getPoints().size() << endl;
         vector<_3f> points = gsp.getPoints();
         vector<_3f> normals = gsp.getNormals();
         for (int i = 0; i < points.size(); i++) {
-
-
-            file << setprecision(FLOAT_PRECISION) << points[i].x << " " << points[i].y << " " << points[i].z;
+            file << setprecision(FLOAT_PRECISION) << points[i].x << " "
+                 << points[i].y << " " << points[i].z;
             if (normals.size() > 0)
-                    file << " " << normals[i].x << " " << normals[i].y << " " << normals[i].z;
-            file << endl; 
+                file << " " << normals[i].x << " " << normals[i].y << " "
+                     << normals[i].z;
+            file << endl;
         }
-
     }
     file.close();
     cout << "Done!" << endl;
@@ -656,80 +636,86 @@ void GeometricShape::writeTo3DFile(vector<GSPoints> gsps, string fName) {
 
 #define SIZE_BUFFER 2048
 
-vector<GSPoints> GeometricShape::readFromBezierPatchFile(string pathFName,  int tesselation) {
-	vector<GSPoints> gspoints;
-    vector <_3f> points;
+vector<GSPoints> GeometricShape::readFromBezierPatchFile(string pathFName,
+                                                         int tesselation) {
+    vector<GSPoints> gspoints;
+    vector<_3f> points;
     char line[SIZE_BUFFER];
-	int j;
-	int nPontos;
-	int nPatches;
-	FILE* f = fopen(pathFName.c_str(), "r");
-	if (!f) {
-		printf("Couldn't open file %s!\n", pathFName);
-		return gspoints;
-	}
-	fscanf(f, "%d\n", &nPatches);	//printf("%d\n", patches);
+    int j;
+    int nPontos;
+    int nPatches;
+    FILE *f = fopen(pathFName.c_str(), "r");
+    if (!f) {
+        printf("Couldn't open file %s!\n", pathFName);
+        return gspoints;
+    }
+    fscanf(f, "%d\n", &nPatches);  // printf("%d\n", patches);
 
-	int ** indexes = (int**)malloc(sizeof(int*) * nPatches);
-	for (int i = 0; i < nPatches; i++) {
-		indexes[i] = (int*)malloc(sizeof(int) * 16);
-		memset(line, 0, SIZE_BUFFER);
-		fgets(line, SIZE_BUFFER, f);
-		char* token = NULL;
-		for (j = 0, token = strtok(line, ", "); token && j < 16; token = strtok(NULL, ", "), j++) {
-			indexes[i][j] = atoi(token);
-		}
-	}
+    int **indexes = (int **)malloc(sizeof(int *) * nPatches);
+    for (int i = 0; i < nPatches; i++) {
+        indexes[i] = (int *)malloc(sizeof(int) * 16);
+        memset(line, 0, SIZE_BUFFER);
+        fgets(line, SIZE_BUFFER, f);
+        char *token = NULL;
+        for (j = 0, token = strtok(line, ", "); token && j < 16;
+             token = strtok(NULL, ", "), j++) {
+            indexes[i][j] = atoi(token);
+        }
+    }
 
-	fscanf(f, "%d\n", &nPontos);
-	float * XPoints = (float*)malloc(sizeof(float) * nPontos);
-	float * YPoints = (float*)malloc(sizeof(float) * nPontos);
-	float * ZPoints = (float*)malloc(sizeof(float) * nPontos);
+    fscanf(f, "%d\n", &nPontos);
+    float *XPoints = (float *)malloc(sizeof(float) * nPontos);
+    float *YPoints = (float *)malloc(sizeof(float) * nPontos);
+    float *ZPoints = (float *)malloc(sizeof(float) * nPontos);
 
-	for (int k = 0; k < nPontos; k++) {
-		memset(line, 0, SIZE_BUFFER);
-		fgets(line, SIZE_BUFFER, f);
-		XPoints[k] = atof(strtok(line, ", "));
-		YPoints[k] = atof(strtok(NULL, ", "));
-		ZPoints[k] = atof(strtok(NULL, ", "));
-	}
-	fclose(f);
+    for (int k = 0; k < nPontos; k++) {
+        memset(line, 0, SIZE_BUFFER);
+        fgets(line, SIZE_BUFFER, f);
+        XPoints[k] = atof(strtok(line, ", "));
+        YPoints[k] = atof(strtok(NULL, ", "));
+        ZPoints[k] = atof(strtok(NULL, ", "));
+    }
+    fclose(f);
 
-	float arrX[16];
-	float arrY[16];
-	float arrZ[16];
+    float arrX[16];
+    float arrY[16];
+    float arrZ[16];
 
-	for (int i = 0; i <nPatches; i++) {
-		for (int j = 0; j < 16; j++) {
-			arrX[j] = XPoints[indexes[i][j]];
-			arrY[j] = YPoints[indexes[i][j]];
-			arrZ[j] = ZPoints[indexes[i][j]];
-		}
-		for (int u = 0; u < tesselation; u++) {
-			float p0[3];
-			float p1[3];
-			float p2[3];
-			float p3[3];
-			for (int v = 0; v < tesselation; v++) {
-				getBezierPoint(u / (float)tesselation, v / (float)tesselation, arrX, arrY, arrZ, p0);
-				getBezierPoint((u + 1) / (float)tesselation, v / (float)tesselation, arrX, arrY, arrZ, p1);
-				getBezierPoint(u / (float)tesselation, (v + 1) / (float)tesselation, arrX, arrY, arrZ, p2);
-				getBezierPoint((u + 1) / (float)tesselation, (v + 1) / (float)tesselation, arrX, arrY, arrZ, p3);
+    for (int i = 0; i < nPatches; i++) {
+        for (int j = 0; j < 16; j++) {
+            arrX[j] = XPoints[indexes[i][j]];
+            arrY[j] = YPoints[indexes[i][j]];
+            arrZ[j] = ZPoints[indexes[i][j]];
+        }
+        for (int u = 0; u < tesselation; u++) {
+            float p0[3];
+            float p1[3];
+            float p2[3];
+            float p3[3];
+            for (int v = 0; v < tesselation; v++) {
+                getBezierPoint(u / (float)tesselation, v / (float)tesselation,
+                               arrX, arrY, arrZ, p0);
+                getBezierPoint((u + 1) / (float)tesselation,
+                               v / (float)tesselation, arrX, arrY, arrZ, p1);
+                getBezierPoint(u / (float)tesselation,
+                               (v + 1) / (float)tesselation, arrX, arrY, arrZ,
+                               p2);
+                getBezierPoint((u + 1) / (float)tesselation,
+                               (v + 1) / (float)tesselation, arrX, arrY, arrZ,
+                               p3);
 
                 points.push_back(_3f(p0[0], p0[1], p0[2]));
                 points.push_back(_3f(p3[0], p3[1], p3[2]));
                 points.push_back(_3f(p2[0], p2[1], p2[2]));
-                
+
                 points.push_back(_3f(p1[0], p1[1], p1[2]));
                 points.push_back(_3f(p3[0], p3[1], p3[2]));
                 points.push_back(_3f(p0[0], p0[1], p0[2]));
-
-		    }
+            }
         }
-	}
+    }
     gspoints.push_back(GSPoints(GL_TRIANGLES, points));
-	return gspoints;
-
+    return gspoints;
 }
 
 vector<int> _readInts(string line) {
@@ -766,27 +752,24 @@ vector<GSPoints> GeometricShape::readFrom3DFile(string fName) {
     string line;
     bool readingPoints = false;
     int k;
-    vector<_3f> pts; 
+    vector<_3f> pts;
     vector<_3f> normals;
     int primitive;
     while (getline(file, line)) {
-
         if (!readingPoints) {
             vector<int> prim_size = _readInts(line);
-            for (auto p : prim_size)
-                cout << "v:" << p << endl;
+            for (auto p : prim_size) cout << "v:" << p << endl;
             readingPoints = true;
             primitive = prim_size[0];
             k = prim_size[1];
-        } 
-        else {
+        } else {
             vector<float> nms = _readFloats(line);
             pts.push_back(_3f(nms[0], nms[1], nms[2]));
-            if (nms.size() >  3) {
+            if (nms.size() > 3) {
                 normals.push_back(_3f(nms[3], nms[4], nms[5]));
-            } 
+            }
             k--;
-        
+
             if (k == 0) {
                 gspoints.push_back(GSPoints(primitive, pts, normals));
                 pts.clear();
@@ -802,7 +785,6 @@ vector<GSPoints> GeometricShape::readFrom3DFile(string fName) {
 vector<VBOStruct> GeometricShape::convertToVBO(vector<GSPoints> gsps) {
     vector<VBOStruct> res;
     for (GSPoints gsp : gsps) {
-
         vector<float> points;
         vector<float> normals;
         for (_3f p : gsp.getPoints()) {
@@ -819,19 +801,21 @@ vector<VBOStruct> GeometricShape::convertToVBO(vector<GSPoints> gsps) {
         GLuint pointsVBO;
         glGenBuffers(1, &pointsVBO);
         glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
-        glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(float), points.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(float),
+                     points.data(), GL_STATIC_DRAW);
 
         GLuint normalsVBO = 0;
         if (gsp.getNormals().size() > 0) {
             glGenBuffers(1, &normalsVBO);
             glBindBuffer(GL_ARRAY_BUFFER, normalsVBO);
-            glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), normals.data(), GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float),
+                         normals.data(), GL_STATIC_DRAW);
         }
-        res.push_back(VBOStruct(pointsVBO, normalsVBO, gsp.getPrimitive(), gsp.getPoints().size()));
+        res.push_back(VBOStruct(pointsVBO, normalsVBO, gsp.getPrimitive(),
+                                gsp.getPoints().size()));
     }
 
     return res;
-
 }
 
 vector<VBOStruct> GeometricShape::readFrom3DFileVBOMode(string fName) {
