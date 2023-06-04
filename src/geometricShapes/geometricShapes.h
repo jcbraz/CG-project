@@ -27,7 +27,7 @@
 #include <cstring>
 #include <iomanip>
 
-#include "splines.h"
+#include "../splines.h"
 
 #define FLOAT_PRECISION 5
 
@@ -54,12 +54,16 @@ class GSPoints {
         int primitive;
         vector<_3f> points;
         vector<_3f> normals;
+        vector<_3f> texCoords;
     public:
         GSPoints(int primitive, vector<_3f> points) : primitive(primitive), points(points) {};
         GSPoints(int primitive, vector<_3f> points, vector<_3f> normals) : primitive(primitive), points(points), normals(normals) {};
+        GSPoints(int primitive, vector<_3f> points, vector<_3f> normals, vector<_3f> texCoords) : primitive(primitive), points(points), normals(normals), texCoords(texCoords) {};
         int getPrimitive() {return this->primitive;};
         vector<_3f> getPoints() {return this->points;};
         vector<_3f> getNormals() {return this->normals;};
+        vector<_3f> getTexCoords() {return this->texCoords;};
+        void setNormals(vector<_3f> normals) {this->normals = normals;};
 };
 
 class GeometricShape {
@@ -71,13 +75,14 @@ public:
     virtual vector<GSPoints> getPoints() {return points;};
 
     static void drawObject(vector<GSPoints> points);
-    static void drawObjectVBOMode(vector<VBOStruct> vbos);
+    static void drawObjectVBOMode(vector<VBOStruct> vbos, GLuint texture);
 
     static void writeTo3DFile(vector<GSPoints> points, string fName);
     static vector<VBOStruct> convertToVBO(vector<GSPoints> gsps);
     static vector<GSPoints> readFrom3DFile(string fName);
     static vector<VBOStruct> readFrom3DFileVBOMode(string fName);
     static vector<GSPoints> readFromBezierPatchFile(string pathFName,  int tesselation);
+    static GLuint loadTextureImageVBO(string pathFName);
 
     string getFileName() { return fileName; }
 
@@ -235,8 +240,8 @@ class Sphere : public GeometricShape {
     public:
         Sphere(float radius, int slices, int stacks);
         Sphere(float radius, int slices, int stacks, string pathFile);
-        Sphere(string specularMap, string fileName, float radius, float multiplier);
-        Sphere(float radius, int slices, int stacks, float multiplier, string fileName);
+        // Sphere(string specularMap, string fileName, float radius, float multiplier);
+        // Sphere(float radius, int slices, int stacks, float multiplier, string fileName);
 
     protected:
         void Print(ostream &) const override;

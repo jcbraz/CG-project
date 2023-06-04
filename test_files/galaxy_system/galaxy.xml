@@ -1,0 +1,30 @@
+<world>
+    <window width="1000" height="1000" />
+    <camera>
+        <position x="200" y="200" z="30" />
+        <lookAt x="0" y="0" z="0" />
+        <up x="0" y="1" z="0" />
+        <projection fov="60" near="1" far="10000" />
+    </camera>
+    <group>
+        <group> <!-- GALACTIC CENTER GROUP -->
+            <transform>
+                <scale x="30" y="30" z="30" />
+            </transform>
+            <models>
+                <model file="sphere_1_20_20.3d">    
+                    <color r="0.212" g="0.168" b="0.097" />
+                    <event>
+                        <group>
+                            <text content="Galactic Center" x="30" y="30"/>
+                        </group>
+                    </event>
+                </model>
+            </models>
+        </group>
+        <group file="./star_belt_1_group.xml" /> <!-- STAR BELT 1 GROUP -->
+        <group file="./asteroid_1_group.xml" /> <!-- ASTEROID 1 GROUP -->
+        <group file="./star_belt_2_group.xml" /> <!-- STAR BELT 2 GROUP -->
+        <group file="./asteroid_2_group.xml" /> <!-- ASTEROID 2 GROUP -->
+    </group>
+</world>

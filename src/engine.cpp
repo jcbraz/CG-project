@@ -19,7 +19,7 @@
 #endif
 #define GLUT_
 
-#include "geometricShapes.h"
+#include "geometricShapes/geometricShapes.h"
 #include "materials.h"
 
 using namespace std;
@@ -34,7 +34,7 @@ Window * window;
 Camera * camera;
 Group * group;
 
-vector<std::tuple<GLuint, int, int>> test;
+vector<VBOStruct> test;
 
 int timebase = 0;
 float frames = 0;
@@ -119,8 +119,8 @@ void renderScene(void) {
     lights->run();
 
     group->run();
-    //glColor3f(1.0f, 1.0f, 1.0f);
-    //GeometricShape::drawObjectVBOMode(test);
+
+    glColor3f(1.0f, 1.0f, 1.0f);
 
     displayFrameRate();
 
@@ -219,8 +219,8 @@ void processMouseMotion(int xx, int yy) {
 int main(int argc, char** argv) {
 
 
+    //string path = "../../test_files/solar_system/solar_system.xml";
     string path = "../../test_files/solar_system/solar_system.xml";
-    //string path = "../../test_files/test_files_phase_4/test_4_1.xml";
 
     srand(time(nullptr));
 
@@ -248,8 +248,6 @@ int main(int argc, char** argv) {
         glewInit();
     #endif
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-
     // Callback registration for keyboard processing
     glutKeyboardFunc(processKeys);
     // glutSpecialFunc(processSpecialKeys);
@@ -264,6 +262,11 @@ int main(int argc, char** argv) {
     //glCullFace(GL_BACK);
 
     glEnable(GL_LIGHTING);
+    glEnable(GL_TEXTURE_2D); 
+
+    glEnableClientState(GL_NORMAL_ARRAY); 
+    glEnableClientState(GL_VERTEX_ARRAY); 
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY); 
 
     ilInit();
     // frames
@@ -271,15 +274,6 @@ int main(int argc, char** argv) {
 
     world->evaluateGroup(path);
     group = new Group(world->getGroup());
-
-
-    /**/
-    //TESTE
-    
-    //Sphere s = Sphere(1, 35, 35, 25, "boas");
-    //Sphere s = Sphere("../../test_files/solar_system/earth_specular.jpg", "sphere_spec.3d", 50, 10);
-    //test = GeometricShape::convertToVBO(s.getPoints());
-    
 
     // Glut's main cycle
     glutMainLoop();

@@ -30,6 +30,7 @@ struct _3f {
         _3f operator-(const _3f& other) const { return _3f(x - other.x, y - other.y, z - other.z); }
         _3f operator*(const _3f& other) const { return _3f(x * other.x, y * other.y, z * other.z); }
         _3f operator*(const float& other) const { return _3f(x * other, y * other, z * other); }
+        bool operator==(const _3f& other) const { return (x == other.x && y == other.y && z == other.z); };
 
 };
 

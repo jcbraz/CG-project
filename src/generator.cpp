@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "geometricShapes.h"
+#include "geometricShapes/geometricShapes.h"
 
 using namespace std;
 
