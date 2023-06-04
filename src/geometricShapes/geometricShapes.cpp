@@ -1,7 +1,3 @@
-//
-// Created by user13 on 03-03-2023.
-//
-
 #include "geometricShapes.h"
 #include "box.cpp"
 #include "sphere.cpp"
@@ -12,79 +8,6 @@
 #include <sstream>
 
 
-
-
-// ILubyte * readImage(string fpath, int * width, int * height) {
-//     ILuint t;
-
-//     ilGenImages(1, &t);
-//     ilBindImage(t);
-//     ilLoadImage((ILstring) fpath.c_str());
-//     ilConvertImage(IL_LUMINANCE, IL_UNSIGNED_BYTE);
-
-//     ILenum error = ilGetError();
-//     if (error != IL_NO_ERROR) {
-//         cout << "Error loading image!" << ilGetString(error) << endl;
-//     }
-
-//     *width = ilGetInteger(IL_IMAGE_WIDTH);
-//     *height = ilGetInteger(IL_IMAGE_HEIGHT);
-
-//     //int size = *width * *height * ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL);
-//     //ILubyte * imageData = new ILubyte[size];
-//     //ILboolean result = ilCopyPixels(0, 0, 0, *width, *height, 1, IL_LUMINANCE, IL_UNSIGNED_BYTE, imageData);
-//     ILubyte * imageData = ilGetData();
-//     ILubyte * tmp = imageData;
-
-//     if (!imageData)
-//         cout << "error getting image data!" << endl;
-
-//    // if (!result)
-//      //   cout << "error getting data!" << endl << ilGetString(ilGetError()) << endl;
-
-//     cout << "Loaded Image! W:" << *width << "H:" << *height << endl;
-//     return imageData;
-// }
-
-// unsigned char * genRandomData(int h, int w) {
-//     unsigned char * data = (unsigned char *) malloc(sizeof(unsigned char) * h*w);
-//     for (int i = 0; i < h*w; i++) {
-//         data[i] = (unsigned char) rand();
-//     }
-//     return data;
-// }
-
-// float height(int i, int j, ILubyte * imageData, int width, float multiplier) {
-//     float h = imageData[i *  width + j];
-//     return h / 255.0f * multiplier;
-// }
-
-
-
-
-
-/*
- *
- * END RING CLASS
- *
- */
-
-
-
-
-
-
-/*
- *
- * END CONE CLASS
- *
- */
-
-/*
- *
- * END POINT STRUCT
- *
- */
 void GeometricShape::drawObject(vector<GSPoints> points) {
     for (GSPoints gsp : points) {
         glBegin(gsp.getPrimitive());

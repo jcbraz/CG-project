@@ -1,7 +1,3 @@
-//
-// Created by user13 on 03-03-2023.
-//
-
 #ifndef __GEOMETRICSHAPES_H__
 #define __GEOMETRICSHAPES_H__
 
